@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Tríade Conexão — Administrador</title>
+<link rel="stylesheet" href="shared.css" />
+</head>
+<body>
+
+<div class="app" id="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-logo">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg>
+      </div>
+      <div class="brand-text"><strong>Tríade Conexão</strong><span>Painel Administrador</span></div>
+    </div>
+
+    <div class="nav-title">Principal</div>
+    <div class="nav-item active" data-tab="visao"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg><span>Visão Geral</span></div>
+    <div class="nav-item" data-tab="turmas"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg><span>Turmas</span></div>
+    <div class="nav-item" data-tab="professores"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Professores</span></div>
+    <div class="nav-item" data-tab="alunos"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg><span>Alunos</span></div>
+    <div class="nav-item" data-tab="planos"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12V8H6a2 2 0 0 1 0-4h12v4"/><path d="M4 6v12a2 2 0 0 0 2 2h14v-4"/><path d="M18 12a2 2 0 0 0 0 4h4v-4z"/></svg><span>Planos</span></div>
+
+    <div class="nav-title">Gestão</div>
+    <div class="nav-item" data-tab="financeiro"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg><span>Financeiro</span></div>
+    <div class="nav-item" data-tab="boletim"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Boletim</span></div>
+    <div class="nav-item" data-tab="desempenho"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><span>Desempenho</span></div>
+    <div class="nav-item" data-tab="mural"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg><span>Mural de Avisos</span></div>
+
+    <div class="nav-title">Conta</div>
+    <div class="nav-item" data-tab="perfil"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>Perfil</span></div>
+    <div class="nav-item" onclick="logout()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg><span>Sair</span></div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <button class="icon-btn" id="menuBtn" aria-label="Menu">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <div class="page-title"><h1 id="pageTitle">Visão Geral</h1><p id="pageSub">Resumo geral da plataforma</p></div>
+      <div class="user-chip" data-tab="perfil">
+        <div class="avatar" id="chipAvatar">AD</div>
+        <div class="info"><strong>Administrador</strong><span>admin@triade.com</span></div>
+      </div>
+    </header>
+
+    <main class="content">
+
+      <!-- VISÃO GERAL -->
+      <section class="tab active" id="tab-visao">
+        <div class="grid grid-4" style="margin-bottom:16px;">
+          <div class="card floating stat"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div><div><div class="val">248</div><div class="lbl">Alunos ativos</div></div></div>
+          <div class="card floating stat"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg></div><div><div class="val">18</div><div class="lbl">Professores</div></div></div>
+          <div class="card floating stat"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg></div><div><div class="val">12</div><div class="lbl">Turmas ativas</div></div></div>
+          <div class="card floating stat"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><div><div class="val">R$ 24.580</div><div class="lbl">Receita do mês</div></div></div>
+        </div>
+
+        <div class="grid grid-2">
+          <div class="card floating">
+            <div class="card-title">Pagamentos pendentes</div>
+            <div class="card-sub">Mensalidades aguardando confirmação</div>
+            <div class="table-wrap">
+              <table><thead><tr><th>Aluno</th><th>Plano</th><th>Valor</th><th>Vencimento</th></tr></thead>
+              <tbody>
+                <tr><td>Ana Beatriz Souza</td><td>3x semana</td><td>R$ 180,00</td><td>12/06/2025</td></tr>
+                <tr><td>Carlos Eduardo Lima</td><td>2x semana</td><td>R$ 140,00</td><td>13/06/2025</td></tr>
+                <tr><td>Fernanda Rocha</td><td>Semanal</td><td>R$ 90,00</td><td>15/06/2025</td></tr>
+              </tbody></table>
+            </div>
+          </div>
+
+          <div class="card floating">
+            <div class="card-title">Avisos recentes</div>
+            <div class="card-sub">Últimas publicações no mural</div>
+            <div class="aviso"><div class="meta"><span class="badge badge-info">Alunos</span> 10/06/2025</div><h4>Simulado geral no sábado</h4><p>O simulado acontecerá das 8h às 12h.</p></div>
+            <div class="aviso"><div class="meta"><span class="badge badge-warn">Professores</span> 09/06/2025</div><h4>Reunião pedagógica</h4><p>Reunião na sexta às 18h.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TURMAS -->
+      <section class="tab" id="tab-turmas">
+        <div class="sec-header">
+          <div><h2>Turmas</h2><p>Cadastro e gestão das turmas</p></div>
+          <div class="actions"><button class="btn btn-primary" onclick="abrirForm('formTurma')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Nova turma</button></div>
+        </div>
+        <div class="card" id="formTurma" style="display:none;margin-bottom:16px;">
+          <div class="card-title">Cadastrar turma</div><div class="card-sub">Dados básicos da turma</div>
+          <form class="form-grid" onsubmit="event.preventDefault(); salvarSimples('formTurma','Turma cadastrada (protótipo).');">
+            <div class="field"><label>Nome</label><input required placeholder="Ex.: 9º Ano A" /></div>
+            <div class="field"><label>Série / Nível</label><select required><option value="">Selecione</option><optgroup label="Fundamental"><option>6º Ano</option><option>7º Ano</option><option>8º Ano</option><option>9º Ano</option></optgroup><optgroup label="Médio"><option>1º Ano EM</option><option>2º Ano EM</option><option>3º Ano EM</option></optgroup></select></div>
+            <div class="field"><label>Turno</label><select required><option value="">Selecione</option><option>Manhã</option><option>Tarde</option><option>Noite</option></select></div>
+            <div class="field"><label>Professor</label><select required><option value="">Selecione</option><option>Prof. Marcos Vinícius</option><option>Profa. Juliana Alves</option><option>Prof. Rafael Costa</option></select></div>
+            <div class="field"><label>Capacidade</label><input type="number" min="1" required /></div>
+            <div class="field"><label>Sala</label><input /></div>
+            <div class="form-actions"><button type="button" class="btn btn-ghost" onclick="fecharForm('formTurma')">Cancelar</button><button type="submit" class="btn btn-primary">Salvar</button></div>
+          </form>
+        </div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Turma</th><th>Série</th><th>Turno</th><th>Professor</th><th>Alunos</th><th>Status</th><th>Ações</th></tr></thead>
+          <tbody>
+            <tr><td>9º Ano A</td><td>9º Ano</td><td>Manhã</td><td>Prof. Marcos Vinícius</td><td>28/30</td><td><span class="badge badge-ok">Ativa</span></td><td><button class="btn btn-ghost btn-sm">Editar</button></td></tr>
+            <tr><td>8º Ano B</td><td>8º Ano</td><td>Tarde</td><td>Profa. Juliana Alves</td><td>25/30</td><td><span class="badge badge-ok">Ativa</span></td><td><button class="btn btn-ghost btn-sm">Editar</button></td></tr>
+            <tr><td>1º Ano EM</td><td>1º EM</td><td>Noite</td><td>Prof. Rafael Costa</td><td>30/30</td><td><span class="badge badge-warn">Lotada</span></td><td><button class="btn btn-ghost btn-sm">Editar</button></td></tr>
+          </tbody></table></div>
+      </section>
+
+      <!-- PROFESSORES -->
+      <section class="tab" id="tab-professores">
+        <div class="sec-header"><div><h2>Professores</h2><p>Corpo docente</p></div><div class="actions"><button class="btn btn-primary" onclick="abrirForm('formProf')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Novo professor</button></div></div>
+        <div class="card" id="formProf" style="display:none;margin-bottom:16px;">
+          <div class="card-title">Cadastrar professor</div>
+          <form class="form-grid" onsubmit="event.preventDefault(); salvarSimples('formProf','Professor cadastrado.');">
+            <div class="field"><label>Nome</label><input required /></div>
+            <div class="field"><label>E-mail</label><input type="email" required /></div>
+            <div class="field"><label>Celular</label><input type="tel" required /></div>
+            <div class="field"><label>Graduação</label><input required /></div>
+            <div class="field"><label>Especialização <span class="hint">(opcional)</span></label><input /></div>
+            <div class="field"><label>Disciplina</label><select required><option value="">Selecione</option><option>Matemática</option><option>Português</option><option>História</option><option>Ciências</option></select></div>
+            <div class="form-actions"><button type="button" class="btn btn-ghost" onclick="fecharForm('formProf')">Cancelar</button><button type="submit" class="btn btn-primary">Salvar</button></div>
+          </form>
+        </div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Professor</th><th>Disciplina</th><th>Graduação</th><th>Celular</th><th>Turmas</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>Marcos Vinícius</td><td>Matemática</td><td>Lic. Matemática</td><td>(11) 99871-2200</td><td>3</td><td><span class="badge badge-ok">Ativo</span></td></tr>
+            <tr><td>Juliana Alves</td><td>Português</td><td>Letras</td><td>(11) 99855-1177</td><td>2</td><td><span class="badge badge-ok">Ativo</span></td></tr>
+            <tr><td>Rafael Costa</td><td>História</td><td>História</td><td>(11) 99844-3322</td><td>2</td><td><span class="badge badge-ok">Ativo</span></td></tr>
+          </tbody></table></div>
+      </section>
+
+      <!-- ALUNOS -->
+      <section class="tab" id="tab-alunos">
+        <div class="sec-header"><div><h2>Alunos</h2><p>Alunos matriculados</p></div><div class="actions"><button class="btn btn-primary" onclick="abrirForm('formAluno')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Novo aluno</button></div></div>
+        <div class="card" id="formAluno" style="display:none;margin-bottom:16px;">
+          <div class="card-title">Cadastrar aluno</div>
+          <form class="form-grid" onsubmit="event.preventDefault(); salvarSimples('formAluno','Aluno cadastrado.');">
+            <div class="field"><label>Nome</label><input required /></div>
+            <div class="field"><label>Nascimento</label><input type="date" required /></div>
+            <div class="field"><label>Responsável</label><input required /></div>
+            <div class="field"><label>Celular do responsável</label><input type="tel" required /></div>
+            <div class="field"><label>Turma</label><select required><option value="">Selecione</option><option>9º Ano A</option><option>8º Ano B</option><option>1º Ano EM</option></select></div>
+            <div class="field"><label>Plano</label><select required><option value="">Selecione</option><option>1 dia</option><option>2 dias</option><option>3 dias</option><option>4 dias</option><option>Semanal</option></select></div>
+            <div class="field"><label>Vencimento (dia)</label><input type="number" min="1" max="31" required /></div>
+            <div class="field"><label>Status</label><select><option>Ativo</option><option>Inativo</option></select></div>
+            <div class="form-actions"><button type="button" class="btn btn-ghost" onclick="fecharForm('formAluno')">Cancelar</button><button type="submit" class="btn btn-primary">Salvar</button></div>
+          </form>
+        </div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Aluno</th><th>Turma</th><th>Plano</th><th>Responsável</th><th>Vencimento</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>Ana Beatriz Souza</td><td>9º Ano A</td><td>3x semana</td><td>Marta Souza</td><td>Dia 12</td><td><span class="badge badge-ok">Ativo</span></td></tr>
+            <tr><td>Carlos Eduardo Lima</td><td>8º Ano B</td><td>2x semana</td><td>Roberto Lima</td><td>Dia 13</td><td><span class="badge badge-ok">Ativo</span></td></tr>
+            <tr><td>Fernanda Rocha</td><td>1º Ano EM</td><td>Semanal</td><td>Cláudia Rocha</td><td>Dia 15</td><td><span class="badge badge-warn">Pendente</span></td></tr>
+          </tbody></table></div>
+      </section>
+
+      <!-- PLANOS -->
+      <section class="tab" id="tab-planos">
+        <div class="sec-header"><div><h2>Planos</h2><p>Configure os planos semanais</p></div></div>
+        <div class="grid grid-3">
+          <div class="plano-card"><h3>1 dia na semana</h3><div class="preco">R$ 90<small>/mês</small></div><ul><li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>1 aula semanal</li></ul></div>
+          <div class="plano-card"><h3>2 dias na semana</h3><div class="preco">R$ 140<small>/mês</small></div><ul><li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>2 aulas semanais</li></ul></div>
+          <div class="plano-card destaque"><h3>3 dias na semana</h3><div class="preco">R$ 180<small>/mês</small></div><ul><li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>3 aulas semanais</li></ul></div>
+          <div class="plano-card"><h3>4 dias na semana</h3><div class="preco">R$ 220<small>/mês</small></div><ul><li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>4 aulas semanais</li></ul></div>
+          <div class="plano-card"><h3>Semanal</h3><div class="preco">R$ 90<small>/semana</small></div><ul><li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>Cobrança semanal</li></ul></div>
+        </div>
+      </section>
+
+      <!-- FINANCEIRO -->
+      <section class="tab" id="tab-financeiro">
+        <div class="sec-header"><div><h2>Financeiro</h2><p>Confirmação de pagamentos</p></div></div>
+        <div class="grid grid-4" style="margin-bottom:16px;">
+          <div class="card floating stat"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><div><div class="val">R$ 24.580</div><div class="lbl">Receita</div></div></div>
+          <div class="card floating stat"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div><div class="val">14</div><div class="lbl">Pendentes</div></div></div>
+          <div class="card floating stat"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><div><div class="val">234</div><div class="lbl">Pagos</div></div></div>
+          <div class="card floating stat"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div><div><div class="val">6</div><div class="lbl">Inadimplentes</div></div></div>
+        </div>
+
+        <div class="card floating">
+          <div class="sec-header" style="margin-bottom:12px;">
+            <div><div class="card-title">Pagamentos do mês</div></div>
+            <input type="text" id="buscaFin" placeholder="Buscar aluno..." oninput="filtrarTabela('tabFin','buscaFin')" style="padding:9px 12px;border:1px solid var(--cinza-200);border-radius:8px;font-size:13px;" />
+          </div>
+          <div class="table-wrap"><table id="tabFin">
+            <thead><tr><th>Aluno</th><th>Plano</th><th>Valor</th><th>Vencimento</th><th>Status</th><th>Ações</th></tr></thead>
+            <tbody>
+              <tr><td>Ana Beatriz Souza</td><td>3x semana</td><td>R$ 180,00</td><td>12/06/2025</td><td><span class="badge badge-warn">Pendente</span></td><td><button class="btn btn-success btn-sm" onclick="confirmarPagamento(this)">Confirmar</button></td></tr>
+              <tr><td>Carlos Eduardo Lima</td><td>2x semana</td><td>R$ 140,00</td><td>13/06/2025</td><td><span class="badge badge-warn">Pendente</span></td><td><button class="btn btn-success btn-sm" onclick="confirmarPagamento(this)">Confirmar</button></td></tr>
+              <tr><td>Gabriel Martins</td><td>4x semana</td><td>R$ 220,00</td><td>10/06/2025</td><td><span class="badge badge-ok">Pago</span></td><td><button class="btn btn-ghost btn-sm" disabled>Confirmado</button></td></tr>
+              <tr><td>Igor Ferreira</td><td>3x semana</td><td>R$ 180,00</td><td>05/06/2025</td><td><span class="badge badge-bad">Atrasado</span></td><td><button class="btn btn-success btn-sm" onclick="confirmarPagamento(this)">Confirmar</button></td></tr>
+            </tbody></table></div>
+        </div>
+      </section>
+
+      <!-- BOLETIM -->
+      <section class="tab" id="tab-boletim">
+        <div class="sec-header">
+          <div><h2>Boletim</h2><p>Notas por matéria</p></div>
+          <div class="actions">
+            <select id="selNivel" style="padding:10px 12px;border:1px solid var(--cinza-200);border-radius:8px;font-size:13px;"><option value="fund">Fundamental</option><option value="medio">Médio</option></select>
+            <select id="selTurma" style="padding:10px 12px;border:1px solid var(--cinza-200);border-radius:8px;font-size:13px;"></select>
+          </div>
+        </div>
+        <div class="card floating" style="margin-bottom:16px;">
+          <div class="card-title">Disciplinas por série</div>
+          <div class="card-sub" id="labelDisc"></div>
+          <div id="chipsDisc" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+        </div>
+        <div class="card floating">
+          <div class="card-title" id="tituloBol"></div>
+          <div class="card-sub">Média mínima 6,0</div>
+          <div class="table-wrap"><table id="tabelaBol"><thead></thead><tbody></tbody></table></div>
+        </div>
+      </section>
+
+      <!-- DESEMPENHO -->
+      <section class="tab" id="tab-desempenho">
+        <div class="sec-header"><div><h2>Desempenho</h2><p>Indicadores gerais</p></div></div>
+        <div class="grid grid-3" style="margin-bottom:16px;">
+          <div class="card floating"><div class="card-title">Alunos</div><div class="card-sub">Média por turma</div>
+            <div style="display:flex;flex-direction:column;gap:14px;">
+              <div><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;"><span>9º Ano A</span><strong>8,4</strong></div><div class="progress"><span style="width:84%"></span></div></div>
+              <div><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;"><span>8º Ano B</span><strong>7,6</strong></div><div class="progress"><span style="width:76%"></span></div></div>
+              <div><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;"><span>3º Ano EM</span><strong>8,9</strong></div><div class="progress"><span style="width:89%"></span></div></div>
+            </div>
+          </div>
+          <div class="card floating"><div class="card-title">Professores</div><div class="card-sub">Satisfação</div>
+            <div style="display:flex;flex-direction:column;gap:14px;">
+              <div><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;"><span>Marcos Vinícius</span><strong>4,9</strong></div><div class="progress"><span style="width:98%"></span></div></div>
+              <div><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;"><span>Juliana Alves</span><strong>4,7</strong></div><div class="progress"><span style="width:94%"></span></div></div>
+              <div><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;"><span>Rafael Costa</span><strong>4,5</strong></div><div class="progress"><span style="width:90%"></span></div></div>
+            </div>
+          </div>
+          <div class="card floating"><div class="card-title">Plataforma</div><div class="card-sub">Indicadores</div>
+            <div style="display:flex;flex-direction:column;gap:14px;">
+              <div><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;"><span>Frequência</span><strong>92%</strong></div><div class="progress"><span style="width:92%"></span></div></div>
+              <div><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;"><span>Adimplência</span><strong>88%</strong></div><div class="progress"><span style="width:88%"></span></div></div>
+              <div><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;"><span>Satisfação pais</span><strong>95%</strong></div><div class="progress"><span style="width:95%"></span></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- MURAL -->
+      <section class="tab" id="tab-mural">
+        <div class="sec-header"><div><h2>Mural de Avisos</h2><p>Comunicação integrada</p></div><div class="actions"><button class="btn btn-primary" onclick="abrirForm('formAviso')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Novo aviso</button></div></div>
+        <div class="card" id="formAviso" style="display:none;margin-bottom:16px;">
+          <form class="form-grid" onsubmit="event.preventDefault(); salvarSimples('formAviso','Aviso publicado.');">
+            <div class="field"><label>Título</label><input required /></div>
+            <div class="field"><label>Público</label><select required><option>Todos</option><option>Alunos</option><option>Professores</option><option>Pais</option></select></div>
+            <div class="field full"><label>Mensagem</label><textarea rows="4" required></textarea></div>
+            <div class="form-actions"><button type="button" class="btn btn-ghost" onclick="fecharForm('formAviso')">Cancelar</button><button type="submit" class="btn btn-primary">Publicar</button></div>
+          </form>
+        </div>
+        <div class="grid grid-2">
+          <div>
+            <div class="aviso"><div class="meta"><span class="badge badge-info">Alunos</span> 10/06/2025</div><h4>Simulado geral no sábado</h4><p>Das 8h às 12h. Trazer documento e caneta.</p></div>
+            <div class="aviso"><div class="meta"><span class="badge badge-warn">Professores</span> 09/06/2025</div><h4>Reunião pedagógica</h4><p>Sexta às 18h para alinhamento.</p></div>
+          </div>
+          <div>
+            <div class="aviso"><div class="meta"><span class="badge badge-bad">Pais</span> 08/06/2025</div><h4>Reunião de pais</h4><p>Dia 20/06 às 19h no auditório.</p></div>
+            <div class="aviso"><div class="meta"><span class="badge badge-info">Todos</span> 05/06/2025</div><h4>Novo horário</h4><p>A partir de 15/06, funcionamento das 7h às 21h.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PERFIL -->
+      <section class="tab" id="tab-perfil">
+        <div class="perfil-header">
+          <div class="perfil-photo">
+            <span id="perfilInitials" style="font-size:28px;font-weight:700;">AD</span>
+            <img id="perfilImg" alt="" style="display:none;" />
+            <label class="upload" for="perfilFile">Alterar</label>
+            <input type="file" id="perfilFile" accept="image/*" hidden />
+          </div>
+          <div class="perfil-info"><h2 id="perfilNome">Administrador</h2><p id="perfilEmail">admin@triade.com</p></div>
+        </div>
+        <div class="card floating">
+          <div class="card-title">Dados do perfil</div>
+          <div class="card-sub">Informações visíveis em relatórios.</div>
+          <form class="form-grid" onsubmit="event.preventDefault(); alert('Perfil salvo.');">
+            <div class="field"><label>Nome</label><input id="pNome" /></div>
+            <div class="field"><label>E-mail</label><input id="pEmail" type="email" /></div>
+            <div class="field"><label>Graduação</label><input placeholder="Ex.: Pedagogia" /></div>
+            <div class="field"><label>Especialização <span class="hint">(opcional)</span></label><input /></div>
+            <div class="field"><label>Celular</label><input type="tel" placeholder="(00) 00000-0000" /></div>
+            <div class="field"><label>Cargo</label><select><option>Administrador</option><option>Coordenador</option><option>Diretor</option></select></div>
+            <div class="form-actions"><button type="reset" class="btn btn-ghost">Cancelar</button><button type="submit" class="btn btn-primary">Salvar</button></div>
+          </form>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<script src="shared.js"></script>
+<script>
+  const user = Session.requirePapel('admin');
+  if (user) {
+    const tabs = initTabs({
+      visao:       ['Visão Geral', 'Resumo geral da plataforma'],
+      turmas:      ['Turmas', 'Cadastro e gestão de turmas'],
+      professores: ['Professores', 'Corpo docente'],
+      alunos:      ['Alunos', 'Alunos matriculados'],
+      planos:      ['Planos', 'Planos semanais'],
+      financeiro:  ['Financeiro', 'Confirmação de pagamentos'],
+      boletim:     ['Boletim', 'Notas por matéria'],
+      desempenho:  ['Desempenho', 'Indicadores'],
+      mural:       ['Mural de Avisos', 'Comunicação integrada'],
+      perfil:      ['Perfil', 'Seus dados']
+    });
+
+    preencherUsuarioUI(user);
+    initUploadPerfil();
+
+    initBoletim({
+      selNivel: 'selNivel',
+      selTurma: 'selTurma',
+      chipsDisc: 'chipsDisc',
+      labelDisc: 'labelDisc',
+      titulo: 'tituloBol',
+      tabela: 'tabelaBol'
+    });
+  }
+
+  function confirmarPagamento(btn) {
+    const linha = btn.closest('tr');
+    linha.querySelector('td:nth-child(5)').innerHTML = '<span class="badge badge-ok">Pago</span>';
+    btn.outerHTML = '<button class="btn btn-ghost btn-sm" disabled>Confirmado</button>';
+  }
+</script>
+
+</body>
+</html>
