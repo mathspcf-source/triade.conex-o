@@ -17,7 +17,7 @@
 
     <div class="nav-title">Acompanhamento</div>
     <div class="nav-item active" data-tab="visao"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg><span>Visão Geral</span></div>
-    <div class="nav-item" data-tab="boletim"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/></svg><span>Boletim</span></div>
+    <div class="nav-item" data-tab="boletim"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Boletim</span></div>
     <div class="nav-item" data-tab="desempenho"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><span>Desempenho</span></div>
     <div class="nav-item" data-tab="faltas"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/></svg><span>Faltas</span></div>
     <div class="nav-item" data-tab="relatorios"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Relatórios</span></div>
@@ -41,38 +41,49 @@
 
     <main class="content">
 
+      <!-- ================= VISÃO GERAL ================= -->
       <section class="tab active" id="tab-visao">
-        <div class="grid grid-4" style="margin-bottom:16px;">
-          <div class="card floating stat"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div><div><div class="val">8,4</div><div class="lbl">Média geral</div></div></div>
-          <div class="card floating stat"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div><div><div class="val">94%</div><div class="lbl">Frequência</div></div></div>
-          <div class="card floating stat"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><div><div class="val">Em dia</div><div class="lbl">Mensalidade</div></div></div>
-          <div class="card floating stat"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg></div><div><div class="val">3</div><div class="lbl">Relatórios</div></div></div>
+        <div class="sec-header">
+          <div><h2>Aluno selecionado</h2><p>Escolha qual filho deseja acompanhar</p></div>
+          <div class="actions"><select id="selFilho" style="padding:10px 12px;border:1px solid var(--cinza-200);border-radius:8px;font-size:13px;min-width:220px;"></select></div>
         </div>
 
-        <div class="grid grid-2">
-          <div class="card floating">
-            <div class="card-title">Resumo do aluno</div>
-            <div class="card-sub">Ana Beatriz Souza — 9º Ano A</div>
-            <div style="display:flex;flex-direction:column;gap:14px;margin-top:8px;">
-              <div><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;"><span>Matemática</span><strong>8,5</strong></div><div class="progress"><span style="width:85%"></span></div></div>
-              <div><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;"><span>Português</span><strong>9,0</strong></div><div class="progress"><span style="width:90%"></span></div></div>
-              <div><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;"><span>Ciências</span><strong>8,0</strong></div><div class="progress"><span style="width:80%"></span></div></div>
-            </div>
+        <div id="semFilho" style="display:none;">
+          <div class="placeholder"><h3>Nenhum aluno vinculado</h3><p>Solicite à administração da escola o vínculo do seu filho a este e-mail.</p></div>
+        </div>
+
+        <div id="conteudoFilho">
+          <div class="grid grid-4" style="margin-bottom:16px;">
+            <div class="card floating stat"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div><div><div class="val" id="kpiMedia">0,0</div><div class="lbl">Média geral</div></div></div>
+            <div class="card floating stat"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div><div><div class="val" id="kpiFreq">0%</div><div class="lbl">Frequência</div></div></div>
+            <div class="card floating stat"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><div><div class="val" id="kpiFin">—</div><div class="lbl">Mensalidade</div></div></div>
+            <div class="card floating stat"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg></div><div><div class="val" id="kpiRel">0</div><div class="lbl">Relatórios</div></div></div>
           </div>
-          <div class="card floating">
-            <div class="card-title">Avisos da escola</div>
-            <div class="card-sub">Comunicados para pais</div>
-            <div class="aviso"><div class="meta"><span class="badge badge-bad">Pais</span> 08/06/2025</div><h4>Reunião de pais e mestres</h4><p>Dia 20/06 às 19h no auditório.</p></div>
+
+          <div class="grid grid-2">
+            <div class="card floating">
+              <div class="card-title">Resumo do aluno</div>
+              <div class="card-sub" id="resumoSub">—</div>
+              <div id="resumoAluno" style="display:flex;flex-direction:column;gap:14px;margin-top:8px;"></div>
+            </div>
+            <div class="card floating">
+              <div class="card-title">Avisos da escola</div>
+              <div class="card-sub">Comunicados para pais</div>
+              <div id="visaoAvisos"></div>
+            </div>
           </div>
         </div>
       </section>
 
+      <!-- ================= BOLETIM ================= -->
       <section class="tab" id="tab-boletim">
-        <div class="sec-header"><div><h2>Boletim</h2><p>Notas do seu filho</p></div></div>
-        <div class="card floating" style="margin-bottom:16px;">
-          <div class="card-title">Disciplinas</div>
-          <div class="card-sub" id="labelDiscPais"></div>
-          <div id="chipsDiscPais" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+        <div class="sec-header">
+          <div><h2>Boletim</h2><p>Notas do aluno <span id="boletimAlunoLabel"></span></p></div>
+          <div class="actions">
+            <select id="selBimPais" style="padding:10px 12px;border:1px solid var(--cinza-200);border-radius:8px;font-size:13px;">
+              <option value="1">1º Bimestre</option><option value="2">2º Bimestre</option><option value="3">3º Bimestre</option><option value="4">4º Bimestre</option>
+            </select>
+          </div>
         </div>
         <div class="card floating">
           <div class="card-title">Notas do bimestre</div>
@@ -81,65 +92,64 @@
         </div>
       </section>
 
+      <!-- ================= DESEMPENHO ================= -->
       <section class="tab" id="tab-desempenho">
-        <div class="sec-header"><div><h2>Desempenho</h2><p>Evolução do aluno</p></div></div>
+        <div class="sec-header"><div><h2>Desempenho</h2><p>Evolução do aluno <span id="desempAlunoLabel"></span></p></div></div>
         <div class="card floating">
           <div class="card-title">Evolução por disciplina</div>
           <div class="card-sub">Comparativo do bimestre</div>
-          <div style="display:flex;flex-direction:column;gap:14px;">
-            <div><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;"><span>Matemática</span><strong>8,5</strong></div><div class="progress"><span style="width:85%"></span></div></div>
-            <div><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;"><span>Português</span><strong>9,0</strong></div><div class="progress"><span style="width:90%"></span></div></div>
-            <div><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;"><span>Ciências</span><strong>8,0</strong></div><div class="progress"><span style="width:80%"></span></div></div>
-            <div><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;"><span>História</span><strong>7,5</strong></div><div class="progress"><span style="width:75%"></span></div></div>
-          </div>
+          <div id="desempenhoPais" style="display:flex;flex-direction:column;gap:14px;"></div>
         </div>
       </section>
 
+      <!-- ================= FALTAS ================= -->
       <section class="tab" id="tab-faltas">
-        <div class="sec-header"><div><h2>Faltas</h2><p>Presença do aluno</p></div></div>
+        <div class="sec-header"><div><h2>Faltas</h2><p>Presença do aluno <span id="faltasAlunoLabel"></span></p></div></div>
         <div class="grid grid-3" style="margin-bottom:16px;">
-          <div class="card floating stat"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><div><div class="val">48</div><div class="lbl">Presenças</div></div></div>
-          <div class="card floating stat"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div><div><div class="val">3</div><div class="lbl">Faltas</div></div></div>
-          <div class="card floating stat"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div><div><div class="val">94%</div><div class="lbl">Frequência</div></div></div>
+          <div class="card floating stat"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><div><div class="val" id="kpiPres">0</div><div class="lbl">Presenças</div></div></div>
+          <div class="card floating stat"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div><div><div class="val" id="kpiFalt">0</div><div class="lbl">Faltas</div></div></div>
+          <div class="card floating stat"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div><div><div class="val" id="kpiFreq2">0%</div><div class="lbl">Frequência</div></div></div>
         </div>
-        <div class="table-wrap"><table>
+        <div class="table-wrap"><table id="tabFaltasPais">
           <thead><tr><th>Data</th><th>Disciplina</th><th>Status</th></tr></thead>
-          <tbody>
-            <tr><td>10/06/2025</td><td>Matemática</td><td><span class="badge badge-ok">Presente</span></td></tr>
-            <tr><td>05/06/2025</td><td>Português</td><td><span class="badge badge-bad">Falta</span></td></tr>
-          </tbody></table></div>
+          <tbody></tbody>
+        </table></div>
       </section>
 
+      <!-- ================= RELATÓRIOS ================= -->
       <section class="tab" id="tab-relatorios">
-        <div class="sec-header"><div><h2>Relatórios do aluno</h2><p>Relatórios emitidos pelos professores</p></div></div>
-        <div class="grid grid-2">
-          <div class="card floating"><div class="card-title">1º Bimestre — Matemática</div><div class="card-sub">Prof. Marcos Vinícius — 09/06/2025</div><p style="font-size:13px;color:var(--preto-700);">Excelente evolução. Recomendo manter o ritmo de estudos e participar das aulas de reforço.</p></div>
-          <div class="card floating"><div class="card-title">1º Bimestre — Português</div><div class="card-sub">Profa. Juliana Alves — 09/06/2025</div><p style="font-size:13px;color:var(--preto-700);">Boa escrita e participação. Sugiro leitura complementar para ampliar vocabulário.</p></div>
-        </div>
+        <div class="sec-header"><div><h2>Relatórios do aluno</h2><p>Relatórios emitidos pelos professores <span id="relAlunoLabel"></span></p></div></div>
+        <div class="grid grid-2" id="listaRelPais"></div>
       </section>
 
+      <!-- ================= FINANCEIRO ================= -->
       <section class="tab" id="tab-financeiro">
-        <div class="sec-header"><div><h2>Financeiro</h2><p>Mensalidades e pagamentos</p></div></div>
-        <div class="grid grid-3" style="margin-bottom:16px;">
-          <div class="card floating stat"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><div><div class="val">R$ 180,00</div><div class="lbl">Mensalidade</div></div></div>
-          <div class="card floating stat"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div><div class="val">Dia 12</div><div class="lbl">Vencimento</div></div></div>
-          <div class="card floating stat"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><div><div class="val">Em dia</div><div class="lbl">Status</div></div></div>
+        <div class="sec-header"><div><h2>Financeiro</h2><p>Mensalidades e pagamentos <span id="finAlunoLabel"></span></p></div></div>
+
+        <div class="grid grid-4" style="margin-bottom:16px;">
+          <div class="card floating stat"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><div><div class="val" id="kpiFinTotal">R$ 0</div><div class="lbl">Total pago</div></div></div>
+          <div class="card floating stat"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div><div class="val" id="kpiFinPend">0</div><div class="lbl">Pendentes</div></div></div>
+          <div class="card floating stat"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><div><div class="val" id="kpiFinPago">0</div><div class="lbl">Pagos</div></div></div>
+          <div class="card floating stat"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div><div><div class="val" id="kpiFinAtras">0</div><div class="lbl">Atrasados</div></div></div>
         </div>
-        <div class="table-wrap"><table>
-          <thead><tr><th>Mês</th><th>Valor</th><th>Vencimento</th><th>Status</th></tr></thead>
-          <tbody>
-            <tr><td>Junho/2025</td><td>R$ 180,00</td><td>12/06/2025</td><td><span class="badge badge-warn">Pendente</span></td></tr>
-            <tr><td>Maio/2025</td><td>R$ 180,00</td><td>12/05/2025</td><td><span class="badge badge-ok">Pago</span></td></tr>
-            <tr><td>Abril/2025</td><td>R$ 180,00</td><td>12/04/2025</td><td><span class="badge badge-ok">Pago</span></td></tr>
-          </tbody></table></div>
+
+        <div class="card floating">
+          <div class="card-title">Histórico de mensalidades</div>
+          <div class="card-sub">Todos os lançamentos do aluno</div>
+          <div class="table-wrap"><table id="tabFinPais">
+            <thead><tr><th>Mês</th><th>Plano</th><th>Valor</th><th>Vencimento</th><th>Status</th></tr></thead>
+            <tbody></tbody>
+          </table></div>
+        </div>
       </section>
 
+      <!-- ================= MURAL ================= -->
       <section class="tab" id="tab-mural">
         <div class="sec-header"><div><h2>Mural de Avisos</h2><p>Comunicados para pais</p></div></div>
-        <div class="aviso"><div class="meta"><span class="badge badge-bad">Pais</span> 08/06/2025</div><h4>Reunião de pais e mestres</h4><p>Encontro no dia 20/06 às 19h no auditório. Presença obrigatória.</p></div>
-        <div class="aviso"><div class="meta"><span class="badge badge-info">Todos</span> 05/06/2025</div><h4>Novo horário de funcionamento</h4><p>A partir de 15/06, funcionamento das 7h às 21h.</p></div>
+        <div id="listaMuralPais"></div>
       </section>
 
+      <!-- ================= PERFIL ================= -->
       <section class="tab" id="tab-perfil">
         <div class="perfil-header">
           <div class="perfil-photo">
@@ -150,18 +160,21 @@
           </div>
           <div class="perfil-info"><h2 id="perfilNome">Responsável</h2><p id="perfilEmail">pais@triade.com</p></div>
         </div>
+
         <div class="card floating">
           <div class="card-title">Dados do perfil</div>
           <div class="card-sub">Suas informações de contato.</div>
-          <form class="form-grid" onsubmit="event.preventDefault(); alert('Perfil salvo.');">
+          <form class="form-grid" onsubmit="salvarPerfil(event)">
             <div class="field"><label>Nome</label><input id="pNome" /></div>
             <div class="field"><label>E-mail</label><input id="pEmail" type="email" /></div>
-            <div class="field"><label>Graduação</label><input placeholder="Opcional" /></div>
-            <div class="field"><label>Especialização <span class="hint">(opcional)</span></label><input /></div>
-            <div class="field"><label>Celular</label><input type="tel" placeholder="(00) 00000-0000" /></div>
-            <div class="field"><label>Parentesco</label><select><option>Mãe</option><option>Pai</option><option>Responsável legal</option></select></div>
-            <div class="field full"><label>Aluno(s) vinculado(s)</label><input value="Ana Beatriz Souza — 9º Ano A" readonly /></div>
-            <div class="form-actions"><button type="reset" class="btn btn-ghost">Cancelar</button><button type="submit" class="btn btn-primary">Salvar</button></div>
+            <div class="field"><label>Graduação <span class="hint">(opcional)</span></label><input id="pGrad" /></div>
+            <div class="field"><label>Especialização <span class="hint">(opcional)</span></label><input id="pEsp" /></div>
+            <div class="field"><label>Celular</label><input id="pTel" type="tel" /></div>
+            <div class="field"><label>Parentesco</label>
+              <select id="pParentesco"><option>Mãe</option><option>Pai</option><option>Responsável legal</option></select>
+            </div>
+            <div class="field full"><label>Aluno(s) vinculado(s)</label><input id="pVinculados" readonly /></div>
+            <div class="form-actions"><button type="reset" class="btn btn-ghost">Cancelar</button><button type="submit" class="btn btn-primary">Salvar alterações</button></div>
           </form>
         </div>
       </section>
@@ -170,47 +183,366 @@
   </div>
 </div>
 
+<script src="db.js"></script>
 <script src="shared.js"></script>
 <script>
-  const user = Session.requirePapel('pais');
-  if (user) {
-    initTabs({
-      visao:      ['Visão Geral', 'Acompanhamento do seu filho'],
-      boletim:    ['Boletim', 'Notas do seu filho'],
-      desempenho: ['Desempenho', 'Evolução do aluno'],
-      faltas:     ['Faltas', 'Presença do aluno'],
-      relatorios: ['Relatórios', 'Relatórios dos professores'],
-      financeiro: ['Financeiro', 'Mensalidades'],
-      mural:      ['Mural de Avisos', 'Comunicados para pais'],
-      perfil:     ['Perfil', 'Seus dados']
-    });
+/* ============================================================
+   PAIS — lógica corrigida
+   ============================================================ */
 
-    preencherUsuarioUI(user);
-    initUploadPerfil();
+const user = Auth.require('pais');
+if (!user) throw new Error('Sem sessão');
 
-    // Boletim do filho (Ana Beatriz — 9º Ano A)
-    const nivel = DADOS_BOLETIM.fund;
-    const chipsDiscPais = document.getElementById('chipsDiscPais');
-    const labelDiscPais = document.getElementById('labelDiscPais');
-    const tabelaBolPais = document.getElementById('tabelaBolPais');
+const DISCIPLINAS_FUND = ['Português','Matemática','Ciências','História','Geografia','Inglês','Artes','Ed. Física'];
+const DISCIPLINAS_MEDIO = ['Português','Matemática','Física','Química','Biologia','História','Geografia','Filosofia','Sociologia','Inglês'];
 
-    labelDiscPais.textContent = '9º Ano — Ensino Fundamental';
-    chipsDiscPais.innerHTML = nivel.disciplinas.map(d =>
-      `<span style="padding:6px 12px;background:var(--azul-50);color:var(--azul-700);border-radius:999px;font-size:12px;font-weight:600;">${d}</span>`
-    ).join('');
+/* ---------- Vínculos ---------- */
+// Recarrega o usuário atualizado direto do banco (evita sessão desatualizada)
+function sessaoAtual() {
+  return DB.list('usuarios').find(u => u.email === user.email) || user;
+}
 
-    const linha = nivel.alunos['9º Ano A'][0];
-    const thead = '<tr><th>Disciplina</th><th>Nota</th><th>Status</th></tr>';
-    const tbody = linha.slice(1).map((n, i) => {
-      const disc = nivel.disciplinas[i];
-      const cor = n >= 6 ? 'badge-ok' : 'badge-bad';
-      const txt = n >= 6 ? 'Aprovado' : 'Recuperação';
-      return `<tr><td>${disc}</td><td><strong>${n.toFixed(1)}</strong></td><td><span class="badge ${cor}">${txt}</span></td></tr>`;
-    }).join('') + `<tr style="background:var(--azul-50);"><td><strong>Média geral</strong></td><td><strong>${media(linha.slice(1))}</strong></td><td><span class="badge badge-ok">Bom</span></td></tr>`;
+function filhosVinculados() {
+  const s = sessaoAtual();
+  const nomes = s.alunosVinculados || [];
+  const todos = DB.list('alunos');
+  return todos.filter(a => nomes.includes(a.nome));
+}
 
-    tabelaBolPais.querySelector('thead').innerHTML = thead;
-    tabelaBolPais.querySelector('tbody').innerHTML = tbody;
+function filhoAtual() {
+  const sel = document.getElementById('selFilho');
+  if (!sel || !sel.value) return null;
+  return DB.list('alunos').find(a => a.nome === sel.value) || null;
+}
+
+function disciplinasDoFilho(filho) {
+  if (!filho) return DISCIPLINAS_FUND;
+  const t = DB.list('turmas').find(x => x.nome === filho.turma);
+  if (!t) return DISCIPLINAS_FUND;
+  return t.nivel === 'medio' ? DISCIPLINAS_MEDIO : DISCIPLINAS_FUND;
+}
+
+/* ---------- Init ---------- */
+initTabs({
+  visao:      ['Visão Geral', 'Acompanhamento do seu filho'],
+  boletim:    ['Boletim', 'Notas do aluno'],
+  desempenho: ['Desempenho', 'Evolução do aluno'],
+  faltas:     ['Faltas', 'Presença do aluno'],
+  relatorios: ['Relatórios', 'Relatórios dos professores'],
+  financeiro: ['Financeiro', 'Mensalidades'],
+  mural:      ['Mural de Avisos', 'Comunicados para pais'],
+  perfil:     ['Perfil', 'Seus dados']
+});
+
+preencherUsuarioUI(user);
+initUploadPerfil();
+
+/* Preenche vínculos no perfil */
+(function preencherVinculos() {
+  const s = sessaoAtual();
+  const filhos = filhosVinculados();
+  const el = document.getElementById('pVinculados');
+  if (el) el.value = filhos.length
+    ? filhos.map(f => `${f.nome} — ${f.turma}`).join('; ')
+    : 'Nenhum aluno vinculado';
+  const sel = document.getElementById('pParentesco');
+  if (sel && s.parentesco) sel.value = s.parentesco;
+})();
+
+/* ============================================================
+   SELETOR DE FILHOS
+   ============================================================ */
+function popularSelectFilhos() {
+  const sel = document.getElementById('selFilho');
+  if (!sel) return;
+  const filhos = filhosVinculados();
+  const valorAnterior = sel.value;
+
+  if (!filhos.length) {
+    sel.innerHTML = '<option value="">Sem filhos vinculados</option>';
+    sel.disabled = true;
+    return;
   }
+
+  sel.disabled = false;
+  sel.innerHTML = filhos.map(f => `<option>${f.nome}</option>`).join('');
+
+  // Restaura seleção anterior se ainda existir
+  if (valorAnterior && filhos.some(f => f.nome === valorAnterior)) {
+    sel.value = valorAnterior;
+  }
+}
+
+/* ============================================================
+   VISÃO GERAL
+   ============================================================ */
+function renderVisao() {
+  const filho = filhoAtual();
+  const semFilho = document.getElementById('semFilho');
+  const conteudo = document.getElementById('conteudoFilho');
+
+  if (!filho) {
+    semFilho.style.display = 'block';
+    conteudo.style.display = 'none';
+    return;
+  }
+  semFilho.style.display = 'none';
+  conteudo.style.display = 'block';
+
+  const mediaAluno = calcularMediaAluno(filho.nome, filho.turma, 1);
+  const freq = calcularFrequencia(filho.nome, filho.turma);
+
+  const pags = DB.list('pagamentos').filter(p => p.aluno === filho.nome);
+  const pendencias = pags.filter(p => p.status !== 'Pago').length;
+
+  const rels = DB.list('relatorios').filter(r => r.aluno === filho.nome);
+
+  document.getElementById('kpiMedia').textContent = mediaAluno.toFixed(1).replace('.', ',');
+  document.getElementById('kpiFreq').textContent = freq + '%';
+  document.getElementById('kpiFin').textContent = pendencias ? pendencias + ' pendente(s)' : 'Em dia';
+  document.getElementById('kpiRel').textContent = rels.length;
+
+  document.getElementById('resumoSub').textContent = `${filho.nome} — ${filho.turma}`;
+
+  const disc = disciplinasDoFilho(filho);
+  const notas = DB.list('notas').filter(n => n.aluno === filho.nome && n.turma === filho.turma && n.bimestre === 1);
+  document.getElementById('resumoAluno').innerHTML = disc.slice(0, 4).map(d => {
+    const n = notas.find(x => x.disciplina === d);
+    const nota = n ? n.nota : 0;
+    return `<div>
+      <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;"><span>${d}</span><strong>${nota.toFixed(1)}</strong></div>
+      <div class="progress"><span style="width:${nota * 10}%"></span></div>
+    </div>`;
+  }).join('');
+
+  const avisos = DB.list('avisos')
+    .filter(a => a.publico === 'Todos' || a.publico === 'Pais')
+    .slice().sort((a, b) => (b.data || '').localeCompare(a.data || ''))
+    .slice(0, 3);
+  const corBadge = { 'Alunos': 'badge-info', 'Professores': 'badge-warn', 'Pais': 'badge-bad', 'Todos': 'badge-info' };
+  document.getElementById('visaoAvisos').innerHTML = avisos.map(a => `
+    <div class="aviso">
+      <div class="meta"><span class="badge ${corBadge[a.publico] || 'badge-info'}">${a.publico}</span> ${fmtData(a.data)}</div>
+      <h4>${a.titulo}</h4>
+      <p>${a.mensagem}</p>
+    </div>
+  `).join('') || '<p style="font-size:13px;color:var(--cinza-500);">Sem avisos.</p>';
+}
+
+/* ============================================================
+   BOLETIM
+   ============================================================ */
+function renderBoletim() {
+  const filho = filhoAtual();
+  const label = document.getElementById('boletimAlunoLabel');
+  const tabela = document.getElementById('tabelaBolPais');
+
+  if (!filho) {
+    if (label) label.textContent = '';
+    tabela.querySelector('thead').innerHTML = '';
+    tabela.querySelector('tbody').innerHTML = '<tr><td style="text-align:center;padding:24px;color:var(--cinza-500);">Sem aluno vinculado.</td></tr>';
+    return;
+  }
+
+  if (label) label.textContent = '— ' + filho.nome;
+
+  const bimestre = +document.getElementById('selBimPais').value;
+  const disc = disciplinasDoFilho(filho);
+  const notas = DB.list('notas').filter(n => n.aluno === filho.nome && n.turma === filho.turma && n.bimestre === bimestre);
+
+  const thead = '<tr><th>Disciplina</th><th>Nota</th><th>Status</th></tr>';
+  const linhas = disc.map(d => {
+    const n = notas.find(x => x.disciplina === d);
+    if (!n) return `<tr><td>${d}</td><td>—</td><td><span class="badge badge-info">Sem nota</span></td></tr>`;
+    const cor = n.nota >= 6 ? 'badge-ok' : 'badge-bad';
+    return `<tr><td>${d}</td><td><strong>${n.nota.toFixed(1)}</strong></td><td><span class="badge ${cor}">${n.nota >= 6 ? 'Aprovado' : 'Recuperação'}</span></td></tr>`;
+  });
+  const validas = notas.map(n => n.nota);
+  const m = validas.length ? media(validas) : 0;
+  linhas.push(`<tr style="background:var(--azul-50);"><td><strong>Média geral</strong></td><td><strong>${m.toFixed(1)}</strong></td><td><span class="badge ${m >= 6 ? 'badge-ok' : 'badge-bad'}">${m >= 6 ? 'Bom' : 'Atenção'}</span></td></tr>`);
+
+  tabela.querySelector('thead').innerHTML = thead;
+  tabela.querySelector('tbody').innerHTML = linhas.join('');
+}
+
+/* ============================================================
+   DESEMPENHO
+   ============================================================ */
+function renderDesempenho() {
+  const filho = filhoAtual();
+  const label = document.getElementById('desempAlunoLabel');
+  const cont = document.getElementById('desempenhoPais');
+
+  if (!filho) {
+    if (label) label.textContent = '';
+    cont.innerHTML = '<p style="font-size:13px;color:var(--cinza-500);">Sem aluno vinculado.</p>';
+    return;
+  }
+
+  if (label) label.textContent = '— ' + filho.nome;
+
+  const bimestre = +document.getElementById('selBimPais').value;
+  const disc = disciplinasDoFilho(filho);
+  const notas = DB.list('notas').filter(n => n.aluno === filho.nome && n.turma === filho.turma && n.bimestre === bimestre);
+
+  cont.innerHTML = disc.map(d => {
+    const n = notas.find(x => x.disciplina === d);
+    const nota = n ? n.nota : 0;
+    return `<div>
+      <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;"><span>${d}</span><strong>${nota.toFixed(1)}</strong></div>
+      <div class="progress"><span style="width:${nota * 10}%"></span></div>
+    </div>`;
+  }).join('');
+}
+
+/* ============================================================
+   FALTAS
+   ============================================================ */
+function renderFaltas() {
+  const filho = filhoAtual();
+  const label = document.getElementById('faltasAlunoLabel');
+  const tbody = document.querySelector('#tabFaltasPais tbody');
+
+  if (!filho) {
+    if (label) label.textContent = '';
+    document.getElementById('kpiPres').textContent = '0';
+    document.getElementById('kpiFalt').textContent = '0';
+    document.getElementById('kpiFreq2').textContent = '0%';
+    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;padding:24px;color:var(--cinza-500);">Sem aluno vinculado.</td></tr>';
+    return;
+  }
+
+  if (label) label.textContent = '— ' + filho.nome;
+
+  const faltas = DB.list('faltas').filter(f => f.aluno === filho.nome && f.turma === filho.turma);
+  const pres = faltas.filter(f => f.status === 'Presente').length;
+  const aus = faltas.filter(f => f.status === 'Falta').length;
+  const freq = faltas.length ? Math.round((pres / faltas.length) * 100) : 100;
+
+  document.getElementById('kpiPres').textContent = pres;
+  document.getElementById('kpiFalt').textContent = aus;
+  document.getElementById('kpiFreq2').textContent = freq + '%';
+
+  tbody.innerHTML = faltas
+    .slice().sort((a, b) => (b.data || '').localeCompare(a.data || ''))
+    .map(f => `<tr>
+      <td>${fmtData(f.data)}</td>
+      <td>${f.disciplina}</td>
+      <td>${f.status === 'Presente' ? '<span class="badge badge-ok">Presente</span>' : '<span class="badge badge-bad">Falta</span>'}</td>
+    </tr>`).join('') || '<tr><td colspan="3" style="text-align:center;padding:24px;color:var(--cinza-500);">Sem registros.</td></tr>';
+}
+
+/* ============================================================
+   RELATÓRIOS
+   ============================================================ */
+function renderRelatorios() {
+  const filho = filhoAtual();
+  const label = document.getElementById('relAlunoLabel');
+  const cont = document.getElementById('listaRelPais');
+
+  if (!filho) {
+    if (label) label.textContent = '';
+    cont.innerHTML = '<div class="placeholder" style="grid-column:1/-1;"><h3>Sem aluno</h3><p>Nenhum aluno vinculado.</p></div>';
+    return;
+  }
+
+  if (label) label.textContent = '— ' + filho.nome;
+
+  const rels = DB.list('relatorios').filter(r => r.aluno === filho.nome);
+  cont.innerHTML = rels.map(r => `
+    <div class="card floating">
+      <div class="card-title">${r.periodo}</div>
+      <div class="card-sub">${r.professor} — ${fmtData(r.data)}</div>
+      <p style="font-size:13px;color:var(--preto-700);">${r.observacoes}</p>
+    </div>
+  `).join('') || '<div class="placeholder" style="grid-column:1/-1;"><h3>Sem relatórios</h3><p>Nenhum relatório emitido ainda.</p></div>';
+}
+
+/* ============================================================
+   FINANCEIRO
+   ============================================================ */
+function renderFinanceiro() {
+  const filho = filhoAtual();
+  const label = document.getElementById('finAlunoLabel');
+  const tbody = document.querySelector('#tabFinPais tbody');
+
+  if (!filho) {
+    if (label) label.textContent = '';
+    document.getElementById('kpiFinTotal').textContent = 'R$ 0';
+    document.getElementById('kpiFinPend').textContent = '0';
+    document.getElementById('kpiFinPago').textContent = '0';
+    document.getElementById('kpiFinAtras').textContent = '0';
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--cinza-500);">Sem aluno vinculado.</td></tr>';
+    return;
+  }
+
+  if (label) label.textContent = '— ' + filho.nome;
+
+  const pags = DB.list('pagamentos')
+    .filter(p => p.aluno === filho.nome)
+    .sort((a, b) => (b.ano * 12 + b.mes) - (a.ano * 12 + a.mes));
+
+  const totalPago = pags.filter(p => p.status === 'Pago').reduce((s, p) => s + p.valor, 0);
+  const pendentes = pags.filter(p => p.status === 'Pendente').length;
+  const pagos = pags.filter(p => p.status === 'Pago').length;
+  const atrasados = pags.filter(p => p.status === 'Atrasado').length;
+
+  document.getElementById('kpiFinTotal').textContent = fmtMoeda(totalPago);
+  document.getElementById('kpiFinPend').textContent = pendentes;
+  document.getElementById('kpiFinPago').textContent = pagos;
+  document.getElementById('kpiFinAtras').textContent = atrasados;
+
+  const corBadge = { 'Pago': 'badge-ok', 'Pendente': 'badge-warn', 'Atrasado': 'badge-bad' };
+  const meses = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  tbody.innerHTML = pags.map(p => `<tr>
+    <td>${meses[(p.mes || 1) - 1]}/${p.ano}</td>
+    <td>${p.plano}</td>
+    <td>${fmtMoeda(p.valor)}</td>
+    <td>${p.vencimento}</td>
+    <td><span class="badge ${corBadge[p.status] || 'badge-warn'}">${p.status}</span></td>
+  </tr>`).join('') || '<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--cinza-500);">Sem pagamentos registrados.</td></tr>';
+}
+
+/* ============================================================
+   MURAL
+   ============================================================ */
+function renderMural() {
+  const avisos = DB.list('avisos')
+    .filter(a => a.publico === 'Todos' || a.publico === 'Pais')
+    .slice().sort((a, b) => (b.data || '').localeCompare(a.data || ''));
+  const corBadge = { 'Alunos': 'badge-info', 'Professores': 'badge-warn', 'Pais': 'badge-bad', 'Todos': 'badge-info' };
+  document.getElementById('listaMuralPais').innerHTML = avisos.map(a => `
+    <div class="aviso">
+      <div class="meta"><span class="badge ${corBadge[a.publico] || 'badge-info'}">${a.publico}</span> ${fmtData(a.data)} — ${a.autor}</div>
+      <h4>${a.titulo}</h4>
+      <p>${a.mensagem}</p>
+    </div>
+  `).join('') || '<p style="color:var(--cinza-500);">Sem avisos.</p>';
+}
+
+/* ============================================================
+   RENDER GERAL
+   ============================================================ */
+function renderTudo() {
+  renderVisao();
+  renderBoletim();
+  renderDesempenho();
+  renderFaltas();
+  renderRelatorios();
+  renderFinanceiro();
+  renderMural();
+}
+
+/* ---------- Eventos ---------- */
+document.getElementById('selFilho').addEventListener('change', renderTudo);
+document.getElementById('selBimPais').addEventListener('change', () => {
+  renderBoletim();
+  renderDesempenho();
+});
+
+/* ---------- Boot ---------- */
+popularSelectFilhos();
+renderTudo();
 </script>
 
 </body>
