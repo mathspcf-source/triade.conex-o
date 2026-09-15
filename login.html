@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Tríade Conexão — Entrar</title>
+<link rel="stylesheet" href="shared.css" />
+</head>
+<body>
+
+<div class="login-page">
+
+  <!-- Coluna esquerda: apresentação -->
+  <div class="login-left">
+    <div class="brand">
+      <div class="brand-logo" style="width:48px;height:48px;">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+          <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <strong style="font-size:17px;">Tríade Conexão</strong>
+        <span>Reforço Escolar</span>
+      </div>
+    </div>
+
+    <h1>Educação que <span>conecta</span> alunos, professores e famílias.</h1>
+    <p>Uma plataforma completa de reforço escolar: gestão de turmas, acompanhamento de desempenho, boletins digitais e comunicação integrada.</p>
+
+    <ul class="features">
+      <li>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        Gestão completa de turmas, alunos e professores
+      </li>
+      <li>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        Boletins e relatórios de desempenho em tempo real
+      </li>
+      <li>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        Mural de avisos para alunos, pais e docentes
+      </li>
+      <li>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        Financeiro integrado com confirmação de pagamentos
+      </li>
+    </ul>
+  </div>
+
+  <!-- Coluna direita: formulário -->
+  <div class="login-right">
+    <form class="login-card" id="loginForm" onsubmit="fazerLogin(event)">
+      <h2>Bem-vindo de volta</h2>
+      <p class="sub">Selecione seu perfil e entre com suas credenciais.</p>
+
+      <div class="perfil-select" id="perfilSelect">
+        <div class="perfil-opt active" data-papel="admin">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
+          Admin
+        </div>
+        <div class="perfil-opt" data-papel="professor">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg>
+          Professor
+        </div>
+        <div class="perfil-opt" data-papel="aluno">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+          Aluno
+        </div>
+        <div class="perfil-opt" data-papel="pais">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Pais
+        </div>
+      </div>
+
+      <div class="login-field">
+        <label for="email">E-mail</label>
+        <input type="email" id="email" required placeholder="seu@email.com" />
+      </div>
+      <div class="login-field">
+        <label for="senha">Senha</label>
+        <input type="password" id="senha" required placeholder="••••••••" />
+      </div>
+
+      <button type="submit" class="login-btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+        Entrar na plataforma
+      </button>
+
+      <div class="login-hint">
+        <strong>Acesso de demonstração</strong>
+        Escolha qualquer perfil acima e clique em Entrar. Não é necessária senha real — este é um protótipo.
+      </div>
+    </form>
+  </div>
+
+</div>
+
+<script src="shared.js"></script>
+<script>
+  let papelSelecionado = 'admin';
+
+  document.querySelectorAll('.perfil-opt').forEach(opt => {
+    opt.addEventListener('click', () => {
+      document.querySelectorAll('.perfil-opt').forEach(o => o.classList.remove('active'));
+      opt.classList.add('active');
+      papelSelecionado = opt.dataset.papel;
+    });
+  });
+
+  function fazerLogin(e) {
+    e.preventDefault();
+    const email = document.getElementById('email').value.trim();
+    const nomes = {
+      admin: 'Administrador',
+      professor: 'Prof. Marcos Vinícius',
+      aluno: 'Ana Beatriz Souza',
+      pais: 'Marta Souza'
+    };
+    Session.set(papelSelecionado, { email, nome: nomes[papelSelecionado] });
+    window.location.href = ROTAS[papelSelecionado];
+  }
+
+  // Se já estiver logado, redireciona
+  const u = Session.get();
+  if (u && ROTAS[u.papel]) window.location.href = ROTAS[u.papel];
+</script>
+
+</body>
+</html>
