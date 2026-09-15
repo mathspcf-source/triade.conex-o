@@ -1,30 +1,46 @@
 /* ============================================================
-   TRÍADE CONEXÃO — Helpers compartilhados
+   TRÍADE CONEXÃO — Helpers compartilhados + Auth
    ============================================================ */
 
-// ---------- Sessão ----------
-const Session = {
-  set(papel, dados = {}) {
-    const u = { papel, ...dados, login: Date.now() };
-    localStorage.setItem('triade_user', JSON.stringify(u));
-    return u;
+// ---------- Autenticação ----------
+const Auth = {
+  login(email, senha) {
+    const usuarios = DB.list('usuarios');
+    const u = usuarios.find(x =>
+      x.email.toLowerCase() === email.toLowerCase() && x.senha === senha
+    );
+    if (!u) return { ok: false, erro: 'E-mail ou senha inválidos.' };
+    const { senha: _, ...sessao } = u;
+    localStorage.setItem('triade_session', JSON.stringify(sessao));
+    return { ok: true, usuario: sessao };
   },
-  get() {
-    try { return JSON.parse(localStorage.getItem('triade_user')); }
+
+  logout() { localStorage.removeItem('triade_session'); },
+
+  atual() {
+    try { return JSON.parse(localStorage.getItem('triade_session')); }
     catch { return null; }
   },
-  clear() { localStorage.removeItem('triade_user'); },
-  requirePapel(papel) {
-    const u = this.get();
+
+  require(papel) {
+    const u = this.atual();
     if (!u || u.papel !== papel) {
       window.location.href = 'login.html';
       return null;
     }
     return u;
+  },
+
+  atualizar(dados) {
+    const u = this.atual();
+    if (!u) return;
+    const novo = { ...u, ...dados };
+    localStorage.setItem('triade_session', JSON.stringify(novo));
+    if (novo.id) DB.update('usuarios', novo.id, dados);
   }
 };
 
-// ---------- Rotas de cada papel ----------
+// ---------- Rotas ----------
 const ROTAS = {
   admin:     'admin.html',
   professor: 'professor.html',
@@ -32,12 +48,47 @@ const ROTAS = {
   pais:      'pais.html'
 };
 
-// ---------- Navegação de abas ----------
+// ---------- Formatação ----------
+function fmtMoeda(v) { return 'R$ ' + Number(v || 0).toFixed(2).replace('.', ','); }
+function fmtData(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  if (isNaN(d)) return iso;
+  return d.toLocaleDateString('pt-BR');
+}
+function hojeISO() { return new Date().toISOString().slice(0, 10); }
+
+// ---------- Cálculos ----------
+function media(arr) {
+  if (!arr.length) return 0;
+  return +(arr.reduce((a, b) => a + Number(b), 0) / arr.length).toFixed(1);
+}
+
+function calcularMediaAluno(alunoNome, turma, bimestre = 1) {
+  const notas = DB.list('notas').filter(n =>
+    n.aluno === alunoNome && n.turma === turma && n.bimestre === bimestre
+  );
+  return notas.length ? media(notas.map(n => n.nota)) : 0;
+}
+
+function calcularMediaTurma(turma, bimestre = 1) {
+  const notas = DB.list('notas').filter(n => n.turma === turma && n.bimestre === bimestre);
+  return notas.length ? media(notas.map(n => n.nota)) : 0;
+}
+
+function calcularFrequencia(aluno, turma) {
+  const faltas = DB.list('faltas').filter(f => f.aluno === aluno && f.turma === turma);
+  if (!faltas.length) return 100;
+  const presentes = faltas.filter(f => f.status === 'Presente').length;
+  return Math.round((presentes / faltas.length) * 100);
+}
+
+// ---------- Navegação por abas ----------
 function initTabs(titulos) {
   const app = document.getElementById('app');
   const pageTitle = document.getElementById('pageTitle');
   const pageSub = document.getElementById('pageSub');
-  const navItems = document.querySelectorAll('.nav-item');
+  const navItems = document.querySelectorAll('.nav-item[data-tab]');
   const tabs = document.querySelectorAll('.tab');
 
   function activateTab(key) {
@@ -46,14 +97,14 @@ function initTabs(titulos) {
     const [t, s] = titulos[key] || ['', ''];
     if (pageTitle) pageTitle.textContent = t;
     if (pageSub) pageSub.textContent = s;
-    app.classList.remove('mobile-open');
+    if (app) app.classList.remove('mobile-open');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   navItems.forEach(n => n.addEventListener('click', () => activateTab(n.dataset.tab)));
 
   const chip = document.querySelector('.user-chip');
-  if (chip) chip.addEventListener('click', () => activateTab('perfil'));
+  if (chip && chip.dataset.tab) chip.addEventListener('click', () => activateTab(chip.dataset.tab));
 
   const menuBtn = document.getElementById('menuBtn');
   if (menuBtn) menuBtn.addEventListener('click', () => {
@@ -64,18 +115,14 @@ function initTabs(titulos) {
   return { activateTab };
 }
 
-// ---------- Formulários ----------
+// ---------- UI Helpers ----------
 function abrirForm(id) {
   const el = document.getElementById(id);
   if (el) { el.style.display = 'block'; el.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
 }
 function fecharForm(id) {
   const el = document.getElementById(id);
-  if (el) el.style.display = 'none';
-}
-function salvarSimples(id, msg) {
-  fecharForm(id);
-  alert(msg);
+  if (el) { el.style.display = 'none'; const f = el.querySelector('form'); if (f) f.reset(); }
 }
 function filtrarTabela(tableId, inputId) {
   const q = document.getElementById(inputId).value.toLowerCase();
@@ -84,13 +131,21 @@ function filtrarTabela(tableId, inputId) {
   });
 }
 
-// ---------- Upload de foto do perfil ----------
+// ---------- Upload de foto ----------
 function initUploadPerfil() {
   const fileInput = document.getElementById('perfilFile');
   if (!fileInput) return;
   const perfilImg = document.getElementById('perfilImg');
   const perfilInitials = document.getElementById('perfilInitials');
   const chipAvatar = document.getElementById('chipAvatar');
+
+  // Se já tem foto salva
+  const u = Auth.atual();
+  if (u && u.foto) {
+    if (perfilImg) { perfilImg.src = u.foto; perfilImg.style.display = 'block'; }
+    if (perfilInitials) perfilInitials.style.display = 'none';
+    if (chipAvatar) chipAvatar.innerHTML = '<img src="' + u.foto + '" alt="">';
+  }
 
   fileInput.addEventListener('change', (e) => {
     const file = e.target.files[0];
@@ -101,148 +156,74 @@ function initUploadPerfil() {
       if (perfilImg) { perfilImg.src = src; perfilImg.style.display = 'block'; }
       if (perfilInitials) perfilInitials.style.display = 'none';
       if (chipAvatar) chipAvatar.innerHTML = '<img src="' + src + '" alt="">';
+      Auth.atualizar({ foto: src });
     };
     reader.readAsDataURL(file);
   });
 }
 
-// ---------- Preencher dados do usuário na UI ----------
+// ---------- Preencher dados do usuário ----------
 function preencherUsuarioUI(user) {
   if (!user) return;
-  const iniciais = (user.nome || user.papel || 'U')
+  const iniciais = (user.nome || 'U')
     .split(' ').map(p => p[0]).slice(0, 2).join('').toUpperCase();
 
-  const chipName = document.querySelector('.user-chip .info strong');
-  const chipRole = document.querySelector('.user-chip .info span');
+  const set = (sel, txt) => { const el = document.querySelector(sel); if (el) el.textContent = txt; };
+  const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || ''; };
+
+  set('.user-chip .info strong', user.nome || 'Usuário');
+  set('.user-chip .info span', user.email || '');
+
   const chipAvatar = document.getElementById('chipAvatar');
-  const perfilNome = document.getElementById('perfilNome');
-  const perfilEmail = document.getElementById('perfilEmail');
+  if (chipAvatar && !user.foto) chipAvatar.textContent = iniciais;
+
+  set('#perfilNome', user.nome || '');
+  set('#perfilEmail', user.email || '');
   const perfilInitials = document.getElementById('perfilInitials');
-  const pNome = document.getElementById('pNome');
-  const pEmail = document.getElementById('pEmail');
+  if (perfilInitials && !user.foto) perfilInitials.textContent = iniciais;
 
-  const nome = user.nome || 'Usuário';
-  const email = user.email || (user.papel + '@triade.com');
-
-  if (chipName) chipName.textContent = nome;
-  if (chipRole) chipRole.textContent = email;
-  if (chipAvatar) chipAvatar.textContent = iniciais;
-  if (perfilNome) perfilNome.textContent = nome;
-  if (perfilEmail) perfilEmail.textContent = email;
-  if (perfilInitials) perfilInitials.textContent = iniciais;
-  if (pNome) pNome.value = nome;
-  if (pEmail) pEmail.value = email;
+  setVal('pNome', user.nome);
+  setVal('pEmail', user.email);
+  setVal('pGrad', user.graduacao);
+  setVal('pEsp', user.especializacao);
+  setVal('pTel', user.celular);
+  setVal('pCargo', user.papel === 'admin' ? 'Administrador' : user.papel);
 }
 
 // ---------- Logout ----------
 function logout() {
   if (confirm('Deseja sair da plataforma?')) {
-    Session.clear();
+    Auth.logout();
     window.location.href = 'login.html';
   }
 }
 
-// ---------- Boletim (compartilhado entre admin, professor, aluno, pais) ----------
-const DADOS_BOLETIM = {
-  fund: {
-    label: 'Ensino Fundamental — 6º ao 9º ano',
-    turmas: ['6º Ano A','7º Ano A','8º Ano B','9º Ano A'],
-    disciplinas: ['Português','Matemática','Ciências','História','Geografia','Inglês','Artes','Ed. Física'],
-    alunos: {
-      '9º Ano A': [
-        ['Ana Beatriz Souza', 8.5, 9.0, 8.0, 7.5, 8.0, 9.0, 9.5, 8.5],
-        ['Bruno Carvalho',   7.0, 6.5, 7.5, 8.0, 7.0, 6.5, 8.0, 9.0],
-        ['Camila Dias',      9.0, 9.5, 8.5, 9.0, 8.5, 9.5, 9.0, 9.0],
-        ['Daniel Evaristo',  6.5, 6.0, 7.0, 6.5, 7.0, 6.0, 7.5, 8.0]
-      ],
-      '8º Ano B': [
-        ['Eduarda Farias',   8.0, 7.5, 8.5, 8.0, 7.5, 8.0, 9.0, 9.0],
-        ['Felipe Gomes',     7.5, 7.0, 7.5, 8.0, 7.0, 7.5, 8.5, 8.5],
-        ['Giovana Horta',    9.0, 8.5, 9.0, 9.5, 9.0, 8.5, 9.5, 9.0]
-      ],
-      '7º Ano A': [
-        ['Igor Iglesias',    7.0, 6.5, 7.5, 7.0, 6.5, 7.0, 8.0, 8.5],
-        ['Júlia Knapp',      8.5, 8.0, 8.5, 9.0, 8.5, 8.0, 9.0, 9.5]
-      ],
-      '6º Ano A': [
-        ['Kauan Lopes',      8.0, 7.5, 8.0, 8.5, 8.0, 7.5, 8.5, 9.0],
-        ['Larissa Moraes',   9.0, 8.5, 9.0, 9.0, 8.5, 9.0, 9.5, 9.0]
-      ]
-    }
-  },
-  medio: {
-    label: 'Ensino Médio — 1º ao 3º ano',
-    turmas: ['1º Ano EM','2º Ano EM','3º Ano EM'],
-    disciplinas: ['Português','Matemática','Física','Química','Biologia','História','Geografia','Filosofia','Sociologia','Inglês'],
-    alunos: {
-      '1º Ano EM': [
-        ['Marcelo Nunes',    7.0, 6.5, 6.0, 6.5, 7.0, 7.5, 7.0, 8.0, 8.5, 7.5],
-        ['Natália Oliveira', 8.5, 8.0, 7.5, 8.0, 8.5, 9.0, 8.5, 9.0, 9.0, 8.5],
-        ['Otávio Pires',     6.5, 6.0, 6.5, 6.0, 6.5, 7.0, 6.5, 7.5, 7.5, 7.0]
-      ],
-      '2º Ano EM': [
-        ['Paula Queiroz',    9.0, 8.5, 8.0, 8.5, 9.0, 9.5, 9.0, 9.0, 9.5, 9.0],
-        ['Rafael Ribas',     7.5, 7.0, 7.5, 7.0, 7.5, 8.0, 7.5, 8.0, 8.5, 8.0]
-      ],
-      '3º Ano EM': [
-        ['Sofia Teixeira',   9.5, 9.0, 9.5, 9.0, 9.5, 9.0, 9.5, 9.5, 9.0, 9.5],
-        ['Thiago Uchôa',     8.0, 7.5, 8.0, 8.5, 8.0, 8.5, 8.0, 8.5, 8.5, 8.0],
-        ['Valentina Vieira', 9.0, 9.5, 9.0, 9.5, 9.0, 9.5, 9.0, 9.5, 9.5, 9.0]
-      ]
-    }
-  }
-};
-
-function media(arr) { return (arr.reduce((a,b)=>a+b,0) / arr.length).toFixed(1); }
-
-function renderBoletim(opts) {
-  const selNivel = document.getElementById(opts.selNivel);
-  const selTurma = document.getElementById(opts.selTurma);
-  const chipsDisc = document.getElementById(opts.chipsDisc);
-  const labelDisc = document.getElementById(opts.labelDisc);
-  const titulo = document.getElementById(opts.titulo);
-  const tabela = document.getElementById(opts.tabela);
-  if (!selNivel || !tabela) return;
-
-  const nivel = DADOS_BOLETIM[selNivel.value];
-
-  if (labelDisc) labelDisc.textContent = nivel.label;
-  if (chipsDisc) chipsDisc.innerHTML = nivel.disciplinas.map(d =>
-    `<span style="padding:6px 12px;background:var(--azul-50);color:var(--azul-700);border-radius:999px;font-size:12px;font-weight:600;">${d}</span>`
-  ).join('');
-
-  const turma = selTurma ? (selTurma.value || nivel.turmas[0]) : nivel.turmas[0];
-  if (titulo) titulo.textContent = 'Boletim — ' + turma;
-
-  const alunos = nivel.alunos[turma] || [];
-  const thead = '<tr><th>Aluno</th>' + nivel.disciplinas.map(d => `<th>${d}</th>`).join('') + '<th>Média</th></tr>';
-  const tbody = alunos.map(row => {
-    const nome = row[0];
-    const notas = row.slice(1);
-    const m = media(notas);
-    const cor = parseFloat(m) >= 6 ? 'badge-ok' : 'badge-bad';
-    return '<tr><td><strong>' + nome + '</strong></td>' +
-      notas.map(n => `<td>${n.toFixed(1)}</td>`).join('') +
-      `<td><span class="badge ${cor}">${m}</span></td></tr>`;
-  }).join('') || '<tr><td colspan="'+(nivel.disciplinas.length+2)+'" style="text-align:center;padding:24px;color:var(--cinza-500);">Sem dados.</td></tr>';
-
-  tabela.querySelector('thead').innerHTML = thead;
-  tabela.querySelector('tbody').innerHTML = tbody;
+// ---------- Salvar perfil ----------
+function salvarPerfil(e) {
+  e.preventDefault();
+  const dados = {
+    nome: document.getElementById('pNome')?.value.trim(),
+    email: document.getElementById('pEmail')?.value.trim(),
+    graduacao: document.getElementById('pGrad')?.value.trim(),
+    especializacao: document.getElementById('pEsp')?.value.trim(),
+    celular: document.getElementById('pTel')?.value.trim()
+  };
+  Auth.atualizar(dados);
+  preencherUsuarioUI(Auth.atual());
+  alert('Perfil atualizado com sucesso!');
 }
 
-function initBoletim(opts) {
-  const selNivel = document.getElementById(opts.selNivel);
-  const selTurma = document.getElementById(opts.selTurma);
-  if (!selNivel) return;
-
-  function popular() {
-    const nivel = DADOS_BOLETIM[selNivel.value];
-    if (selTurma) selTurma.innerHTML = nivel.turmas.map(t => `<option>${t}</option>`).join('');
-  }
-
-  selNivel.addEventListener('change', () => { popular(); renderBoletim(opts); });
-  if (selTurma) selTurma.addEventListener('change', () => renderBoletim(opts));
-
-  popular();
-  renderBoletim(opts);
+// ---------- Toast simples ----------
+function toast(msg, tipo = 'ok') {
+  const el = document.createElement('div');
+  el.textContent = msg;
+  el.style.cssText = `
+    position:fixed; bottom:24px; right:24px; z-index:9999;
+    padding:14px 20px; border-radius:10px; font-weight:600; font-size:14px;
+    color:#fff; box-shadow:0 12px 28px rgba(0,0,0,.2);
+    background:${tipo === 'ok' ? '#16A34A' : '#DC2626'};
+    animation: slideIn .3s ease;
+  `;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 2600);
 }
