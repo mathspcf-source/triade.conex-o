@@ -10,7 +10,6 @@
 
 <div class="login-page">
 
-  <!-- Coluna esquerda: apresentação -->
   <div class="login-left">
     <div class="brand">
       <div class="brand-logo" style="width:48px;height:48px;">
@@ -29,30 +28,17 @@
     <p>Uma plataforma completa de reforço escolar: gestão de turmas, acompanhamento de desempenho, boletins digitais e comunicação integrada.</p>
 
     <ul class="features">
-      <li>
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-        Gestão completa de turmas, alunos e professores
-      </li>
-      <li>
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-        Boletins e relatórios de desempenho em tempo real
-      </li>
-      <li>
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-        Mural de avisos para alunos, pais e docentes
-      </li>
-      <li>
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-        Financeiro integrado com confirmação de pagamentos
-      </li>
+      <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Gestão completa de turmas, alunos e professores</li>
+      <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Boletins e relatórios de desempenho em tempo real</li>
+      <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Mural de avisos para alunos, pais e docentes</li>
+      <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Financeiro integrado com confirmação de pagamentos</li>
     </ul>
   </div>
 
-  <!-- Coluna direita: formulário -->
   <div class="login-right">
     <form class="login-card" id="loginForm" onsubmit="fazerLogin(event)">
       <h2>Bem-vindo de volta</h2>
-      <p class="sub">Selecione seu perfil e entre com suas credenciais.</p>
+      <p class="sub">Entre com suas credenciais para acessar o painel.</p>
 
       <div class="perfil-select" id="perfilSelect">
         <div class="perfil-opt active" data-papel="admin">
@@ -75,12 +61,14 @@
 
       <div class="login-field">
         <label for="email">E-mail</label>
-        <input type="email" id="email" required placeholder="seu@email.com" />
+        <input type="email" id="email" required placeholder="seu@email.com" autocomplete="email" />
       </div>
       <div class="login-field">
         <label for="senha">Senha</label>
-        <input type="password" id="senha" required placeholder="••••••••" />
+        <input type="password" id="senha" required placeholder="••••••••" autocomplete="current-password" />
       </div>
+
+      <div id="erroLogin" style="display:none;padding:10px 12px;background:var(--vermelho-100);color:var(--vermelho-600);border-radius:8px;font-size:12.5px;font-weight:600;margin-bottom:12px;"></div>
 
       <button type="submit" class="login-btn">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
@@ -88,14 +76,18 @@
       </button>
 
       <div class="login-hint">
-        <strong>Acesso de demonstração</strong>
-        Escolha qualquer perfil acima e clique em Entrar. Não é necessária senha real — este é um protótipo.
+        <strong>Contas de demonstração</strong>
+        Admin: admin@triade.com / admin123<br>
+        Professor: professor@triade.com / prof123<br>
+        Aluno: aluno@triade.com / aluno123<br>
+        Pais: pais@triade.com / pais123
       </div>
     </form>
   </div>
 
 </div>
 
+<script src="db.js"></script>
 <script src="shared.js"></script>
 <script>
   let papelSelecionado = 'admin';
@@ -108,22 +100,57 @@
     });
   });
 
+  // Pré-preenche conforme perfil selecionado (ajuda nos testes)
+  const CREDENCIAIS = {
+    admin:     { email: 'admin@triade.com',     senha: 'admin123' },
+    professor: { email: 'professor@triade.com', senha: 'prof123' },
+    aluno:     { email: 'aluno@triade.com',     senha: 'aluno123' },
+    pais:      { email: 'pais@triade.com',      senha: 'pais123' }
+  };
+
+  document.querySelectorAll('.perfil-opt').forEach(opt => {
+    opt.addEventListener('click', () => {
+      const c = CREDENCIAIS[opt.dataset.papel];
+      if (c) {
+        document.getElementById('email').value = c.email;
+        document.getElementById('senha').value = c.senha;
+      }
+    });
+  });
+
   function fazerLogin(e) {
     e.preventDefault();
     const email = document.getElementById('email').value.trim();
-    const nomes = {
-      admin: 'Administrador',
-      professor: 'Prof. Marcos Vinícius',
-      aluno: 'Ana Beatriz Souza',
-      pais: 'Marta Souza'
-    };
-    Session.set(papelSelecionado, { email, nome: nomes[papelSelecionado] });
-    window.location.href = ROTAS[papelSelecionado];
+    const senha = document.getElementById('senha').value;
+    const erroEl = document.getElementById('erroLogin');
+
+    const res = Auth.login(email, senha);
+
+    if (!res.ok) {
+      erroEl.textContent = res.erro;
+      erroEl.style.display = 'block';
+      return;
+    }
+
+    // Valida se o papel do usuário bate com o perfil selecionado
+    if (res.usuario.papel !== papelSelecionado) {
+      Auth.logout();
+      erroEl.textContent = 'Este e-mail não pertence ao perfil "' + papelSelecionado + '".';
+      erroEl.style.display = 'block';
+      return;
+    }
+
+    erroEl.style.display = 'none';
+    window.location.href = ROTAS[res.usuario.papel];
   }
 
   // Se já estiver logado, redireciona
-  const u = Session.get();
+  const u = Auth.atual();
   if (u && ROTAS[u.papel]) window.location.href = ROTAS[u.papel];
+
+  // Pré-preenche admin ao abrir (facilita teste)
+  document.getElementById('email').value = CREDENCIAIS.admin.email;
+  document.getElementById('senha').value = CREDENCIAIS.admin.senha;
 </script>
 
 </body>
