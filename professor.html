@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Tríade Conexão — Professor</title>
+<link rel="stylesheet" href="shared.css" />
+</head>
+<body>
+
+<div class="app" id="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-logo"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg></div>
+      <div class="brand-text"><strong>Tríade Conexão</strong><span>Painel Professor</span></div>
+    </div>
+
+    <div class="nav-title">Principal</div>
+    <div class="nav-item active" data-tab="visao"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg><span>Visão Geral</span></div>
+    <div class="nav-item" data-tab="turmas"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg><span>Minhas Turmas</span></div>
+    <div class="nav-item" data-tab="atividades"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Atividades</span></div>
+    <div class="nav-item" data-tab="notas"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4z"/></svg><span>Notas</span></div>
+    <div class="nav-item" data-tab="faltas"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span>Faltas</span></div>
+
+    <div class="nav-title">Análise</div>
+    <div class="nav-item" data-tab="desempenho"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><span>Desempenho</span></div>
+    <div class="nav-item" data-tab="relatorios"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Relatórios</span></div>
+    <div class="nav-item" data-tab="mural"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg><span>Mural de Avisos</span></div>
+
+    <div class="nav-title">Conta</div>
+    <div class="nav-item" data-tab="perfil"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>Perfil</span></div>
+    <div class="nav-item" onclick="logout()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg><span>Sair</span></div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <button class="icon-btn" id="menuBtn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+      <div class="page-title"><h1 id="pageTitle">Visão Geral</h1><p id="pageSub">Suas turmas e atividades</p></div>
+      <div class="user-chip" data-tab="perfil">
+        <div class="avatar" id="chipAvatar">PR</div>
+        <div class="info"><strong>Professor</strong><span>professor@triade.com</span></div>
+      </div>
+    </header>
+
+    <main class="content">
+
+      <section class="tab active" id="tab-visao">
+        <div class="grid grid-4" style="margin-bottom:16px;">
+          <div class="card floating stat"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div><div><div class="val">3</div><div class="lbl">Turmas</div></div></div>
+          <div class="card floating stat"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div><div><div class="val">83</div><div class="lbl">Alunos</div></div></div>
+          <div class="card floating stat"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div><div class="val">6</div><div class="lbl">Atividades ativas</div></div></div>
+          <div class="card floating stat"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><div><div class="val">92%</div><div class="lbl">Presença média</div></div></div>
+        </div>
+
+        <div class="grid grid-2">
+          <div class="card floating">
+            <div class="card-title">Próximas aulas</div>
+            <div class="card-sub">Sua agenda da semana</div>
+            <div class="table-wrap"><table>
+              <thead><tr><th>Dia</th><th>Turma</th><th>Horário</th></tr></thead>
+              <tbody>
+                <tr><td>Segunda</td><td>9º Ano A</td><td>14h — 15h30</td></tr>
+                <tr><td>Quarta</td><td>9º Ano A</td><td>14h — 15h30</td></tr>
+                <tr><td>Sexta</td><td>1º Ano EM</td><td>19h — 20h30</td></tr>
+              </tbody></table></div>
+          </div>
+          <div class="card floating">
+            <div class="card-title">Avisos recentes</div>
+            <div class="card-sub">Comunicados do administrador</div>
+            <div class="aviso"><div class="meta"><span class="badge badge-warn">Professores</span> 09/06/2025</div><h4>Reunião pedagógica</h4><p>Sexta às 18h.</p></div>
+            <div class="aviso"><div class="meta"><span class="badge badge-info">Todos</span> 05/06/2025</div><h4>Novo horário</h4><p>Funcionamento das 7h às 21h.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="tab" id="tab-turmas">
+        <div class="sec-header"><div><h2>Minhas Turmas</h2><p>Turmas sob sua responsabilidade</p></div></div>
+        <div class="grid grid-3">
+          <div class="card floating"><div class="card-title">9º Ano A</div><div class="card-sub">Segunda e Quarta — 14h</div><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;"><span>28 alunos</span><strong>8,4 média</strong></div><div class="progress"><span style="width:84%"></span></div></div>
+          <div class="card floating"><div class="card-title">8º Ano B</div><div class="card-sub">Terça e Quinta — 15h30</div><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;"><span>25 alunos</span><strong>7,6 média</strong></div><div class="progress"><span style="width:76%"></span></div></div>
+          <div class="card floating"><div class="card-title">1º Ano EM</div><div class="card-sub">Sexta — 19h</div><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;"><span>30 alunos</span><strong>7,1 média</strong></div><div class="progress"><span style="width:71%"></span></div></div>
+        </div>
+      </section>
+
+      <section class="tab" id="tab-atividades">
+        <div class="sec-header"><div><h2>Atividades</h2><p>Cadastre atividades para suas turmas</p></div><div class="actions"><button class="btn btn-primary" onclick="abrirForm('formAtiv')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Nova atividade</button></div></div>
+        <div class="card" id="formAtiv" style="display:none;margin-bottom:16px;">
+          <form class="form-grid" onsubmit="event.preventDefault(); salvarSimples('formAtiv','Atividade cadastrada.');">
+            <div class="field"><label>Título</label><input required /></div>
+            <div class="field"><label>Turma</label><select required><option>9º Ano A</option><option>8º Ano B</option><option>1º Ano EM</option></select></div>
+            <div class="field"><label>Disciplina</label><input required /></div>
+            <div class="field"><label>Prazo de entrega</label><input type="date" required /></div>
+            <div class="field full"><label>Descrição</label><textarea rows="3"></textarea></div>
+            <div class="form-actions"><button type="button" class="btn btn-ghost" onclick="fecharForm('formAtiv')">Cancelar</button><button type="submit" class="btn btn-primary">Salvar</button></div>
+          </form>
+        </div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Atividade</th><th>Turma</th><th>Disciplina</th><th>Prazo</th><th>Entregues</th><th>Ações</th></tr></thead>
+          <tbody>
+            <tr><td>Lista de equações</td><td>9º Ano A</td><td>Matemática</td><td>20/06/2025</td><td>18/28</td><td><button class="btn btn-ghost btn-sm">Ver</button></td></tr>
+            <tr><td>Redação argumentativa</td><td>8º Ano B</td><td>Português</td><td>22/06/2025</td><td>10/25</td><td><button class="btn btn-ghost btn-sm">Ver</button></td></tr>
+            <tr><td>Física — Cinemática</td><td>1º Ano EM</td><td>Física</td><td>25/06/2025</td><td>22/30</td><td><button class="btn btn-ghost btn-sm">Ver</button></td></tr>
+          </tbody></table></div>
+      </section>
+
+      <section class="tab" id="tab-notas">
+        <div class="sec-header">
+          <div><h2>Notas</h2><p>Lance notas das suas turmas</p></div>
+          <div class="actions">
+            <select id="selNivelProf" style="padding:10px 12px;border:1px solid var(--cinza-200);border-radius:8px;font-size:13px;"><option value="fund">Fundamental</option><option value="medio">Médio</option></select>
+            <select id="selTurmaProf" style="padding:10px 12px;border:1px solid var(--cinza-200);border-radius:8px;font-size:13px;"></select>
+            <button class="btn btn-primary" onclick="alert('Notas salvas (protótipo).')">Salvar notas</button>
+          </div>
+        </div>
+        <div class="card floating" style="margin-bottom:16px;">
+          <div class="card-title">Disciplinas</div>
+          <div class="card-sub" id="labelDiscProf"></div>
+          <div id="chipsDiscProf" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+        </div>
+        <div class="card floating">
+          <div class="card-title" id="tituloBolProf"></div>
+          <div class="card-sub">Notas do bimestre — média mínima 6,0</div>
+          <div class="table-wrap"><table id="tabelaBolProf"><thead></thead><tbody></tbody></table></div>
+        </div>
+      </section>
+
+      <section class="tab" id="tab-faltas">
+        <div class="sec-header"><div><h2>Faltas</h2><p>Registro de presença</p></div></div>
+        <div class="card floating">
+          <div class="card-title">Chamada — 9º Ano A</div>
+          <div class="card-sub">Segunda-feira, 16/06/2025 — Matemática</div>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Aluno</th><th>Presente</th><th>Falta</th></tr></thead>
+            <tbody>
+              <tr><td>Ana Beatriz Souza</td><td><span class="badge badge-ok">Presente</span></td><td><button class="btn btn-ghost btn-sm">Marcar falta</button></td></tr>
+              <tr><td>Bruno Carvalho</td><td><span class="badge badge-bad">Falta</span></td><td><button class="btn btn-success btn-sm">Marcar presença</button></td></tr>
+              <tr><td>Camila Dias</td><td><span class="badge badge-ok">Presente</span></td><td><button class="btn btn-ghost btn-sm">Marcar falta</button></td></tr>
+            </tbody></table></div>
+        </div>
+      </section>
+
+      <section class="tab" id="tab-desempenho">
+        <div class="sec-header"><div><h2>Desempenho</h2><p>Análise das suas turmas</p></div></div>
+        <div class="grid grid-2">
+          <div class="card floating"><div class="card-title">Meu desempenho</div><div class="card-sub">Avaliação dos alunos</div>
+            <div style="display:flex;flex-direction:column;gap:14px;">
+              <div><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;"><span>Didática</span><strong>4,9</strong></div><div class="progress"><span style="width:98%"></span></div></div>
+              <div><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;"><span>Clareza</span><strong>4,7</strong></div><div class="progress"><span style="width:94%"></span></div></div>
+              <div><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;"><span>Assiduidade</span><strong>100%</strong></div><div class="progress"><span style="width:100%"></span></div></div>
+            </div>
+          </div>
+          <div class="card floating"><div class="card-title">Alunos</div><div class="card-sub">Média por turma</div>
+            <div style="display:flex;flex-direction:column;gap:14px;">
+              <div><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;"><span>9º Ano A</span><strong>8,4</strong></div><div class="progress"><span style="width:84%"></span></div></div>
+              <div><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;"><span>8º Ano B</span><strong>7,6</strong></div><div class="progress"><span style="width:76%"></span></div></div>
+              <div><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;"><span>1º Ano EM</span><strong>7,1</strong></div><div class="progress"><span style="width:71%"></span></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="tab" id="tab-relatorios">
+        <div class="sec-header"><div><h2>Relatórios do aluno</h2><p>Crie relatórios individuais</p></div><div class="actions"><button class="btn btn-primary" onclick="abrirForm('formRel')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Novo relatório</button></div></div>
+        <div class="card" id="formRel" style="display:none;margin-bottom:16px;">
+          <form class="form-grid" onsubmit="event.preventDefault(); salvarSimples('formRel','Relatório salvo.');">
+            <div class="field"><label>Aluno</label><select required><option>Ana Beatriz Souza</option><option>Bruno Carvalho</option><option>Camila Dias</option></select></div>
+            <div class="field"><label>Período</label><select><option>1º Bimestre</option><option>2º Bimestre</option></select></div>
+            <div class="field full"><label>Observações</label><textarea rows="4" required></textarea></div>
+            <div class="form-actions"><button type="button" class="btn btn-ghost" onclick="fecharForm('formRel')">Cancelar</button><button type="submit" class="btn btn-primary">Salvar</button></div>
+          </form>
+        </div>
+        <div class="grid grid-2">
+          <div class="card floating"><div class="card-title">Ana Beatriz Souza</div><div class="card-sub">1º Bimestre — 09/06/2025</div><p style="font-size:13px;color:var(--preto-700);">Excelente evolução em matemática. Recomendo manter o ritmo de estudos.</p></div>
+          <div class="card floating"><div class="card-title">Bruno Carvalho</div><div class="card-sub">1º Bimestre — 09/06/2025</div><p style="font-size:13px;color:var(--preto-700);">Precisa reforçar atenção nas aulas. Sugiro atividades complementares.</p></div>
+        </div>
+      </section>
+
+      <section class="tab" id="tab-mural">
+        <div class="sec-header"><div><h2>Mural de Avisos</h2><p>Avisos do administrador e da coordenação</p></div></div>
+        <div class="aviso"><div class="meta"><span class="badge badge-warn">Professores</span> 09/06/2025</div><h4>Reunião pedagógica</h4><p>Sexta às 18h para alinhamento do novo bimestre.</p></div>
+        <div class="aviso"><div class="meta"><span class="badge badge-info">Todos</span> 05/06/2025</div><h4>Novo horário de funcionamento</h4><p>A partir de 15/06, funcionamento das 7h às 21h.</p></div>
+      </section>
+
+      <section class="tab" id="tab-perfil">
+        <div class="perfil-header">
+          <div class="perfil-photo">
+            <span id="perfilInitials" style="font-size:28px;font-weight:700;">PR</span>
+            <img id="perfilImg" alt="" style="display:none;" />
+            <label class="upload" for="perfilFile">Alterar</label>
+            <input type="file" id="perfilFile" accept="image/*" hidden />
+          </div>
+          <div class="perfil-info"><h2 id="perfilNome">Professor</h2><p id="perfilEmail">professor@triade.com</p></div>
+        </div>
+        <div class="card floating">
+          <div class="card-title">Dados do perfil</div>
+          <div class="card-sub">Informações visíveis em relatórios.</div>
+          <form class="form-grid" onsubmit="event.preventDefault(); alert('Perfil salvo.');">
+            <div class="field"><label>Nome</label><input id="pNome" /></div>
+            <div class="field"><label>E-mail</label><input id="pEmail" type="email" /></div>
+            <div class="field"><label>Graduação</label><input placeholder="Ex.: Licenciatura em Matemática" /></div>
+            <div class="field"><label>Especialização <span class="hint">(opcional)</span></label><input placeholder="Ex.: Mestrado" /></div>
+            <div class="field"><label>Celular</label><input type="tel" placeholder="(00) 00000-0000" /></div>
+            <div class="field"><label>Disciplina</label><input placeholder="Ex.: Matemática" /></div>
+            <div class="form-actions"><button type="reset" class="btn btn-ghost">Cancelar</button><button type="submit" class="btn btn-primary">Salvar</button></div>
+          </form>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<script src="shared.js"></script>
+<script>
+  const user = Session.requirePapel('professor');
+  if (user) {
+    initTabs({
+      visao:      ['Visão Geral', 'Suas turmas e atividades'],
+      turmas:     ['Minhas Turmas', 'Turmas sob sua responsabilidade'],
+      atividades: ['Atividades', 'Cadastre atividades'],
+      notas:      ['Notas', 'Lance notas das turmas'],
+      faltas:     ['Faltas', 'Registro de presença'],
+      desempenho: ['Desempenho', 'Análise das turmas'],
+      relatorios: ['Relatórios', 'Relatórios dos alunos'],
+      mural:      ['Mural de Avisos', 'Comunicados'],
+      perfil:     ['Perfil', 'Seus dados']
+    });
+
+    preencherUsuarioUI(user);
+    initUploadPerfil();
+
+    initBoletim({
+      selNivel: 'selNivelProf',
+      selTurma: 'selTurmaProf',
+      chipsDisc: 'chipsDiscProf',
+      labelDisc: 'labelDiscProf',
+      titulo: 'tituloBolProf',
+      tabela: 'tabelaBolProf'
+    });
+  }
+</script>
+
+</body>
+</html>
