@@ -5,6 +5,117 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Tríade Conexão — Administrador</title>
 <link rel="stylesheet" href="shared.css" />
+<style>
+  /* ===== Modal ===== */
+  .modal-backdrop {
+    position: fixed; inset: 0; z-index: 1000;
+    background: rgba(15,23,42,.6);
+    display: none; align-items: center; justify-content: center;
+    padding: 20px; overflow-y: auto;
+  }
+  .modal-backdrop.open { display: flex; }
+  .modal {
+    background: #fff; border-radius: var(--radius-md);
+    width: 100%; max-width: 780px;
+    box-shadow: var(--sombra-lg);
+    max-height: 90vh; overflow-y: auto;
+    animation: modalIn .25s ease;
+  }
+  @keyframes modalIn { from { opacity: 0; transform: translateY(16px) scale(.98); } to { opacity: 1; transform: none; } }
+  .modal-header {
+    padding: 18px 22px; border-bottom: 1px solid var(--cinza-200);
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    position: sticky; top: 0; background: #fff; z-index: 2;
+  }
+  .modal-header h3 { font-size: 17px; }
+  .modal-header p { font-size: 12.5px; color: var(--cinza-500); margin-top: 2px; }
+  .modal-body { padding: 22px; }
+  .modal-footer {
+    padding: 16px 22px; border-top: 1px solid var(--cinza-200);
+    display: flex; justify-content: flex-end; gap: 10px;
+    position: sticky; bottom: 0; background: #fff;
+  }
+  .modal-close {
+    width: 34px; height: 34px; border-radius: 8px;
+    border: 1px solid var(--cinza-200); background: #fff;
+    cursor: pointer; display: grid; place-items: center;
+    color: var(--preto-700); transition: background .18s;
+  }
+  .modal-close:hover { background: var(--cinza-100); }
+
+  /* ===== Carnê ===== */
+  .carne-header {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; flex-wrap: wrap;
+    padding: 16px; margin-bottom: 16px;
+    background: linear-gradient(135deg, var(--azul-700), var(--azul-900));
+    color: #fff; border-radius: var(--radius-md);
+  }
+  .carne-header h4 { font-size: 15px; }
+  .carne-header p { font-size: 12.5px; opacity: .85; margin-top: 2px; }
+  .carne-header .info { display: flex; flex-direction: column; gap: 2px; }
+
+  .carne-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr);
+    gap: 12px; margin-bottom: 16px;
+  }
+  .carne-parcela {
+    border: 1px solid var(--cinza-200);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    background: #fff;
+    display: flex; flex-direction: column; gap: 6px;
+    position: relative;
+    transition: box-shadow .18s, transform .18s;
+  }
+  .carne-parcela:hover { box-shadow: var(--sombra-md); }
+  .carne-parcela .parc-num {
+    font-size: 11px; text-transform: uppercase; letter-spacing: .06em;
+    color: var(--cinza-500); font-weight: 700;
+  }
+  .carne-parcela .parc-valor { font-size: 18px; font-weight: 800; color: var(--preto-900); }
+  .carne-parcela .parc-venc { font-size: 12px; color: var(--cinza-500); }
+  .carne-parcela .parc-status { align-self: flex-start; margin-top: 4px; }
+  .carne-parcela.pago { border-left: 4px solid var(--verde-600); }
+  .carne-parcela.pendente { border-left: 4px solid var(--amarelo-600); }
+  .carne-parcela.atrasado { border-left: 4px solid var(--vermelho-600); }
+  .carne-parcela .parc-acoes {
+    display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap;
+  }
+
+  .carne-resumo {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 10px; margin-bottom: 16px;
+  }
+  .carne-resumo .item {
+    padding: 10px 12px; border-radius: var(--radius-sm);
+    background: var(--cinza-100); text-align: center;
+  }
+  .carne-resumo .item strong { display: block; font-size: 15px; color: var(--preto-900); }
+  .carne-resumo .item span { font-size: 11px; color: var(--cinza-500); text-transform: uppercase; letter-spacing: .04em; }
+
+  @media (max-width: 700px) {
+    .carne-grid { grid-template-columns: 1fr; }
+    .carne-resumo { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  /* ===== Impressão ===== */
+  @media print {
+    body * { visibility: hidden; }
+    #modalCarne, #modalCarne * { visibility: visible; }
+    #modalCarne { position: absolute; inset: 0; background: #fff; padding: 0; display: block; }
+    #modalCarne .modal { box-shadow: none; max-width: 100%; }
+    #modalCarne .modal-header,
+    #modalCarne .modal-footer,
+    #modalCarne .parc-acoes { display: none !important; }
+    #modalCarne .carne-header {
+      background: #1E3A8A !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .carne-parcela { break-inside: avoid; }
+  }
+</style>
 </head>
 <body>
 
@@ -187,7 +298,20 @@
 
       <!-- ============ FINANCEIRO ============ -->
       <section class="tab" id="tab-financeiro">
-        <div class="sec-header"><div><h2>Financeiro</h2><p>Confirmação de pagamentos</p></div></div>
+        <div class="sec-header">
+          <div><h2>Financeiro</h2><p>Confirmação de pagamentos e carnês por cliente</p></div>
+          <div class="actions">
+            <button class="btn btn-ghost" onclick="abrirModalCarnesGerais()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              Ver todos os carnês
+            </button>
+            <button class="btn btn-primary" onclick="gerarPagamentosMes()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Gerar mês atual
+            </button>
+          </div>
+        </div>
+
         <div class="grid grid-4" style="margin-bottom:16px;">
           <div class="card floating stat"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><div><div class="val" id="kpiReceitaFin">R$ 0</div><div class="lbl">Receita recebida</div></div></div>
           <div class="card floating stat"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div><div class="val" id="kpiPendentes">0</div><div class="lbl">Pendentes</div></div></div>
@@ -197,9 +321,9 @@
 
         <div class="card floating">
           <div class="sec-header" style="margin-bottom:12px;">
-            <div><div class="card-title">Pagamentos</div><div class="card-sub" style="margin:0;">Confirme os pagamentos recebidos</div></div>
+            <div><div class="card-title">Pagamentos</div><div class="card-sub" style="margin:0;">Confirme os pagamentos ou abra o carnê do cliente</div></div>
             <div class="actions">
-              <button class="btn btn-ghost btn-sm" onclick="gerarPagamentosMes()">Gerar mês atual</button>
+              <select id="filtroAnoFin" onchange="renderFinanceiro()" style="padding:9px 12px;border:1px solid var(--cinza-200);border-radius:8px;font-size:13px;"></select>
               <input type="text" id="buscaFin" placeholder="Buscar aluno..." oninput="filtrarTabela('tabFin','buscaFin')" style="padding:9px 12px;border:1px solid var(--cinza-200);border-radius:8px;font-size:13px;" />
             </div>
           </div>
@@ -296,6 +420,80 @@
   </div>
 </div>
 
+<!-- ============ MODAL: CARNÊ DO ALUNO ============ -->
+<div class="modal-backdrop" id="modalCarne" onclick="if(event.target===this) fecharModalCarne()">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <h3 id="carneTitulo">Carnê do aluno</h3>
+        <p id="carneSubtitulo"></p>
+      </div>
+      <button class="modal-close" onclick="fecharModalCarne()" aria-label="Fechar">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <div class="carne-header">
+        <div class="info">
+          <h4 id="carneNomeAluno"></h4>
+          <p id="carneInfoAluno"></p>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <select id="carneAno" onchange="renderCarneAluno()" style="padding:8px 10px;border:1px solid rgba(255,255,255,.3);border-radius:8px;font-size:13px;background:rgba(255,255,255,.1);color:#fff;"></select>
+          <button class="btn" style="background:#fff;color:var(--azul-700);" onclick="gerarCarneAnual()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Gerar carnê anual
+          </button>
+        </div>
+      </div>
+
+      <div class="carne-resumo" id="carneResumo"></div>
+      <div class="carne-grid" id="carneGrid"></div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="fecharModalCarne()">Fechar</button>
+      <button class="btn btn-primary" onclick="imprimirCarne()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+        Imprimir carnê
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MODAL: TODOS OS CARNÊS ============ -->
+<div class="modal-backdrop" id="modalCarnesGerais" onclick="if(event.target===this) fecharModalCarnesGerais()">
+  <div class="modal" style="max-width:900px;">
+    <div class="modal-header">
+      <div>
+        <h3>Visão geral dos carnês</h3>
+        <p>Status consolidado de todos os alunos no ano selecionado</p>
+      </div>
+      <button class="modal-close" onclick="fecharModalCarnesGerais()" aria-label="Fechar">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="sec-header" style="margin-bottom:12px;">
+        <div></div>
+        <div class="actions">
+          <select id="carnesGeraisAno" onchange="renderCarnesGerais()" style="padding:9px 12px;border:1px solid var(--cinza-200);border-radius:8px;font-size:13px;"></select>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table id="tabCarnesGerais">
+          <thead><tr><th>Aluno</th><th>Turma</th><th>Total</th><th>Pago</th><th>Pendente</th><th>Atrasado</th><th>Ações</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="fecharModalCarnesGerais()">Fechar</button>
+    </div>
+  </div>
+</div>
+
 <script src="db.js"></script>
 <script src="shared.js"></script>
 <script>
@@ -306,7 +504,6 @@
 const user = Auth.require('admin');
 if (!user) throw new Error('Sem sessão');
 
-/* ---------- Tabelas auxiliares ---------- */
 const DISCIPLINAS_FUND = ['Português','Matemática','Ciências','História','Geografia','Inglês','Artes','Ed. Física'];
 const DISCIPLINAS_MEDIO = ['Português','Matemática','Física','Química','Biologia','História','Geografia','Filosofia','Sociologia','Inglês'];
 
@@ -317,7 +514,7 @@ initTabs({
   professores: ['Professores', 'Corpo docente'],
   alunos:      ['Alunos', 'Alunos matriculados'],
   planos:      ['Planos', 'Planos semanais'],
-  financeiro:  ['Financeiro', 'Confirmação de pagamentos'],
+  financeiro:  ['Financeiro', 'Confirmação de pagamentos e carnês'],
   boletim:     ['Boletim', 'Notas por matéria'],
   desempenho:  ['Desempenho', 'Indicadores'],
   mural:       ['Mural de Avisos', 'Comunicação integrada'],
@@ -340,8 +537,7 @@ function popularSelectProfessores() {
 function novaTurma() {
   document.getElementById('turmaId').value = '';
   document.getElementById('tituloFormTurma').textContent = 'Cadastrar turma';
-  const f = document.querySelector('#formTurma form');
-  f.reset();
+  document.querySelector('#formTurma form').reset();
   popularSelectProfessores();
   abrirForm('formTurma');
 }
@@ -645,24 +841,32 @@ function renderPlanos() {
 /* ============================================================
    FINANCEIRO
    ============================================================ */
+let carneAlunoAtual = null;
+
 function confirmarPagamento(id) {
   DB.update('pagamentos', id, { status: 'Pago', pagoEm: new Date().toISOString() });
   toast('Pagamento confirmado.');
-  renderFinanceiro(); renderTudo();
+  renderFinanceiro();
+  if (carneAlunoAtual) renderCarneAluno();
+  renderVisao();
 }
 
 function estornarPagamento(id) {
   if (!confirm('Marcar como pendente novamente?')) return;
   DB.update('pagamentos', id, { status: 'Pendente', pagoEm: null });
   toast('Pagamento estornado.');
-  renderFinanceiro(); renderTudo();
+  renderFinanceiro();
+  if (carneAlunoAtual) renderCarneAluno();
+  renderVisao();
 }
 
 function excluirPagamento(id) {
   if (!confirm('Excluir este registro de pagamento?')) return;
   DB.remove('pagamentos', id);
   toast('Pagamento excluído.');
-  renderFinanceiro(); renderTudo();
+  renderFinanceiro();
+  if (carneAlunoAtual) renderCarneAluno();
+  renderVisao();
 }
 
 function gerarPagamentosMes() {
@@ -687,16 +891,39 @@ function gerarPagamentosMes() {
     criados++;
   });
   toast(criados ? criados + ' pagamento(s) gerado(s).' : 'Nenhum novo pagamento a gerar.');
-  renderFinanceiro(); renderTudo();
+  renderFinanceiro(); renderVisao();
 }
 
-function renderFinanceiro() {
-  const pagamentos = DB.list('pagamentos');
+/* ---------- Anos ---------- */
+function anosDisponiveis() {
+  const pags = DB.list('pagamentos');
+  const anos = [...new Set(pags.map(p => p.ano).filter(Boolean))].sort((a, b) => b - a);
+  if (!anos.length) anos.push(new Date().getFullYear());
+  return anos;
+}
 
-  const recebido = pagamentos.filter(p => p.status === 'Pago').reduce((s, p) => s + p.valor, 0);
-  const pendentes = pagamentos.filter(p => p.status === 'Pendente').length;
-  const pagos = pagamentos.filter(p => p.status === 'Pago').length;
-  const atrasados = pagamentos.filter(p => p.status === 'Atrasado').length;
+function popularFiltrosAno() {
+  const anos = anosDisponiveis();
+  const opts = anos.map(a => `<option value="${a}">${a}</option>`).join('');
+  const selFin = document.getElementById('filtroAnoFin');
+  const selCarne = document.getElementById('carneAno');
+  const selGerais = document.getElementById('carnesGeraisAno');
+  if (selFin) { const v = selFin.value; selFin.innerHTML = opts; selFin.value = v && anos.includes(+v) ? v : anos[0]; }
+  if (selCarne) { const v = selCarne.value; selCarne.innerHTML = opts; selCarne.value = v && anos.includes(+v) ? v : anos[0]; }
+  if (selGerais) { const v = selGerais.value; selGerais.innerHTML = opts; selGerais.value = v && anos.includes(+v) ? v : anos[0]; }
+}
+
+/* ---------- Render principal ---------- */
+function renderFinanceiro() {
+  popularFiltrosAno();
+
+  const anoFiltro = +document.getElementById('filtroAnoFin').value || new Date().getFullYear();
+  const pags = DB.list('pagamentos').filter(p => p.ano === anoFiltro);
+
+  const recebido = pags.filter(p => p.status === 'Pago').reduce((s, p) => s + p.valor, 0);
+  const pendentes = pags.filter(p => p.status === 'Pendente').length;
+  const pagos = pags.filter(p => p.status === 'Pago').length;
+  const atrasados = pags.filter(p => p.status === 'Atrasado').length;
 
   document.getElementById('kpiReceitaFin').textContent = fmtMoeda(recebido);
   document.getElementById('kpiPendentes').textContent = pendentes;
@@ -704,22 +931,192 @@ function renderFinanceiro() {
   document.getElementById('kpiAtrasados').textContent = atrasados;
 
   const tbody = document.querySelector('#tabFin tbody');
-  tbody.innerHTML = pagamentos.map(p => {
-    let badge = 'badge-warn', cor = 'warn';
-    if (p.status === 'Pago') { badge = 'badge-ok'; cor = 'ok'; }
-    if (p.status === 'Atrasado') { badge = 'badge-bad'; cor = 'bad'; }
+  tbody.innerHTML = pags
+    .slice().sort((a, b) => (a.aluno || '').localeCompare(b.aluno || '') || (a.mes - b.mes))
+    .map(p => {
+      let badge = 'badge-warn';
+      if (p.status === 'Pago') badge = 'badge-ok';
+      if (p.status === 'Atrasado') badge = 'badge-bad';
+      const acoes = p.status === 'Pago'
+        ? `<button class="btn btn-ghost btn-sm" onclick="estornarPagamento('${p.id}')">Estornar</button>`
+        : `<button class="btn btn-success btn-sm" onclick="confirmarPagamento('${p.id}')">Confirmar</button>`;
+      return `<tr>
+        <td><strong>${p.aluno}</strong></td>
+        <td>${p.plano}</td>
+        <td>${fmtMoeda(p.valor)}</td>
+        <td>${p.vencimento}</td>
+        <td><span class="badge ${badge}">${p.status}</span></td>
+        <td style="white-space:nowrap;">
+          ${acoes}
+          <button class="btn btn-ghost btn-sm" onclick="abrirCarneAluno('${p.aluno}')" title="Abrir carnê">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            Carnê
+          </button>
+          <button class="btn btn-danger btn-sm" onclick="excluirPagamento('${p.id}')">Excluir</button>
+        </td>
+      </tr>`;
+    }).join('') || '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--cinza-500);">Nenhum pagamento neste ano.</td></tr>';
+}
+
+/* ============================================================
+   CARNÊ POR CLIENTE
+   ============================================================ */
+function abrirCarneAluno(nomeAluno) {
+  const aluno = DB.list('alunos').find(a => a.nome === nomeAluno);
+  if (!aluno) { toast('Aluno não encontrado.', 'erro'); return; }
+  carneAlunoAtual = aluno;
+  document.getElementById('carneTitulo').textContent = 'Carnê de ' + aluno.nome;
+  document.getElementById('carneSubtitulo').textContent = 'Mensalidades do aluno';
+  document.getElementById('carneNomeAluno').textContent = aluno.nome;
+  document.getElementById('carneInfoAluno').textContent =
+    `${aluno.turma} · Plano: ${aluno.plano} · Vencimento: dia ${aluno.vencimento}`;
+  popularFiltrosAno();
+  document.getElementById('carneAno').value = new Date().getFullYear();
+  renderCarneAluno();
+  document.getElementById('modalCarne').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function fecharModalCarne() {
+  document.getElementById('modalCarne').classList.remove('open');
+  document.body.style.overflow = '';
+  carneAlunoAtual = null;
+}
+
+function renderCarneAluno() {
+  if (!carneAlunoAtual) return;
+  const aluno = carneAlunoAtual;
+  const ano = +document.getElementById('carneAno').value || new Date().getFullYear();
+
+  const pags = DB.list('pagamentos')
+    .filter(p => p.aluno === aluno.nome && p.ano === ano)
+    .sort((a, b) => a.mes - b.mes);
+
+  const total = pags.reduce((s, p) => s + p.valor, 0);
+  const pago = pags.filter(p => p.status === 'Pago').reduce((s, p) => s + p.valor, 0);
+  const pendente = pags.filter(p => p.status === 'Pendente').reduce((s, p) => s + p.valor, 0);
+  const atrasado = pags.filter(p => p.status === 'Atrasado').reduce((s, p) => s + p.valor, 0);
+
+  document.getElementById('carneResumo').innerHTML = `
+    <div class="item"><strong>${fmtMoeda(total)}</strong><span>Total ano</span></div>
+    <div class="item"><strong style="color:var(--verde-600);">${fmtMoeda(pago)}</strong><span>Pago</span></div>
+    <div class="item"><strong style="color:var(--amarelo-600);">${fmtMoeda(pendente)}</strong><span>Pendente</span></div>
+    <div class="item"><strong style="color:var(--vermelho-600);">${fmtMoeda(atrasado)}</strong><span>Atrasado</span></div>
+  `;
+
+  const grid = document.getElementById('carneGrid');
+  if (!pags.length) {
+    grid.innerHTML = `<div class="placeholder" style="grid-column:1/-1;">
+      <h3>Sem parcelas em ${ano}</h3>
+      <p>Use o botão "Gerar carnê anual" para criar as 12 parcelas do ano.</p>
+    </div>`;
+    return;
+  }
+
+  grid.innerHTML = pags.map(p => {
+    const statusClass = p.status.toLowerCase() === 'pago' ? 'pago'
+                      : p.status.toLowerCase() === 'atrasado' ? 'atrasado' : 'pendente';
+    const badge = p.status === 'Pago' ? 'badge-ok'
+                : p.status === 'Atrasado' ? 'badge-bad' : 'badge-warn';
     const acoes = p.status === 'Pago'
       ? `<button class="btn btn-ghost btn-sm" onclick="estornarPagamento('${p.id}')">Estornar</button>`
       : `<button class="btn btn-success btn-sm" onclick="confirmarPagamento('${p.id}')">Confirmar</button>`;
+    const venc = p.vencimento || (String(aluno.vencimento).padStart(2,'0') + '/' + String(p.mes).padStart(2,'0') + '/' + ano);
+    return `<div class="carne-parcela ${statusClass}">
+      <div class="parc-num">Parcela ${p.mes}/${ano}</div>
+      <div class="parc-valor">${fmtMoeda(p.valor)}</div>
+      <div class="parc-venc">Vencimento: ${venc}</div>
+      <div class="parc-status"><span class="badge ${badge}">${p.status}</span></div>
+      <div class="parc-acoes">
+        ${acoes}
+        <button class="btn btn-ghost btn-sm" onclick="excluirPagamento('${p.id}')">Excluir</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function gerarCarneAnual() {
+  if (!carneAlunoAtual) return;
+  const aluno = carneAlunoAtual;
+  const ano = +document.getElementById('carneAno').value || new Date().getFullYear();
+
+  const plano = DB.list('planos').find(p => p.nome === aluno.plano);
+  const valor = plano ? plano.valor : 0;
+  const diaVenc = String(aluno.vencimento).padStart(2, '0');
+
+  const existentes = DB.list('pagamentos').filter(p => p.aluno === aluno.nome && p.ano === ano);
+  let criadas = 0;
+
+  for (let mes = 1; mes <= 12; mes++) {
+    if (existentes.some(p => p.mes === mes)) continue;
+    DB.create('pagamentos', {
+      aluno: aluno.nome,
+      plano: aluno.plano,
+      valor,
+      mes,
+      ano,
+      vencimento: `${diaVenc}/${String(mes).padStart(2,'0')}/${ano}`,
+      status: 'Pendente'
+    });
+    criadas++;
+  }
+
+  toast(criadas ? criadas + ' parcela(s) gerada(s) para ' + aluno.nome : 'Carnê já está completo.');
+  renderCarneAluno();
+  renderFinanceiro();
+  renderVisao();
+}
+
+function imprimirCarne() {
+  window.print();
+}
+
+/* ============================================================
+   VISÃO GERAL DOS CARNÊS
+   ============================================================ */
+function abrirModalCarnesGerais() {
+  popularFiltrosAno();
+  document.getElementById('carnesGeraisAno').value = new Date().getFullYear();
+  renderCarnesGerais();
+  document.getElementById('modalCarnesGerais').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function fecharModalCarnesGerais() {
+  document.getElementById('modalCarnesGerais').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function renderCarnesGerais() {
+  const ano = +document.getElementById('carnesGeraisAno').value || new Date().getFullYear();
+  const alunos = DB.list('alunos');
+  const pags = DB.list('pagamentos').filter(p => p.ano === ano);
+
+  const tbody = document.querySelector('#tabCarnesGerais tbody');
+  tbody.innerHTML = alunos.map(a => {
+    const doAluno = pags.filter(p => p.aluno === a.nome);
+    if (!doAluno.length) {
+      return `<tr>
+        <td><strong>${a.nome}</strong></td>
+        <td>${a.turma}</td>
+        <td colspan="4" style="color:var(--cinza-500);font-size:12.5px;">Sem parcelas em ${ano}</td>
+        <td><button class="btn btn-ghost btn-sm" onclick="fecharModalCarnesGerais(); abrirCarneAluno('${a.nome}')">Gerar carnê</button></td>
+      </tr>`;
+    }
+    const total = doAluno.length;
+    const pago = doAluno.filter(p => p.status === 'Pago').length;
+    const pend = doAluno.filter(p => p.status === 'Pendente').length;
+    const atras = doAluno.filter(p => p.status === 'Atrasado').length;
     return `<tr>
-      <td><strong>${p.aluno}</strong></td>
-      <td>${p.plano}</td>
-      <td>${fmtMoeda(p.valor)}</td>
-      <td>${p.vencimento}</td>
-      <td><span class="badge ${badge}">${p.status}</span></td>
-      <td>${acoes} <button class="btn btn-danger btn-sm" onclick="excluirPagamento('${p.id}')">Excluir</button></td>
+      <td><strong>${a.nome}</strong></td>
+      <td>${a.turma}</td>
+      <td>${total}</td>
+      <td><span class="badge badge-ok">${pago}</span></td>
+      <td><span class="badge badge-warn">${pend}</span></td>
+      <td><span class="badge badge-bad">${atras}</span></td>
+      <td><button class="btn btn-ghost btn-sm" onclick="fecharModalCarnesGerais(); abrirCarneAluno('${a.nome}')">Abrir carnê</button></td>
     </tr>`;
-  }).join('') || '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--cinza-500);">Nenhum pagamento registrado.</td></tr>';
+  }).join('') || '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--cinza-500);">Nenhum aluno cadastrado.</td></tr>';
 }
 
 /* ============================================================
@@ -794,11 +1191,8 @@ function lancarNota(aluno, turma, disciplina, bimestre) {
   if (entrada === null) return;
   const nota = parseFloat(entrada.replace(',', '.'));
   if (isNaN(nota) || nota < 0 || nota > 10) { alert('Nota inválida. Use valores entre 0 e 10.'); return; }
-  if (existente) {
-    DB.update('notas', existente.id, { nota });
-  } else {
-    DB.create('notas', { aluno, turma, disciplina, bimestre, nota });
-  }
+  if (existente) DB.update('notas', existente.id, { nota });
+  else           DB.create('notas', { aluno, turma, disciplina, bimestre, nota });
   toast('Nota salva.');
   renderBoletim(); renderTudo();
 }
@@ -813,7 +1207,6 @@ function renderDesempenho() {
   const faltas = DB.list('faltas');
   const pagamentos = DB.list('pagamentos');
 
-  // Alunos por turma
   const contTurmas = document.getElementById('desempenhoTurmas');
   contTurmas.innerHTML = turmas.map(t => {
     const m = calcularMediaTurma(t.nome, 1);
@@ -823,7 +1216,6 @@ function renderDesempenho() {
     </div>`;
   }).join('') || '<p style="font-size:13px;color:var(--cinza-500);">Sem turmas.</p>';
 
-  // Professores (turmas)
   const contProfs = document.getElementById('desempenhoProfs');
   contProfs.innerHTML = professores.map(p => {
     const qtd = turmas.filter(t => t.professor === p.nome).length;
@@ -834,7 +1226,6 @@ function renderDesempenho() {
     </div>`;
   }).join('') || '<p style="font-size:13px;color:var(--cinza-500);">Sem professores.</p>';
 
-  // Plataforma
   const totalFaltas = faltas.length;
   const presentes = faltas.filter(f => f.status === 'Presente').length;
   const freqGeral = totalFaltas ? Math.round((presentes / totalFaltas) * 100) : 100;
@@ -848,7 +1239,6 @@ function renderDesempenho() {
     <div><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;"><span>Total alunos</span><strong>${alunos.length}</strong></div><div class="progress"><span style="width:${Math.min(100, alunos.length)}%"></span></div></div>
   `;
 
-  // Resumo
   const tbody = document.querySelector('#tabResumoTurmas tbody');
   tbody.innerHTML = turmas.map(t => {
     const lista = alunos.filter(a => a.turma === t.nome);
@@ -902,14 +1292,14 @@ function salvarAviso(e) {
   if (id) { DB.update('avisos', id, dados); toast('Aviso atualizado.'); }
   else    { DB.create('avisos', dados);       toast('Aviso publicado.'); }
   fecharForm('formAviso');
-  renderAvisos(); renderTudo();
+  renderAvisos(); renderVisao();
 }
 
 function excluirAviso(id) {
   if (!confirm('Excluir este aviso?')) return;
   DB.remove('avisos', id);
   toast('Aviso excluído.');
-  renderAvisos(); renderTudo();
+  renderAvisos(); renderVisao();
 }
 
 function renderAvisos() {
@@ -947,13 +1337,11 @@ function renderVisao() {
   document.getElementById('kpiTurmas').textContent = turmas.length;
   document.getElementById('kpiReceita').textContent = fmtMoeda(receita);
 
-  // Pagamentos pendentes na visão
   const pendentes = pagamentos.filter(p => p.status !== 'Pago').slice(0, 5);
   document.querySelector('#tabPendentesVisao tbody').innerHTML = pendentes.map(p => `
     <tr><td>${p.aluno}</td><td>${p.plano}</td><td>${fmtMoeda(p.valor)}</td><td>${p.vencimento}</td></tr>
   `).join('') || '<tr><td colspan="4" style="text-align:center;padding:24px;color:var(--cinza-500);">Nenhum pagamento pendente.</td></tr>';
 
-  // Avisos recentes
   const avisos = DB.list('avisos').slice().sort((a, b) => (b.data || '').localeCompare(a.data || '')).slice(0, 2);
   const corBadge = { 'Alunos': 'badge-info', 'Professores': 'badge-warn', 'Pais': 'badge-bad', 'Todos': 'badge-info' };
   document.getElementById('avisosVisao').innerHTML = avisos.map(a => `
@@ -990,6 +1378,14 @@ function renderTudo() {
 document.getElementById('selNivel').addEventListener('change', () => { popularTurmasBoletim(); renderBoletim(); });
 document.getElementById('selTurmaBol').addEventListener('change', renderBoletim);
 document.getElementById('selBimBol').addEventListener('change', renderBoletim);
+
+/* Fecha modal com ESC */
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    if (document.getElementById('modalCarne').classList.contains('open')) fecharModalCarne();
+    if (document.getElementById('modalCarnesGerais').classList.contains('open')) fecharModalCarnesGerais();
+  }
+});
 
 /* ============================================================
    BOOT
