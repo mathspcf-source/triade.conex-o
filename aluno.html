@@ -9,6 +9,8 @@
 <body>
 
 <div class="app" id="app">
+
+  <!-- ============ SIDEBAR ============ -->
   <aside class="sidebar">
     <div class="brand">
       <div class="brand-logo"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg></div>
@@ -42,6 +44,7 @@
 
     <main class="content">
 
+      <!-- ============ VISÃO GERAL ============ -->
       <section class="tab active" id="tab-visao">
         <div class="grid grid-4" style="margin-bottom:16px;">
           <div class="card floating stat"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg></div><div><div class="val" id="kpiPend">0</div><div class="lbl">Atividades pendentes</div></div></div>
@@ -63,11 +66,13 @@
         </div>
       </section>
 
+      <!-- ============ MINHAS TURMAS ============ -->
       <section class="tab" id="tab-turmas">
         <div class="sec-header"><div><h2>Minhas Turmas</h2><p>Turmas em que você está matriculado</p></div></div>
         <div class="grid grid-2" id="listaMinhasTurmas"></div>
       </section>
 
+      <!-- ============ ATIVIDADES ============ -->
       <section class="tab" id="tab-atividades">
         <div class="sec-header"><div><h2>Atividades</h2><p>Atividades designadas a você</p></div></div>
         <div class="table-wrap"><table id="tabAtivAluno">
@@ -76,6 +81,7 @@
         </table></div>
       </section>
 
+      <!-- ============ BOLETIM ============ -->
       <section class="tab" id="tab-boletim">
         <div class="sec-header">
           <div><h2>Boletim</h2><p>Suas notas por matéria</p></div>
@@ -92,6 +98,7 @@
         </div>
       </section>
 
+      <!-- ============ FALTAS ============ -->
       <section class="tab" id="tab-faltas">
         <div class="sec-header"><div><h2>Faltas</h2><p>Seu registro de presença</p></div></div>
         <div class="grid grid-3" style="margin-bottom:16px;">
@@ -105,6 +112,7 @@
         </table></div>
       </section>
 
+      <!-- ============ DESEMPENHO ============ -->
       <section class="tab" id="tab-desempenho">
         <div class="sec-header"><div><h2>Desempenho</h2><p>Sua evolução</p></div></div>
         <div class="card floating">
@@ -114,16 +122,19 @@
         </div>
       </section>
 
+      <!-- ============ RELATÓRIOS ============ -->
       <section class="tab" id="tab-relatorios">
         <div class="sec-header"><div><h2>Relatórios</h2><p>Relatórios emitidos pelos professores</p></div></div>
         <div class="grid grid-2" id="listaRelAluno"></div>
       </section>
 
+      <!-- ============ MURAL ============ -->
       <section class="tab" id="tab-mural">
         <div class="sec-header"><div><h2>Mural de Avisos</h2><p>Comunicados para você</p></div></div>
         <div id="listaMuralAluno"></div>
       </section>
 
+      <!-- ============ PERFIL ============ -->
       <section class="tab" id="tab-perfil">
         <div class="perfil-header">
           <div class="perfil-photo">
@@ -157,7 +168,7 @@
 <script src="shared.js"></script>
 <script>
 /* ============================================================
-   ALUNO — lógica corrigida
+   ALUNO — lógica
    ============================================================ */
 
 const user = Auth.require('aluno');
@@ -166,27 +177,22 @@ if (!user) throw new Error('Sem sessão');
 const DISCIPLINAS_FUND = ['Português','Matemática','Ciências','História','Geografia','Inglês','Artes','Ed. Física'];
 const DISCIPLINAS_MEDIO = ['Português','Matemática','Física','Química','Biologia','História','Geografia','Filosofia','Sociologia','Inglês'];
 
-/* ---------- Localização do aluno ----------
-   Tenta achar o registro de 3 formas:
-   1) pelo nome do usuário logado
-   2) pelo e-mail do usuário na tabela alunos (se existir)
-   3) pelo campo `turma` da sessão
---------------------------------------------- */
+/* ---------- Localização do aluno (3 níveis de fallback) ---------- */
 function meuRegistro() {
   const alunos = DB.list('alunos');
   if (!alunos.length) return null;
 
-  // 1) nome exato
+  // 1) por nome exato
   let reg = alunos.find(a => a.nome === user.nome);
   if (reg) return reg;
 
-  // 2) e-mail (caso o admin tenha cadastrado)
+  // 2) por e-mail
   if (user.email) {
     reg = alunos.find(a => a.email && a.email.toLowerCase() === user.email.toLowerCase());
     if (reg) return reg;
   }
 
-  // 3) primeiro aluno da turma que o usuário informou na sessão
+  // 3) por turma da sessão
   if (user.turma) {
     reg = alunos.find(a => a.turma === user.turma);
     if (reg) return reg;
@@ -223,7 +229,6 @@ initTabs({
 preencherUsuarioUI(user);
 initUploadPerfil();
 
-/* ---------- Perfil do aluno ---------- */
 (function preencherPerfilAluno() {
   const r = meuRegistro();
   const elTurma = document.getElementById('pTurma');
@@ -271,7 +276,6 @@ function renderVisao() {
   if (kpiFreq) kpiFreq.textContent = freq + '%';
   if (kpiTurmas) kpiTurmas.textContent = turma ? 1 : 0;
 
-  // Atividades em aberto
   const elAtiv = document.getElementById('visaoAtiv');
   if (elAtiv) {
     const abertas = atividades.filter(a =>
@@ -288,7 +292,6 @@ function renderVisao() {
       : '<p style="font-size:13px;color:var(--cinza-500);">Nenhuma atividade pendente.</p>';
   }
 
-  // Avisos
   const elAvisos = document.getElementById('visaoAvisos');
   if (elAvisos) {
     const avisos = DB.list('avisos')
@@ -484,7 +487,7 @@ function renderFaltas() {
 }
 
 /* ============================================================
-   DESEMPENHO (com donuts)
+   DESEMPENHO (donuts)
    ============================================================ */
 function renderDesempenho() {
   const cont = document.getElementById('desempenhoAluno');
@@ -505,10 +508,9 @@ function renderDesempenho() {
   cont.innerHTML = disciplinas.map(d => {
     const n = notas.find(x => x.disciplina === d);
     const nota = n ? n.nota : 0;
-    const pct = notaParaPct(nota);
     return `
       <div class="donut-item">
-        ${donutSVG(pct, corPorNota(nota), nota.toFixed(1).replace('.', ','))}
+        ${donutSVG(notaParaPct(nota), corPorNota(nota), nota.toFixed(1).replace('.', ','))}
         <div class="donut-info">
           <div class="nome">${d}</div>
           <div class="valor">${nota >= 6 ? 'Aprovado' : 'Abaixo da média'}</div>
@@ -570,7 +572,6 @@ function renderTudo() {
   renderMural();
 }
 
-/* ---------- Eventos ---------- */
 const selBim = document.getElementById('selBimAluno');
 if (selBim) {
   selBim.addEventListener('change', () => {
@@ -579,7 +580,6 @@ if (selBim) {
   });
 }
 
-/* ---------- Boot ---------- */
 renderTudo();
 </script>
 
