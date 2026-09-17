@@ -6,7 +6,7 @@
 <title>Tríade Conexão — Administrador</title>
 <link rel="stylesheet" href="shared.css" />
 <style>
-  /* ===== Modal ===== */
+  /* ===== Modal (usado no carnê) ===== */
   .modal-backdrop {
     position: fixed; inset: 0; z-index: 1000;
     background: rgba(15,23,42,.6);
@@ -19,15 +19,13 @@
     width: 100%; max-width: 780px;
     box-shadow: var(--sombra-lg);
     max-height: 90vh; overflow-y: auto;
-    animation: modalIn .25s ease;
   }
-  @keyframes modalIn { from { opacity: 0; transform: translateY(16px) scale(.98); } to { opacity: 1; transform: none; } }
   .modal-header {
     padding: 18px 22px; border-bottom: 1px solid var(--cinza-200);
     display: flex; align-items: center; justify-content: space-between; gap: 12px;
     position: sticky; top: 0; background: #fff; z-index: 2;
   }
-  .modal-header h3 { font-size: 17px; }
+  .modal-header h3 { font-size: 17px; font-weight: 800; }
   .modal-header p { font-size: 12.5px; color: var(--cinza-500); margin-top: 2px; }
   .modal-body { padding: 22px; }
   .modal-footer {
@@ -51,7 +49,7 @@
     background: linear-gradient(135deg, var(--azul-700), var(--azul-900));
     color: #fff; border-radius: var(--radius-md);
   }
-  .carne-header h4 { font-size: 15px; }
+  .carne-header h4 { font-size: 15px; font-weight: 700; }
   .carne-header p { font-size: 12.5px; opacity: .85; margin-top: 2px; }
   .carne-header .info { display: flex; flex-direction: column; gap: 2px; }
 
@@ -65,15 +63,14 @@
     padding: 12px 14px;
     background: #fff;
     display: flex; flex-direction: column; gap: 6px;
-    position: relative;
-    transition: box-shadow .18s, transform .18s;
+    transition: box-shadow .18s;
   }
   .carne-parcela:hover { box-shadow: var(--sombra-md); }
   .carne-parcela .parc-num {
     font-size: 11px; text-transform: uppercase; letter-spacing: .06em;
     color: var(--cinza-500); font-weight: 700;
   }
-  .carne-parcela .parc-valor { font-size: 18px; font-weight: 800; color: var(--preto-900); }
+  .carne-parcela .parc-valor { font-size: 18px; font-weight: 800; color: var(--preto-900); letter-spacing: -.02em; }
   .carne-parcela .parc-venc { font-size: 12px; color: var(--cinza-500); }
   .carne-parcela .parc-status { align-self: flex-start; margin-top: 4px; }
   .carne-parcela.pago { border-left: 4px solid var(--verde-600); }
@@ -91,7 +88,7 @@
     padding: 10px 12px; border-radius: var(--radius-sm);
     background: var(--cinza-100); text-align: center;
   }
-  .carne-resumo .item strong { display: block; font-size: 15px; color: var(--preto-900); }
+  .carne-resumo .item strong { display: block; font-size: 15px; color: var(--preto-900); font-weight: 800; }
   .carne-resumo .item span { font-size: 11px; color: var(--cinza-500); text-transform: uppercase; letter-spacing: .04em; }
 
   @media (max-width: 700px) {
@@ -104,6 +101,7 @@
 
 <div class="app" id="app">
 
+  <!-- ============ SIDEBAR ============ -->
   <aside class="sidebar">
     <div class="brand">
       <div class="brand-logo">
@@ -338,9 +336,9 @@
       <section class="tab" id="tab-desempenho">
         <div class="sec-header"><div><h2>Desempenho</h2><p>Indicadores calculados em tempo real</p></div></div>
         <div class="grid grid-3" style="margin-bottom:16px;">
-          <div class="card floating"><div class="card-title">Alunos</div><div class="card-sub">Média por turma</div><div id="desempenhoTurmas" style="display:flex;flex-direction:column;gap:14px;"></div></div>
-          <div class="card floating"><div class="card-title">Professores</div><div class="card-sub">Turmas sob responsabilidade</div><div id="desempenhoProfs" style="display:flex;flex-direction:column;gap:14px;"></div></div>
-          <div class="card floating"><div class="card-title">Plataforma</div><div class="card-sub">Indicadores gerais</div><div id="desempenhoPlataforma" style="display:flex;flex-direction:column;gap:14px;"></div></div>
+          <div class="card floating"><div class="card-title">Alunos</div><div class="card-sub">Média por turma</div><div id="desempenhoTurmas" class="donut-list"></div></div>
+          <div class="card floating"><div class="card-title">Professores</div><div class="card-sub">Turmas sob responsabilidade</div><div id="desempenhoProfs" class="donut-list"></div></div>
+          <div class="card floating"><div class="card-title">Plataforma</div><div class="card-sub">Indicadores gerais</div><div id="desempenhoPlataforma" class="donut-list"></div></div>
         </div>
         <div class="card floating">
           <div class="card-title">Resumo por turma</div>
@@ -490,7 +488,6 @@ if (!user) throw new Error('Sem sessão');
 const DISCIPLINAS_FUND = ['Português','Matemática','Ciências','História','Geografia','Inglês','Artes','Ed. Física'];
 const DISCIPLINAS_MEDIO = ['Português','Matemática','Física','Química','Biologia','História','Geografia','Filosofia','Sociologia','Inglês'];
 
-/* ---------- Inicialização ---------- */
 initTabs({
   visao:       ['Visão Geral', 'Resumo geral da plataforma'],
   turmas:      ['Turmas', 'Cadastro e gestão de turmas'],
@@ -877,7 +874,6 @@ function gerarPagamentosMes() {
   renderFinanceiro(); renderVisao();
 }
 
-/* ---------- Anos ---------- */
 function anosDisponiveis() {
   const pags = DB.list('pagamentos');
   const anos = [...new Set(pags.map(p => p.ano).filter(Boolean))].sort((a, b) => b - a);
@@ -896,7 +892,6 @@ function popularFiltrosAno() {
   if (selGerais) { const v = selGerais.value; selGerais.innerHTML = opts; selGerais.value = v && anos.includes(+v) ? v : anos[0]; }
 }
 
-/* ---------- Render principal ---------- */
 function renderFinanceiro() {
   popularFiltrosAno();
 
@@ -1050,7 +1045,6 @@ function gerarCarneAnual() {
   renderVisao();
 }
 
-/* ⬇⬇⬇ AQUI ESTÁ A ÚNICA MUDANÇA — aponta para carne.html ⬇⬇⬇ */
 function imprimirCarne() {
   if (!carneAlunoAtual) return;
   const ano = document.getElementById('carneAno').value || new Date().getFullYear();
@@ -1185,7 +1179,7 @@ function lancarNota(aluno, turma, disciplina, bimestre) {
 }
 
 /* ============================================================
-   DESEMPENHO
+   DESEMPENHO (com donuts)
    ============================================================ */
 function renderDesempenho() {
   const turmas = DB.list('turmas');
@@ -1195,23 +1189,35 @@ function renderDesempenho() {
   const pagamentos = DB.list('pagamentos');
 
   const contTurmas = document.getElementById('desempenhoTurmas');
-  contTurmas.innerHTML = turmas.map(t => {
-    const m = calcularMediaTurma(t.nome, 1);
-    return `<div>
-      <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;"><span>${t.nome}</span><strong>${m.toFixed(1)}</strong></div>
-      <div class="progress"><span style="width:${m * 10}%"></span></div>
-    </div>`;
-  }).join('') || '<p style="font-size:13px;color:var(--cinza-500);">Sem turmas.</p>';
+  contTurmas.className = 'donut-list';
+  contTurmas.innerHTML = turmas.length
+    ? turmas.map(t => {
+        const m = calcularMediaTurma(t.nome, 1);
+        return donutItem({
+          percent: notaParaPct(m),
+          cor: corPorNota(m),
+          texto: m.toFixed(1).replace('.', ','),
+          nome: t.nome,
+          valor: `Média ${m.toFixed(1)}`
+        });
+      }).join('')
+    : '<p style="font-size:13px;color:var(--cinza-500);">Sem turmas.</p>';
 
   const contProfs = document.getElementById('desempenhoProfs');
-  contProfs.innerHTML = professores.map(p => {
-    const qtd = turmas.filter(t => t.professor === p.nome).length;
-    const pct = Math.min(100, qtd * 33);
-    return `<div>
-      <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;"><span>${p.nome}</span><strong>${qtd} turma${qtd !== 1 ? 's' : ''}</strong></div>
-      <div class="progress"><span style="width:${pct}%"></span></div>
-    </div>`;
-  }).join('') || '<p style="font-size:13px;color:var(--cinza-500);">Sem professores.</p>';
+  contProfs.className = 'donut-list';
+  contProfs.innerHTML = professores.length
+    ? professores.map(p => {
+        const qtd = turmas.filter(t => t.professor === p.nome).length;
+        const pct = Math.min(100, qtd * 33);
+        return donutItem({
+          percent: pct,
+          cor: corPorPct(pct),
+          texto: pct + '%',
+          nome: p.nome,
+          valor: `${qtd} turma${qtd !== 1 ? 's' : ''} sob responsabilidade`
+        });
+      }).join('')
+    : '<p style="font-size:13px;color:var(--cinza-500);">Sem professores.</p>';
 
   const totalFaltas = faltas.length;
   const presentes = faltas.filter(f => f.status === 'Presente').length;
@@ -1219,30 +1225,45 @@ function renderDesempenho() {
   const adimpl = pagamentos.length
     ? Math.round((pagamentos.filter(p => p.status === 'Pago').length / pagamentos.length) * 100)
     : 100;
+  const ocupacao = turmas.length
+    ? Math.round(
+        turmas.reduce((s, t) => {
+          const n = alunos.filter(a => a.turma === t.nome).length;
+          return s + (n / Math.max(1, t.capacidade)) * 100;
+        }, 0) / turmas.length
+      )
+    : 0;
 
-  document.getElementById('desempenhoPlataforma').innerHTML = `
-    <div><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;"><span>Frequência</span><strong>${freqGeral}%</strong></div><div class="progress"><span style="width:${freqGeral}%"></span></div></div>
-    <div><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;"><span>Adimplência</span><strong>${adimpl}%</strong></div><div class="progress"><span style="width:${adimpl}%"></span></div></div>
-    <div><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;"><span>Total alunos</span><strong>${alunos.length}</strong></div><div class="progress"><span style="width:${Math.min(100, alunos.length)}%"></span></div></div>
-  `;
+  const elPlat = document.getElementById('desempenhoPlataforma');
+  elPlat.className = 'donut-list';
+  elPlat.innerHTML = [
+    donutItem({ percent: freqGeral, cor: corPorPct(freqGeral), nome: 'Frequência', valor: `${presentes}/${totalFaltas} presenças` }),
+    donutItem({ percent: adimpl,    cor: corPorPct(adimpl),    nome: 'Adimplência', valor: `${pagamentos.filter(p => p.status === 'Pago').length}/${pagamentos.length} pagos` }),
+    donutItem({ percent: ocupacao,  cor: corPorPct(ocupacao),  nome: 'Ocupação', valor: `${alunos.length} alunos em ${turmas.length} turmas` })
+  ].join('');
 
   const tbody = document.querySelector('#tabResumoTurmas tbody');
-  tbody.innerHTML = turmas.map(t => {
-    const lista = alunos.filter(a => a.turma === t.nome);
-    const m = calcularMediaTurma(t.nome, 1);
-    const freq = lista.length
-      ? Math.round(lista.reduce((s, a) => s + calcularFrequencia(a.nome, t.nome), 0) / lista.length)
-      : 100;
-    const status = m >= 8 ? 'Ótimo' : m >= 6 ? 'Bom' : 'Atenção';
-    const cor = m >= 8 ? 'badge-ok' : m >= 6 ? 'badge-info' : 'badge-warn';
-    return `<tr>
-      <td>${t.nome}</td>
-      <td>${lista.length}</td>
-      <td>${m.toFixed(1)}</td>
-      <td>${freq}%</td>
-      <td><span class="badge ${cor}">${status}</span></td>
-    </tr>`;
-  }).join('') || '<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--cinza-500);">Sem dados.</td></tr>';
+  tbody.innerHTML = turmas.length
+    ? turmas.map(t => {
+        const lista = alunos.filter(a => a.turma === t.nome);
+        const m = calcularMediaTurma(t.nome, 1);
+        const freq = lista.length
+          ? Math.round(lista.reduce((s, a) => s + calcularFrequencia(a.nome, t.nome), 0) / lista.length)
+          : 100;
+        const status = m >= 8 ? 'Ótimo' : m >= 6 ? 'Bom' : 'Atenção';
+        const cor = m >= 8 ? 'badge-ok' : m >= 6 ? 'badge-info' : 'badge-warn';
+        const mini = donutSVG(notaParaPct(m), corPorNota(m), m.toFixed(1).replace('.', ','));
+        return `<tr>
+          <td>${t.nome}</td>
+          <td>${lista.length}</td>
+          <td style="width:70px;padding:6px 8px;">
+            <div style="transform:scale(.75);transform-origin:left center;">${mini}</div>
+          </td>
+          <td>${freq}%</td>
+          <td><span class="badge ${cor}">${status}</span></td>
+        </tr>`;
+      }).join('')
+    : '<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--cinza-500);">Sem dados.</td></tr>';
 }
 
 /* ============================================================
@@ -1359,9 +1380,6 @@ function renderTudo() {
   renderBoletim();
 }
 
-/* ============================================================
-   EVENTOS
-   ============================================================ */
 document.getElementById('selNivel').addEventListener('change', () => { popularTurmasBoletim(); renderBoletim(); });
 document.getElementById('selTurmaBol').addEventListener('change', renderBoletim);
 document.getElementById('selBimBol').addEventListener('change', renderBoletim);
@@ -1373,9 +1391,6 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
-/* ============================================================
-   BOOT
-   ============================================================ */
 renderTudo();
 </script>
 
