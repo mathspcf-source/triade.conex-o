@@ -2,10 +2,9 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Carnê Tríade Conexão - Reforço Escolar</title>
+<title>Carnê Tríade Conexão</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-
   :root {
     --azul: #1e3a8a;
     --azul-claro: #dbeafe;
@@ -14,7 +13,6 @@
     --amarelo: #fbbf24;
     --vermelho: #ef4444;
     --cinza: #64748b;
-    --cinza-claro: #f1f5f9;
   }
 
   body {
@@ -24,7 +22,7 @@
     min-height: 100vh;
   }
 
-  /* Barra de ações (não aparece na impressão) */
+  /* ===== Barra de ações (não imprime) ===== */
   .barra-acoes {
     max-width: 210mm;
     margin: 0 auto 16px;
@@ -59,6 +57,37 @@
   .barra-acoes .btn-voltar:hover { background: #cbd5e1; }
   .barra-acoes .grupo { margin-left: auto; display: flex; gap: 8px; }
 
+  /* ===== Aviso (quando não acha o aluno) ===== */
+  .aviso-sistema {
+    max-width: 210mm;
+    margin: 0 auto 16px;
+    padding: 14px 18px;
+    border-radius: 8px;
+    font-size: 13px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    line-height: 1.5;
+  }
+  .aviso-sistema.amarelo {
+    background: #fef3c7;
+    border-left: 4px solid var(--amarelo);
+    color: #92400e;
+  }
+  .aviso-sistema.vermelho {
+    background: #fee2e2;
+    border-left: 4px solid var(--vermelho);
+    color: #991b1b;
+  }
+  .aviso-sistema svg { flex-shrink: 0; margin-top: 1px; }
+  .aviso-sistema strong { display: block; margin-bottom: 3px; font-size: 14px; }
+  .aviso-sistema code {
+    background: rgba(0,0,0,.08);
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-family: monospace;
+  }
+
   /* ===== FOLHA A4 ===== */
   .folha {
     width: 210mm;
@@ -86,7 +115,6 @@
     background: #fff;
     position: relative;
   }
-
   .carne::before {
     content: "";
     position: absolute;
@@ -106,7 +134,6 @@
     border-right: 2px dashed #94a3b8;
     position: relative;
   }
-
   .canhoto::after {
     content: "";
     position: absolute;
@@ -119,7 +146,6 @@
     border-radius: 50%;
     transform: translateY(-50%);
   }
-
   .canhoto .topo {
     display: flex;
     justify-content: space-between;
@@ -131,7 +157,6 @@
     border-bottom: 1.5px solid var(--azul-claro);
     margin-bottom: 2px;
   }
-
   .canhoto .topo .badge {
     background: var(--azul);
     color: #fff;
@@ -140,14 +165,12 @@
     font-size: 8px;
     letter-spacing: .3px;
   }
-
   .canhoto .campo {
     display: flex;
     flex-direction: column;
     gap: 1px;
     flex: 1;
   }
-
   .canhoto .campo label {
     font-size: 7.5px;
     color: var(--cinza);
@@ -155,25 +178,22 @@
     letter-spacing: 0.3px;
     text-transform: uppercase;
   }
-
   .canhoto .campo .linha {
     border-bottom: 1px dotted #94a3b8;
     height: 11px;
   }
-
   .canhoto .data-linha {
     display: flex;
     gap: 3px;
     align-items: flex-end;
   }
-
   .canhoto .data-linha .linha {
     flex: 1;
     border-bottom: 1px dotted #94a3b8;
     height: 11px;
   }
 
-  /* ===== VIA PRINCIPAL ===== */
+  /* ===== VIA ===== */
   .via {
     width: 68%;
     padding: 8px 10px 6px;
@@ -182,7 +202,6 @@
     gap: 4px;
     background: #fff;
   }
-
   .via .cabecalho {
     display: flex;
     justify-content: space-between;
@@ -191,7 +210,6 @@
     margin-bottom: 2px;
     border-bottom: 1.5px solid var(--azul-claro);
   }
-
   .via .titulo {
     font-weight: 800;
     font-size: 11px;
@@ -200,9 +218,7 @@
     align-items: center;
     gap: 5px;
   }
-
   .via .titulo svg { color: var(--azul-medio); flex-shrink: 0; }
-
   .via .parcela-tag {
     font-weight: 700;
     font-size: 9px;
@@ -213,33 +229,28 @@
     letter-spacing: 0.5px;
     box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
   }
-
   .via .corpo {
     display: flex;
     gap: 8px;
     flex: 1;
   }
-
   .via .col-esq {
     flex: 1;
     display: flex;
     flex-direction: column;
     gap: 5px;
   }
-
   .via .col-dir {
     width: 38%;
     display: flex;
     flex-direction: column;
     gap: 5px;
   }
-
   .via .campo {
     display: flex;
     flex-direction: column;
     gap: 1px;
   }
-
   .via .campo label {
     font-size: 7.5px;
     font-weight: 700;
@@ -247,12 +258,10 @@
     letter-spacing: 0.3px;
     text-transform: uppercase;
   }
-
   .via .campo .linha {
     border-bottom: 1px dotted #94a3b8;
     height: 12px;
   }
-
   .via .campo .valor-preenchido {
     font-size: 9.5px;
     font-weight: 700;
@@ -264,21 +273,16 @@
     overflow: hidden;
     text-overflow: ellipsis;
   }
-
-  /* Caixas destacadas */
   .via .caixa {
     border: 1.5px solid var(--azul-claro);
     border-radius: 6px;
     padding: 4px 6px;
     background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-    position: relative;
   }
-
   .via .caixa.destaque {
     border-color: var(--verde);
     background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
   }
-
   .via .caixa label {
     font-size: 7.5px;
     font-weight: 800;
@@ -289,13 +293,8 @@
     align-items: center;
     gap: 3px;
   }
-
-  .via .caixa.destaque label {
-    color: #047857;
-  }
-
+  .via .caixa.destaque label { color: #047857; }
   .via .caixa label svg { flex-shrink: 0; }
-
   .via .caixa .valor-preenchido {
     font-size: 10px;
     font-weight: 800;
@@ -305,36 +304,10 @@
     margin-top: 2px;
     min-height: 13px;
   }
-
   .via .caixa.destaque .valor-preenchido {
     color: #047857;
     font-size: 11px;
   }
-
-  .via .caixa .linha {
-    border-bottom: 1px dotted #64748b;
-    height: 11px;
-    margin-top: 2px;
-  }
-
-  .via .caixa .data {
-    display: flex;
-    gap: 3px;
-    margin-top: 2px;
-    align-items: center;
-  }
-
-  .via .caixa .data .linha {
-    flex: 1;
-    margin-top: 0;
-  }
-
-  .via .caixa .data span {
-    color: var(--cinza);
-    font-weight: 700;
-  }
-
-  /* Linha recebido */
   .via .recebido {
     display: flex;
     align-items: flex-end;
@@ -343,19 +316,16 @@
     margin-top: auto;
     padding-top: 3px;
   }
-
   .via .recebido .label {
     font-weight: 700;
     color: var(--cinza);
     white-space: nowrap;
   }
-
   .via .recebido .linha {
     flex: 1;
     border-bottom: 1px dotted #94a3b8;
     height: 11px;
   }
-
   .via .recebido .check {
     background: var(--verde);
     color: #fff;
@@ -368,10 +338,7 @@
     align-items: center;
     gap: 3px;
   }
-
   .via .recebido .check svg { flex-shrink: 0; }
-
-  /* Aviso */
   .via .aviso {
     font-size: 7.5px;
     color: #92400e;
@@ -384,16 +351,12 @@
     gap: 4px;
     margin-top: 2px;
   }
-
   .via .aviso svg { flex-shrink: 0; color: #b45309; }
 
   /* ===== IMPRESSÃO ===== */
   @media print {
-    body {
-      background: #fff;
-      padding: 0;
-    }
-    .barra-acoes { display: none !important; }
+    body { background: #fff; padding: 0; }
+    .barra-acoes, .aviso-sistema { display: none !important; }
     .folha {
       margin: 0;
       box-shadow: none;
@@ -410,8 +373,8 @@
 </head>
 <body>
 
-<!-- Barra de ações (não imprime) -->
-<div class="barra-acoes" id="barraAcoes">
+<!-- Barra de ações -->
+<div class="barra-acoes">
   <svg class="icone" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
     <line x1="16" y1="2" x2="16" y2="6"/>
@@ -441,45 +404,44 @@
   </div>
 </div>
 
+<!-- Aviso do sistema (quando algo não bate) -->
+<div id="avisoSistema"></div>
+
 <!-- Container das folhas -->
 <div id="paginas"></div>
 
-<!-- Fallback: se o JS falhar, mostra mensagem -->
-<noscript>
-  <div style="max-width:210mm;margin:20px auto;padding:20px;background:#fee2e2;color:#991b1b;border-radius:8px;">
-    JavaScript está desativado. Ative para gerar o carnê.
-  </div>
-</noscript>
-
 <script>
 /* ============================================================
-   CARNÊ — geração dinâmica a partir do localStorage
+   CARNÊ — geração com fallback e diagnóstico visível
    ============================================================ */
 
-// ---------- Compatibilidade com o DB do admin ----------
-// Se estiver rodando sozinho (sem db.js), criamos um stub que lê direto do localStorage
-function lerDB(entidade) {
-  try {
-    const raw = localStorage.getItem('triade_' + entidade);
-    return raw ? JSON.parse(raw) : [];
-  } catch (e) {
-    console.error('Erro ao ler', entidade, e);
-    return [];
-  }
-}
-
-function fmtMoeda(v) {
-  return 'R$ ' + Number(v || 0).toFixed(2).replace('.', ',');
-}
-
-// ---------- Ícones SVG ----------
 const ICONE_ESCOLA = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg>`;
 const ICONE_CALENDARIO = `<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`;
 const ICONE_DINHEIRO = `<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>`;
 const ICONE_CHECK = `<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
 const ICONE_INFO = `<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>`;
+const ICONE_ALERTA = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`;
 
-// ---------- Inicialização ----------
+function fmtMoeda(v) {
+  return 'R$ ' + Number(v || 0).toFixed(2).replace('.', ',');
+}
+
+function lerLS(chave) {
+  try {
+    const raw = localStorage.getItem(chave);
+    return raw ? JSON.parse(raw) : [];
+  } catch (e) {
+    console.warn('Erro ao ler', chave, e);
+    return [];
+  }
+}
+
+function mostrarAviso(tipo, html) {
+  const cont = document.getElementById('avisoSistema');
+  cont.innerHTML = `<div class="aviso-sistema ${tipo}">${ICONE_ALERTA}<div>${html}</div></div>`;
+}
+
+// ---------- Boot ----------
 (function gerarCarne() {
   const params = new URLSearchParams(location.search);
   const nomeAluno = params.get('aluno');
@@ -489,41 +451,105 @@ const ICONE_INFO = `<svg width="9" height="9" viewBox="0 0 24 24" fill="none" st
   const infoSub = document.getElementById('infoSub');
   const container = document.getElementById('paginas');
 
-  // Sem parâmetro: erro amigável
+  // Diagnóstico: mostra o que está no localStorage
+  const todosAlunos = lerLS('triade_alunos');
+  const todosPags = lerLS('triade_pagamentos');
+  const todosPlanos = lerLS('triade_planos');
+
+  console.log('[CARNE] Alunos no localStorage:', todosAlunos);
+  console.log('[CARNE] Pagamentos no localStorage:', todosPags);
+  console.log('[CARNE] Aluno solicitado:', nomeAluno);
+  console.log('[CARNE] Ano solicitado:', anoParam);
+
+  // ---------- Modo 1: sem parâmetro ----------
   if (!nomeAluno) {
-    infoAluno.textContent = 'Aluno não informado';
-    infoSub.textContent = 'Abra o carnê pela aba Financeiro do painel admin.';
-    container.innerHTML = `<div style="max-width:210mm;margin:20px auto;padding:24px;background:#fef3c7;border-left:4px solid #f59e0b;border-radius:8px;color:#92400e;">
-      <strong style="display:block;font-size:15px;margin-bottom:6px;">Nenhum aluno especificado</strong>
-      Use o botão <strong>Imprimir carnê</strong> na aba Financeiro do painel admin para abrir esta página com os dados corretos.
-    </div>`;
+    infoAluno.textContent = 'Demonstração';
+    infoSub.textContent = 'Nenhum aluno informado — exibindo exemplo com dados fictícios.';
+
+    mostrarAviso('amarelo', `
+      <strong>Modo demonstração</strong>
+      Você abriu o <code>carne.html</code> direto, sem o parâmetro <code>?aluno=</code>.
+      Aqui está um carnê de exemplo. Para gerar o carnê de um aluno real,
+      use o botão <strong>Imprimir carnê</strong> na aba Financeiro do painel admin.
+    `);
+
+    renderCarne({
+      aluno: {
+        nome: 'Aluno Exemplo',
+        turma: '9º Ano A',
+        plano: '3 dias na semana',
+        responsavel: 'Responsável Exemplo',
+        vencimento: 12
+      },
+      parcelas: Array.from({ length: 12 }, (_, i) => ({
+        mes: i + 1,
+        valor: 180,
+        vencimento: `12/${String(i + 1).padStart(2,'0')}/${anoParam}`,
+        status: 'Pendente'
+      })),
+      anoParam
+    });
     return;
   }
 
-  const alunos = lerDB('alunos');
-  const aluno = alunos.find(a => a.nome === nomeAluno);
+  // ---------- Modo 2: com parâmetro, mas sem dados no localStorage ----------
+  if (!todosAlunos.length) {
+    infoAluno.textContent = 'Sem dados salvos';
+    infoSub.textContent = nomeAluno;
 
+    mostrarAviso('vermelho', `
+      <strong>Nenhum dado encontrado no localStorage</strong>
+      O <code>localStorage</code> deste navegador está vazio.
+      Isso geralmente acontece quando:
+      <ul style="margin:8px 0 0 18px;font-size:12.5px;">
+        <li>O admin ainda não cadastrou nenhum aluno;</li>
+        <li>Ou você abriu o admin e o carnê em <strong>caminhos diferentes</strong> (ex.: <code>file://</code> vs <code>http://</code>) — nesse caso os dados não são compartilhados.</li>
+      </ul>
+    `);
+
+    renderCarne({
+      aluno: { nome: nomeAluno, turma: '—', plano: '—', responsavel: '—', vencimento: 10 },
+      parcelas: Array.from({ length: 12 }, (_, i) => ({
+        mes: i + 1, valor: 0,
+        vencimento: `10/${String(i + 1).padStart(2,'0')}/${anoParam}`,
+        status: 'Pendente'
+      })),
+      anoParam
+    });
+    return;
+  }
+
+  // ---------- Modo 3: aluno não encontrado ----------
+  const aluno = todosAlunos.find(a => a.nome === nomeAluno);
   if (!aluno) {
     infoAluno.textContent = 'Aluno não encontrado';
     infoSub.textContent = nomeAluno;
-    container.innerHTML = `<div style="max-width:210mm;margin:20px auto;padding:24px;background:#fee2e2;border-left:4px solid #ef4444;border-radius:8px;color:#991b1b;">
-      <strong style="display:block;font-size:15px;margin-bottom:6px;">Aluno não encontrado no banco local</strong>
-      O aluno <strong>${nomeAluno}</strong> não existe no <code>localStorage</code> deste navegador.
-      Cadastre-o no painel admin primeiro.
-    </div>`;
+
+    mostrarAviso('vermelho', `
+      <strong>Aluno "${nomeAluno}" não existe no banco local</strong>
+      Alunos disponíveis neste navegador: <code>${todosAlunos.map(a => a.nome).join(', ')}</code>
+    `);
+
+    renderCarne({
+      aluno: { nome: nomeAluno, turma: '—', plano: '—', responsavel: '—', vencimento: 10 },
+      parcelas: Array.from({ length: 12 }, (_, i) => ({
+        mes: i + 1, valor: 0,
+        vencimento: `10/${String(i + 1).padStart(2,'0')}/${anoParam}`,
+        status: 'Pendente'
+      })),
+      anoParam
+    });
     return;
   }
 
-  // Pagamentos do aluno no ano
-  const pagamentos = lerDB('pagamentos')
+  // ---------- Modo 4: caminho feliz ----------
+  const pagamentos = todosPags
     .filter(p => p.aluno === aluno.nome && p.ano === anoParam)
     .sort((a, b) => a.mes - b.mes);
 
-  // Plano
-  const plano = lerDB('planos').find(p => p.nome === aluno.plano);
+  const plano = todosPlanos.find(p => p.nome === aluno.plano);
   const valorPadrao = plano ? plano.valor : 0;
 
-  // Se não há pagamentos, gera 12 parcelas virtuais
   let parcelas;
   if (pagamentos.length) {
     parcelas = pagamentos;
@@ -537,13 +563,22 @@ const ICONE_INFO = `<svg width="9" height="9" viewBox="0 0 24 24" fill="none" st
         status: 'Pendente'
       });
     }
+    mostrarAviso('amarelo', `
+      <strong>Nenhum pagamento lançado para ${aluno.nome} em ${anoParam}</strong>
+      O carnê abaixo foi gerado usando o valor do plano <code>${aluno.plano}</code> (${fmtMoeda(valorPadrao)}/mês)
+      e o vencimento cadastrado (dia ${aluno.vencimento}).
+    `);
   }
 
-  // Cabeçalho
   infoAluno.textContent = 'Carnê — ' + aluno.nome;
   infoSub.textContent = `${aluno.turma} · ${aluno.plano} · Ano ${anoParam} · ${parcelas.length} parcela(s)`;
 
-  // Renderização em folhas de 6
+  renderCarne({ aluno, parcelas, anoParam });
+})();
+
+// ---------- Render ----------
+function renderCarne({ aluno, parcelas, anoParam }) {
+  const container = document.getElementById('paginas');
   const meses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
   const total = parcelas.length;
 
@@ -556,8 +591,8 @@ const ICONE_INFO = `<svg width="9" height="9" viewBox="0 0 24 24" fill="none" st
       const numero = i + idx + 1;
       const numeroFmt = String(numero).padStart(2, '0');
       const totalFmt = String(total).padStart(2, '0');
-      const valor = p.valor || valorPadrao;
-      const venc = p.vencimento || `${String(aluno.vencimento).padStart(2,'0')}/${String(p.mes).padStart(2,'0')}/${anoParam}`;
+      const valor = p.valor || 0;
+      const venc = p.vencimento || '—';
       const mesNome = meses[(p.mes || 1) - 1] || '';
 
       return `
@@ -618,7 +653,7 @@ const ICONE_INFO = `<svg width="9" height="9" viewBox="0 0 24 24" fill="none" st
 
     container.appendChild(folha);
   }
-})();
+}
 </script>
 
 </body>
