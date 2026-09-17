@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Carnê Tríade Conexão</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --azul: #1e3a8a;
+    --azul-medio: #3b82f6;
+    --azul-claro: #dbeafe;
+    --verde: #10b981;
+    --amarelo: #fbbf24;
+    --vermelho: #ef4444;
+    --cinza: #64748b;
+    --cinza-claro: #f1f5f9;
+  }
+
+  body {
+    font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+    background: linear-gradient(135deg, #e0e7ff 0%, #f1f5f9 100%);
+    padding: 20px 10px;
+    min-height: 100vh;
+  }
+
+  .aviso-topo {
+    max-width: 210mm;
+    margin: 0 auto 16px;
+    padding: 12px 18px;
+    background: #fff;
+    border-left: 4px solid var(--azul-medio);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(30,58,138,.08);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 13.5px;
+    color: #1e293b;
+  }
+  .aviso-topo svg { flex-shrink: 0; color: var(--azul); }
+  .aviso-topo strong { color: var(--azul); }
+  .aviso-topo .acoes {
+    margin-left: auto;
+    display: flex;
+    gap: 8px;
+  }
+  .aviso-topo button {
+    padding: 8px 14px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: background .18s;
+  }
+  .btn-imprimir {
+    background: var(--azul);
+    color: #fff;
+  }
+  .btn-imprimir:hover { background: #172554; }
+  .btn-voltar {
+    background: #e2e8f0;
+    color: #1e293b;
+  }
+  .btn-voltar:hover { background: #cbd5e1; }
+
+  .folha {
+    width: 210mm;
+    min-height: 297mm;
+    margin: 0 auto 20px;
+    background: #fff;
+    padding: 6mm 5mm;
+    display: flex;
+    flex-direction: column;
+    gap: 3mm;
+    box-shadow: 0 10px 30px rgba(30, 58, 138, 0.15);
+    border-radius: 8px;
+  }
+
+  /* ===== CARNÊ ===== */
+  .carne {
+    display: flex;
+    height: 44mm;
+    page-break-inside: avoid;
+    font-size: 9px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(30, 58, 138, 0.12);
+    border: 1px solid #cbd5e1;
+    background: #fff;
+    position: relative;
+  }
+
+  .carne::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #1e3a8a, #3b82f6, #60a5fa);
+  }
+
+  /* ===== CANHOTO ===== */
+  .canhoto {
+    width: 32%;
+    padding: 8px 8px 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    background: linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
+    border-right: 2px dashed #94a3b8;
+    position: relative;
+  }
+
+  .canhoto::after {
+    content: "";
+    position: absolute;
+    right: -6px;
+    top: 50%;
+    width: 10px;
+    height: 10px;
+    background: #fff;
+    border: 1px solid #94a3b8;
+    border-radius: 50%;
+    transform: translateY(-50%);
+  }
+
+  .canhoto .topo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 700;
+    font-size: 9px;
+    color: var(--azul);
+    padding-bottom: 3px;
+    border-bottom: 1.5px solid var(--azul-claro);
+    margin-bottom: 2px;
+  }
+
+  .canhoto .topo .badge {
+    background: var(--azul);
+    color: #fff;
+    padding: 1px 6px;
+    border-radius: 8px;
+    font-size: 8px;
+    letter-spacing: .3px;
+  }
+
+  .canhoto .campo {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    flex: 1;
+  }
+
+  .canhoto .campo label {
+    font-size: 7.5px;
+    color: var(--cinza);
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+  }
+
+  .canhoto .campo .valor-fixo {
+    font-size: 9.5px;
+    font-weight: 700;
+    color: var(--azul);
+    padding: 1px 0;
+    border-bottom: 1px dotted #94a3b8;
+    min-height: 12px;
+  }
+
+  .canhoto .campo .linha {
+    border-bottom: 1px dotted #94a3b8;
+    height: 11px;
+  }
+
+  .canhoto .data-linha {
+    display: flex;
+    gap: 3px;
+    align-items: flex-end;
+  }
+  .canhoto .data-linha .linha { flex: 1; border-bottom: 1px dotted #94a3b8; height: 11px; }
+
+  /* ===== VIA PRINCIPAL ===== */
+  .via {
+    width: 68%;
+    padding: 8px 10px 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    background: #fff;
+  }
+
+  .via .cabecalho {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 4px;
+    margin-bottom: 2px;
+    border-bottom: 1.5px solid var(--azul-claro);
+  }
+
+  .via .titulo {
+    font-weight: 800;
+    font-size: 11px;
+    color: var(--azul);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .via .titulo svg { color: var(--azul-medio); }
+
+  .via .parcela-tag {
+    font-weight: 700;
+    font-size: 9px;
+    color: #fff;
+    background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+    padding: 3px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+  }
+
+  .via .corpo {
+    display: flex;
+    gap: 8px;
+    flex: 1;
+  }
+
+  .via .col-esq { flex: 1; display: flex; flex-direction: column; gap: 5px; }
+  .via .col-dir { width: 38%; display: flex; flex-direction: column; gap: 5px; }
+
+  .via .campo { display: flex; flex-direction: column; gap: 1px; }
+
+  .via .campo label {
+    font-size: 7.5px;
+    font-weight: 700;
+    color: var(--cinza);
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+  }
+
+  .via .campo .valor-fixo {
+    font-size: 10px;
+    font-weight: 700;
+    color: #1e293b;
+    padding: 1px 0;
+    border-bottom: 1px dotted #94a3b8;
+    min-height: 13px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .via .campo .linha {
+    border-bottom: 1px dotted #94a3b8;
+    height: 12px;
+  }
+
+  .via .caixa {
+    border: 1.5px solid var(--azul-claro);
+    border-radius: 6px;
+    padding: 4px 6px;
+    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+    position: relative;
+  }
+
+  .via .caixa.destaque {
+    border-color: var(--verde);
+    background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+  }
+
+  .via .caixa label {
+    font-size: 7.5px;
+    font-weight: 800;
+    color: var(--azul);
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .via .caixa.destaque label { color: #047857; }
+  .via .caixa label svg { flex-shrink: 0; }
+
+  .via .caixa .valor-fixo {
+    font-size: 11px;
+    font-weight: 800;
+    color: #0f172a;
+    margin-top: 2px;
+  }
+  .via .caixa.destaque .valor-fixo { color: #047857; font-size: 12px; }
+
+  .via .recebido {
+    display: flex;
+    align-items: flex-end;
+    gap: 4px;
+    font-size: 8.5px;
+    margin-top: auto;
+    padding-top: 3px;
+  }
+  .via .recebido .label {
+    font-weight: 700;
+    color: var(--cinza);
+    white-space: nowrap;
+  }
+  .via .recebido .linha {
+    flex: 1;
+    border-bottom: 1px dotted #94a3b8;
+    height: 11px;
+  }
+  .via .recebido .check {
+    background: var(--verde);
+    color: #fff;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 8px;
+    font-weight: 700;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+  }
+
+  .via .aviso {
+    font-size: 7.5px;
+    color: #92400e;
+    background: #fef3c7;
+    padding: 3px 6px;
+    border-radius: 4px;
+    border-left: 3px solid var(--amarelo);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 2px;
+  }
+  .via .aviso svg { flex-shrink: 0; color: #b45309; }
+
+  /* ===== IMPRESSÃO ===== */
+  @media print {
+    body { background: #fff; padding: 0; }
+    .aviso-topo { display: none !important; }
+    .folha {
+      margin: 0;
+      box-shadow: none;
+      border-radius: 0;
+      padding: 5mm;
+      min-height: auto;
+      page-break-after: always;
+    }
+    .folha:last-child { page-break-after: auto; }
+    .carne { box-shadow: none; }
+    @page { size: A4; margin: 0; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Barra de ações (não imprime) -->
+<div class="aviso-topo">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+    <line x1="16" y1="2" x2="16" y2="6"/>
+    <line x1="8" y1="2" x2="8" y2="6"/>
+    <line x1="3" y1="10" x2="21" y2="10"/>
+  </svg>
+  <div>
+    <strong id="tituloAluno">Carregando…</strong>
+    <div id="subtituloCarne" style="font-size:12px;color:#64748b;margin-top:2px;"></div>
+  </div>
+  <div class="acoes">
+    <button class="btn-voltar" onclick="window.close()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="19" y1="12" x2="5" y2="12"/>
+        <polyline points="12 19 5 12 12 5"/>
+      </svg>
+      Fechar
+    </button>
+    <button class="btn-imprimir" onclick="window.print()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="6 9 6 2 18 2 18 9"/>
+        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+        <rect x="6" y="14" width="12" height="8"/>
+      </svg>
+      Imprimir
+    </button>
+  </div>
+</div>
+
+<!-- Container onde as folhas serão montadas -->
+<div id="paginas"></div>
+
+<script src="db.js"></script>
+<script>
+/* ============================================================
+   CARNÊ — geração dinâmica a partir dos dados do aluno
+   ============================================================ */
+
+(function gerarCarne() {
+  const params = new URLSearchParams(location.search);
+  const nomeAluno = params.get('aluno');
+  const anoParam = +(params.get('ano') || new Date().getFullYear());
+
+  if (!nomeAluno) {
+    document.getElementById('tituloAluno').textContent = 'Aluno não informado';
+    document.getElementById('subtituloCarne').textContent = 'Abra o carnê pela aba Financeiro do painel admin.';
+    return;
+  }
+
+  const aluno = DB.list('alunos').find(a => a.nome === nomeAluno);
+  if (!aluno) {
+    document.getElementById('tituloAluno').textContent = 'Aluno não encontrado';
+    document.getElementById('subtituloCarne').textContent = nomeAluno;
+    return;
+  }
+
+  // Busca todos os pagamentos do aluno no ano
+  const pagamentos = DB.list('pagamentos')
+    .filter(p => p.aluno === aluno.nome && p.ano === anoParam)
+    .sort((a, b) => a.mes - b.mes);
+
+  // Se não tiver nenhum lançamento, gera 12 vazios na memória (só visual)
+  const parcelas = [];
+  if (pagamentos.length) {
+    pagamentos.forEach(p => parcelas.push(p));
+  } else {
+    for (let m = 1; m <= 12; m++) {
+      parcelas.push({
+        mes: m,
+        valor: 0,
+        vencimento: `${String(aluno.vencimento).padStart(2,'0')}/${String(m).padStart(2,'0')}/${anoParam}`,
+        status: 'Pendente'
+      });
+    }
+  }
+
+  const plano = DB.list('planos').find(p => p.nome === aluno.plano);
+  const valorPadrao = plano ? plano.valor : 0;
+
+  // Cabeçalho da página
+  document.getElementById('tituloAluno').textContent = 'Carnê — ' + aluno.nome;
+  document.getElementById('subtituloCarne').textContent =
+    `${aluno.turma} · ${aluno.plano} · Ano ${anoParam} · ${parcelas.length} parcela(s)`;
+
+  // Renderiza em folhas de 6
+  const container = document.getElementById('paginas');
+  const meses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+
+  const ICONE_ESCOLA = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg>`;
+  const ICONE_CALENDARIO = `<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`;
+  const ICONE_DINHEIRO = `<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>`;
+  const ICONE_CHECK = `<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+  const ICONE_INFO = `<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>`;
+
+  for (let i = 0; i < parcelas.length; i += 6) {
+    const bloco = parcelas.slice(i, i + 6);
+    const folha = document.createElement('div');
+    folha.className = 'folha';
+    folha.innerHTML = bloco.map((p, idx) => {
+      const numero = i + idx + 1;
+      const total = parcelas.length;
+      const valor = p.valor || valorPadrao;
+      const venc = p.vencimento || `${String(aluno.vencimento).padStart(2,'0')}/${String(p.mes).padStart(2,'0')}/${anoParam}`;
+      const mesNome = meses[(p.mes || 1) - 1] || '';
+
+      return `
+      <div class="carne">
+        <div class="canhoto">
+          <div class="topo"><span>CANHOTO</span><span class="badge">${String(numero).padStart(2,'0')}/${String(total).padStart(2,'0')}</span></div>
+          <div class="campo"><label>Aluno(a):</label><div class="valor-fixo">${aluno.nome}</div></div>
+          <div class="campo"><label>Vencimento:</label><div class="valor-fixo">${venc}</div></div>
+          <div class="campo"><label>Valor (R$):</label><div class="valor-fixo">${fmtMoeda(valor)}</div></div>
+          <div class="campo"><label>Data pagamento:</label>
+            <div class="data-linha"><div class="linha"></div><span>/</span><div class="linha"></div><span>/</span><div class="linha"></div></div>
+          </div>
+          <div class="campo"><label>Visto / Assinatura:</label><div class="linha"></div></div>
+        </div>
+
+        <div class="via">
+          <div class="cabecalho">
+            <span class="titulo">${ICONE_ESCOLA} TRÍADE CONEXÃO | Reforço Escolar</span>
+            <span class="parcela-tag">PARCELA ${String(numero).padStart(2,'0')}/${String(total).padStart(2,'0')}</span>
+          </div>
+
+          <div class="corpo">
+            <div class="col-esq">
+              <div class="campo"><label>Nome do aluno(a):</label><div class="valor-fixo">${aluno.nome}</div></div>
+              <div class="campo"><label>Responsável:</label><div class="valor-fixo">${aluno.responsavel || '—'}</div></div>
+              <div class="campo"><label>Turma / Plano:</label><div class="valor-fixo">${aluno.turma} · ${aluno.plano}</div></div>
+            </div>
+
+            <div class="col-dir">
+              <div class="caixa">
+                <label>${ICONE_CALENDARIO} Vencimento — ${mesNome}</label>
+                <div class="valor-fixo">${venc}</div>
+              </div>
+              <div class="caixa destaque">
+                <label>${ICONE_DINHEIRO} Valor da mensalidade</label>
+                <div class="valor-fixo">${fmtMoeda(valor)}</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="recebido">
+            <span class="label">Recebido por:</span><div class="linha"></div>
+            <span class="label">Data:</span><div class="linha" style="max-width:50px;"></div>
+            <span class="check">${ICONE_CHECK} OK</span>
+          </div>
+
+          <div class="aviso">${ICONE_INFO} Pagamento até o vencimento. Em caso de dúvidas ou imprevistos, fale conosco.</div>
+        </div>
+      </div>`;
+    }).join('');
+    container.appendChild(folha);
+  }
+})();
+</script>
+
+</body>
+</html>
