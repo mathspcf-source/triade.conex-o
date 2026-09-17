@@ -46,7 +46,6 @@ const ROTAS = {
   pais:      'pais.html'
 };
 
-/* ---------- Formatação ---------- */
 function fmtMoeda(v) { return 'R$ ' + Number(v || 0).toFixed(2).replace('.', ','); }
 function fmtData(iso) {
   if (!iso) return '';
@@ -56,14 +55,12 @@ function fmtData(iso) {
 }
 function hojeISO() { return new Date().toISOString().slice(0, 10); }
 
-/* ---------- Cálculos ---------- */
 function media(arr) {
-  if (!arr || !arr.length) return 0;
+  if (!arr.length) return 0;
   return +(arr.reduce((a, b) => a + Number(b), 0) / arr.length).toFixed(1);
 }
 
 function calcularMediaAluno(alunoNome, turma, bimestre = 1) {
-  if (!alunoNome || !turma) return 0;
   const notas = DB.list('notas').filter(n =>
     n.aluno === alunoNome && n.turma === turma && n.bimestre === bimestre
   );
@@ -71,69 +68,17 @@ function calcularMediaAluno(alunoNome, turma, bimestre = 1) {
 }
 
 function calcularMediaTurma(turma, bimestre = 1) {
-  if (!turma) return 0;
   const notas = DB.list('notas').filter(n => n.turma === turma && n.bimestre === bimestre);
   return notas.length ? media(notas.map(n => n.nota)) : 0;
 }
 
 function calcularFrequencia(aluno, turma) {
-  if (!aluno || !turma) return 100;
   const faltas = DB.list('faltas').filter(f => f.aluno === aluno && f.turma === turma);
   if (!faltas.length) return 100;
   const presentes = faltas.filter(f => f.status === 'Presente').length;
   return Math.round((presentes / faltas.length) * 100);
 }
 
-/* ---------- Donut ---------- */
-function donutSVG(percent, corClasse = 'azul', texto = null) {
-  const p = Math.max(0, Math.min(100, Number(percent) || 0));
-  const raio = 26;
-  const circunferencia = 2 * Math.PI * raio;
-  const offset = circunferencia - (p / 100) * circunferencia;
-  return `
-    <div class="donut">
-      <svg viewBox="0 0 60 60">
-        <circle class="track" cx="30" cy="30" r="${raio}"></circle>
-        <circle class="bar ${corClasse}" cx="30" cy="30" r="${raio}"
-                stroke-dasharray="${circunferencia}"
-                stroke-dashoffset="${offset}"></circle>
-      </svg>
-      <div class="centro">${texto !== null ? texto : p.toFixed(0) + '%'}</div>
-    </div>`;
-}
-
-function notaParaPct(nota) {
-  return Math.max(0, Math.min(100, (Number(nota) || 0) * 10));
-}
-
-function corPorNota(nota) {
-  const n = Number(nota) || 0;
-  if (n >= 8) return 'verde';
-  if (n >= 6) return 'azul';
-  if (n >= 4) return 'amarelo';
-  return 'vermelho';
-}
-
-function corPorPct(pct) {
-  const p = Number(pct) || 0;
-  if (p >= 80) return 'verde';
-  if (p >= 60) return 'azul';
-  if (p >= 40) return 'amarelo';
-  return 'vermelho';
-}
-
-function donutItem({ percent, cor, texto, nome, valor }) {
-  return `
-    <div class="donut-item">
-      ${donutSVG(percent, cor, texto)}
-      <div class="donut-info">
-        <div class="nome">${nome}</div>
-        <div class="valor">${valor}</div>
-      </div>
-    </div>`;
-}
-
-/* ---------- Navegação ---------- */
 function initTabs(titulos) {
   const app = document.getElementById('app');
   const pageTitle = document.getElementById('pageTitle');
@@ -165,7 +110,6 @@ function initTabs(titulos) {
   return { activateTab };
 }
 
-/* ---------- UI Helpers ---------- */
 function abrirForm(id) {
   const el = document.getElementById(id);
   if (el) { el.style.display = 'block'; el.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
@@ -175,15 +119,12 @@ function fecharForm(id) {
   if (el) { el.style.display = 'none'; const f = el.querySelector('form'); if (f) f.reset(); }
 }
 function filtrarTabela(tableId, inputId) {
-  const el = document.getElementById(inputId);
-  if (!el) return;
-  const q = el.value.toLowerCase();
+  const q = document.getElementById(inputId).value.toLowerCase();
   document.querySelectorAll('#' + tableId + ' tbody tr').forEach(tr => {
     tr.style.display = tr.textContent.toLowerCase().includes(q) ? '' : 'none';
   });
 }
 
-/* ---------- Upload de foto ---------- */
 function initUploadPerfil() {
   const fileInput = document.getElementById('perfilFile');
   if (!fileInput) return;
@@ -213,7 +154,6 @@ function initUploadPerfil() {
   });
 }
 
-/* ---------- Preencher dados do usuário ---------- */
 function preencherUsuarioUI(user) {
   if (!user) return;
   const iniciais = (user.nome || 'U')
@@ -241,7 +181,6 @@ function preencherUsuarioUI(user) {
   setVal('pCargo', user.papel === 'admin' ? 'Administrador' : user.papel);
 }
 
-/* ---------- Logout ---------- */
 function logout() {
   if (confirm('Deseja sair da plataforma?')) {
     Auth.logout();
@@ -249,7 +188,6 @@ function logout() {
   }
 }
 
-/* ---------- Salvar perfil ---------- */
 function salvarPerfil(e) {
   e.preventDefault();
   const dados = {
@@ -264,7 +202,6 @@ function salvarPerfil(e) {
   alert('Perfil atualizado com sucesso!');
 }
 
-/* ---------- Toast ---------- */
 function toast(msg, tipo = 'ok') {
   const el = document.createElement('div');
   el.textContent = msg;
