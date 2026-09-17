@@ -1,885 +1,1506 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Ficha de Inscrição — Tríade Conexão</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Tríade Conexão — Administrador</title>
+<link rel="stylesheet" href="shared.css" />
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
-
-  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
-  :root {
-    --azul:      #1e3a8a;
-    --azul-med:  #2563eb;
-    --azul-clr:  #dbeafe;
-    --laranja:   #f97316;
-    --preto:     #0f172a;
-    --cinza-esc: #334155;
-    --cinza:     #64748b;
-    --cinza-clr: #e2e8f0;
-    --branco:    #ffffff;
+  /* ===== Modal (carnê) ===== */
+  .modal-backdrop {
+    position: fixed; inset: 0; z-index: 1000;
+    background: rgba(15,23,42,.6);
+    display: none; align-items: center; justify-content: center;
+    padding: 20px; overflow-y: auto;
   }
-
-  html { -webkit-text-size-adjust: 100%; }
-
-  body {
-    font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
-    background: linear-gradient(135deg, #c7d2fe 0%, #dbeafe 100%);
-    padding: 20px 10px 40px;
-    color: var(--preto);
-    -webkit-font-smoothing: antialiased;
+  .modal-backdrop.open { display: flex; }
+  .modal {
+    background: #fff; border-radius: var(--radius-md);
+    width: 100%; max-width: 780px;
+    box-shadow: var(--sombra-lg);
+    max-height: 90vh; overflow-y: auto;
   }
-
-  /* ===== Toolbar (não imprime) ===== */
-  .toolbar {
-    max-width: 210mm;
-    margin: 0 auto 14px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
+  .modal-header {
+    padding: 18px 22px; border-bottom: 1px solid var(--cinza-200);
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    position: sticky; top: 0; background: #fff; z-index: 2;
   }
-  .btn {
-    font: inherit; font-size: 13px; font-weight: 700;
-    color: #fff;
-    border: 0; border-radius: 999px;
-    padding: 10px 20px; cursor: pointer;
-    display: inline-flex; align-items: center; gap: 6px;
-    transition: transform .15s, box-shadow .18s;
+  .modal-header h3 { font-size: 17px; font-weight: 800; }
+  .modal-header p { font-size: 12.5px; color: var(--cinza-500); margin-top: 2px; }
+  .modal-body { padding: 22px; }
+  .modal-footer {
+    padding: 16px 22px; border-top: 1px solid var(--cinza-200);
+    display: flex; justify-content: flex-end; gap: 10px;
+    position: sticky; bottom: 0; background: #fff;
   }
-  .btn:hover { transform: translateY(-1px); }
-
-  .btn--salvar {
-    background: linear-gradient(135deg, #16a34a, #22c55e);
-    box-shadow: 0 4px 12px rgba(22,163,74,.3);
+  .modal-close {
+    width: 34px; height: 34px; border-radius: 8px;
+    border: 1px solid var(--cinza-200); background: #fff;
+    cursor: pointer; display: grid; place-items: center;
+    color: var(--preto-700); transition: background .18s;
   }
-  .btn--salvar:hover { box-shadow: 0 6px 16px rgba(22,163,74,.4); }
+  .modal-close:hover { background: var(--cinza-100); }
 
-  .btn--imprimir {
-    background: linear-gradient(135deg, #6d28d9, #8b5cf6);
-    box-shadow: 0 4px 12px rgba(109,40,217,.3);
+  /* ===== Carnê ===== */
+  .carne-header {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; flex-wrap: wrap;
+    padding: 16px; margin-bottom: 16px;
+    background: linear-gradient(135deg, var(--azul-700), var(--azul-900));
+    color: #fff; border-radius: var(--radius-md);
   }
-  .btn--imprimir:hover { box-shadow: 0 6px 16px rgba(109,40,217,.4); }
+  .carne-header h4 { font-size: 15px; font-weight: 700; }
+  .carne-header p { font-size: 12.5px; opacity: .85; margin-top: 2px; }
+  .carne-header .info { display: flex; flex-direction: column; gap: 2px; }
 
-  .btn--cancelar {
+  .carne-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr);
+    gap: 12px; margin-bottom: 16px;
+  }
+  .carne-parcela {
+    border: 1px solid var(--cinza-200);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
     background: #fff;
-    color: #475569;
-    box-shadow: 0 3px 10px rgba(15,23,42,.1);
+    display: flex; flex-direction: column; gap: 6px;
+    transition: box-shadow .18s;
   }
-  .btn--cancelar:hover { background: #f1f5f9; }
+  .carne-parcela:hover { box-shadow: var(--sombra-md); }
+  .carne-parcela .parc-num {
+    font-size: 11px; text-transform: uppercase; letter-spacing: .06em;
+    color: var(--cinza-500); font-weight: 700;
+  }
+  .carne-parcela .parc-valor { font-size: 18px; font-weight: 800; color: var(--preto-900); letter-spacing: -.02em; }
+  .carne-parcela .parc-venc { font-size: 12px; color: var(--cinza-500); }
+  .carne-parcela .parc-status { align-self: flex-start; margin-top: 4px; }
+  .carne-parcela.pago { border-left: 4px solid var(--verde-600); }
+  .carne-parcela.pendente { border-left: 4px solid var(--amarelo-600); }
+  .carne-parcela.atrasado { border-left: 4px solid var(--vermelho-600); }
+  .carne-parcela .parc-acoes { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
 
-  .btn--danger {
-    background: linear-gradient(135deg, #dc2626, #ef4444);
-    box-shadow: 0 4px 12px rgba(220,38,38,.3);
+  .carne-resumo {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 10px; margin-bottom: 16px;
   }
+  .carne-resumo .item {
+    padding: 10px 12px; border-radius: var(--radius-sm);
+    background: var(--cinza-100); text-align: center;
+  }
+  .carne-resumo .item strong { display: block; font-size: 15px; color: var(--preto-900); font-weight: 800; }
+  .carne-resumo .item span { font-size: 11px; color: var(--cinza-500); text-transform: uppercase; letter-spacing: .04em; }
 
-  .toolbar__spacer { flex: 1; }
-
-  .toolbar__titulo {
-    flex: 1 1 260px;
-    font-size: 13px;
-    color: #5b21b6;
-    font-weight: 600;
-  }
-  .toolbar__titulo strong { color: #be123c; }
-
-  /* ===== Folha A4 ===== */
-  .folha {
-    width: 210mm;
-    height: 297mm;
-    margin: 0 auto;
-    background: #fff;
-    border-radius: 6px;
-    box-shadow: 0 12px 32px rgba(30,58,138,.2);
-    padding: 8mm 10mm;
-    display: flex;
-    flex-direction: column;
-    gap: 2.5mm;
-    position: relative;
-  }
-
-  /* ===== Cabeçalho ===== */
-  .cabecalho {
-    border: 2px solid var(--azul-med);
-    border-radius: 6px;
-    padding: 3mm 5mm;
-    text-align: center;
-    background: linear-gradient(135deg, #ffffff 0%, #eff6ff 100%);
-    position: relative;
-    overflow: hidden;
-  }
-  .cabecalho::before {
-    content: "";
-    position: absolute; top: 0; left: 0; right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, #6d28d9, #3b82f6, #10b981);
-  }
-  .cabecalho::after {
-    content: "";
-    position: absolute; bottom: 0; left: 0; right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, #f43f5e, #f97316, #facc15);
-  }
-  .cabecalho__titulo {
-    font-size: 15pt; font-weight: 900; color: var(--azul);
-    letter-spacing: .02em; text-transform: uppercase; line-height: 1.1;
-    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-  }
-  .cabecalho__subtitulo {
-    font-size: 10pt; font-weight: 800; color: var(--laranja);
-    letter-spacing: .1em; text-transform: uppercase; margin-top: 1mm;
-  }
-  .cabecalho__contatos {
-    display: flex; justify-content: center; align-items: center;
-    gap: 6mm; margin-top: 2mm;
-    font-size: 8pt; font-weight: 600; color: var(--preto); flex-wrap: wrap;
-  }
-  .cabecalho__contatos .item { display: inline-flex; align-items: center; gap: 4px; }
-  .cabecalho__contatos svg { color: var(--azul-med); flex-shrink: 0; }
-
-  /* ===== Título ===== */
-  .titulo-ficha {
-    align-self: center;
-    padding: 1.6mm 12mm;
-    border-radius: 999px;
-    background: linear-gradient(135deg, #1d4ed8, #1e3a8a);
-    color: #fff;
-    font-size: 11pt; font-weight: 900;
-    letter-spacing: .16em; text-transform: uppercase;
-    box-shadow: 0 3px 10px rgba(30,58,138,.25);
-    margin: 1mm 0;
-  }
-
-  /* ===== Barra ===== */
-  .barra {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 1.6mm 3mm;
-    background: var(--azul-clr);
-    border: 1px solid #bfdbfe;
-    border-radius: 4px;
-    font-size: 9pt; font-weight: 700; color: var(--azul);
-  }
-  .barra .campo { display: inline-flex; align-items: center; gap: 4px; }
-  .barra input {
-    border: 0; border-bottom: 1.2px dotted var(--cinza);
-    background: transparent; font: inherit; font-weight: 800;
-    color: var(--preto); text-align: center;
-    padding: 0 3px; min-width: 26mm; height: 13px;
-    outline: none;
-  }
-  .barra input:focus { border-bottom-color: var(--azul-med); }
-  .barra input[readonly] { color: var(--cinza-esc); }
-
-  /* ===== Seções ===== */
-  .secao {
-    border: 1px solid var(--cinza-clr);
-    border-radius: 4px;
-    overflow: hidden;
-  }
-  .secao__titulo {
-    background: linear-gradient(135deg, var(--azul-med), var(--azul));
-    color: #fff;
-    padding: 1.4mm 3mm;
-    font-size: 9.5pt; font-weight: 800;
-    letter-spacing: .03em; text-transform: uppercase;
-    display: flex; align-items: center; gap: 6px;
-  }
-  .secao__titulo .num {
-    display: grid; place-items: center;
-    width: 18px; height: 18px; border-radius: 50%;
-    background: #fff; color: var(--azul);
-    font-size: 10px; font-weight: 900; flex-shrink: 0;
-  }
-  .secao__corpo {
-    padding: 2mm 3mm;
-    display: flex; flex-direction: column; gap: 1.6mm;
-  }
-
-  /* ===== Campos ===== */
-  .linha { display: flex; align-items: flex-end; gap: 4mm; flex-wrap: nowrap; }
-  .linha.wrap { flex-wrap: wrap; }
-
-  .campo {
-    display: flex; align-items: flex-end; gap: 4px;
-    min-width: 0; flex: 1;
-  }
-  .campo.f0 { flex: 0 0 auto; }
-  .campo.f2 { flex: 2; }
-
-  .campo > label {
-    font-size: 8pt; font-weight: 700; color: var(--preto);
-    white-space: nowrap; flex-shrink: 0;
-  }
-  .campo > input,
-  .campo > select {
-    flex: 1; min-width: 40px; height: 15px;
-    border: 0; border-bottom: 1.2px dotted var(--cinza);
-    background: transparent; font: inherit; font-weight: 700;
-    font-size: 8.5pt; color: var(--preto);
-    padding: 0 2px; outline: none;
-    text-transform: uppercase;
-  }
-  .campo > input:focus,
-  .campo > select:focus { border-bottom-color: var(--azul-med); }
-  .campo > input.curto { min-width: 22px; max-width: 30px; text-align: center; }
-  .campo > input.medio { min-width: 45px; max-width: 60px; }
-
-  .bloco { display: flex; flex-direction: column; gap: 1px; width: 100%; }
-  .bloco > label { font-size: 8pt; font-weight: 700; color: var(--preto); }
-  .bloco > input {
-    height: 14px; border: 0; border-bottom: 1.2px dotted var(--cinza);
-    background: transparent; font: inherit; font-weight: 700;
-    font-size: 8.5pt; color: var(--preto);
-    padding: 0 2px; outline: none;
-    text-transform: uppercase;
-  }
-  .bloco > input:focus { border-bottom-color: var(--azul-med); }
-
-  /* Checkbox customizado */
-  .check {
-    display: inline-flex; align-items: center; gap: 5px;
-    font-size: 8pt; font-weight: 600; color: var(--preto);
-    white-space: nowrap; cursor: pointer;
-  }
-  .check input[type="checkbox"],
-  .check input[type="radio"] {
-    appearance: none; -webkit-appearance: none;
-    width: 11px; height: 11px;
-    border: 1.3px solid var(--preto); border-radius: 2px;
-    background: #fff; flex-shrink: 0; position: relative;
-    cursor: pointer; margin: 0;
-  }
-  .check input[type="radio"] { border-radius: 50%; }
-  .check input:checked::after {
-    content: "";
-    position: absolute; inset: 1px;
-    background: var(--azul-med); border-radius: 1px;
-  }
-  .check input[type="radio"]:checked::after { border-radius: 50%; }
-
-  .checks { display: flex; flex-wrap: wrap; gap: 3mm 5mm; align-items: center; }
-
-  /* ===== Tabela ===== */
-  .tabela { width: 100%; border-collapse: collapse; font-size: 8pt; border-radius: 4px; overflow: hidden; }
-  .tabela thead th {
-    background: linear-gradient(135deg, var(--azul-med), var(--azul));
-    color: #fff; font-size: 8pt; font-weight: 800;
-    text-align: left; padding: 1.4mm 2.5mm;
-    text-transform: uppercase; letter-spacing: .03em;
-  }
-  .tabela tbody td {
-    padding: 0 2.5mm; border-bottom: 1px solid var(--cinza-clr);
-    height: 6.5mm; font-weight: 600; vertical-align: middle;
-  }
-  .tabela tbody tr:last-child td { border-bottom: 1px solid var(--cinza-clr); }
-  .tabela tbody tr:nth-child(even) { background: #f8fafc; }
-  .tabela input {
-    width: 100%; height: 100%;
-    border: 0; background: transparent;
-    font: inherit; font-weight: 600; padding: 0;
-    outline: none; text-transform: uppercase;
-  }
-  .tabela input:focus { border-bottom: 1.2px dotted var(--azul-med); }
-
-  .aviso {
-    padding: 1.4mm 2.5mm;
-    border-left: 3px solid #ca8a04;
-    background: #fef9c3;
-    color: #78350f;
-    font-size: 7.5pt; font-weight: 600; border-radius: 3px;
-  }
-
-  /* ===== Termo ===== */
-  .termo {
-    padding: 1.8mm 3mm;
-    border: 1px solid var(--cinza-clr);
-    border-left: 3px solid var(--azul-med);
-    border-radius: 4px;
-    background: #eff6ff;
-    font-size: 7.5pt; line-height: 1.4; color: var(--cinza-esc);
-  }
-  .termo strong { color: var(--azul); font-weight: 800; }
-
-  /* ===== Assinatura ===== */
-  .assinatura {
-    margin-top: auto;
-    display: flex; flex-direction: column; align-items: center;
-    gap: 2mm; padding-top: 4mm;
-  }
-  .assinatura__local {
-    display: flex; align-items: flex-end; gap: 5px;
-    font-size: 9pt; font-weight: 600; color: var(--preto);
-    flex-wrap: wrap; justify-content: center;
-  }
-  .assinatura__local input {
-    border: 0; border-bottom: 1.2px dotted var(--cinza);
-    background: transparent; font: inherit; font-weight: 700;
-    text-align: center; padding: 0 3px;
-    min-width: 22mm; height: 12px; outline: none;
-  }
-  .assinatura__local input.largo { min-width: 40mm; }
-  .assinatura__local input:focus { border-bottom-color: var(--azul-med); }
-
-  .assinatura__linha {
-    width: 90mm; height: 1px;
-    background: var(--preto);
-    margin-top: 4mm;
-  }
-  .assinatura__nome {
-    font-size: 9pt; font-weight: 800;
-    letter-spacing: .06em; text-transform: uppercase; color: var(--preto);
-  }
-
-  /* ===== Aviso de status (salvo) ===== */
-  .toast {
-    position: fixed;
-    bottom: 24px; right: 24px;
-    padding: 14px 20px;
-    border-radius: 10px;
-    background: #16a34a; color: #fff;
-    font-weight: 700; font-size: 14px;
-    box-shadow: 0 12px 28px rgba(0,0,0,.2);
-    z-index: 9999;
-    opacity: 0;
-    transform: translateY(12px);
-    transition: opacity .3s, transform .3s;
-    pointer-events: none;
-  }
-  .toast.show { opacity: 1; transform: none; }
-  .toast.erro { background: #dc2626; }
-
-  /* ===== Impressão ===== */
-  @media print {
-    @page { size: A4; margin: 0; }
-    html, body { background: #fff; padding: 0; margin: 0; }
-    .no-print { display: none !important; }
-    .folha {
-      width: 210mm;
-      height: 297mm;
-      margin: 0;
-      padding: 8mm 10mm;
-      border-radius: 0;
-      box-shadow: none;
-    }
-    input, select, textarea { caret-color: transparent; }
-    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  @media (max-width: 700px) {
+    .carne-grid { grid-template-columns: 1fr; }
+    .carne-resumo { grid-template-columns: repeat(2, 1fr); }
   }
 </style>
 </head>
 <body>
 
-<!-- Toolbar -->
-<div class="toolbar no-print">
-  <button class="btn btn--salvar" onclick="salvarFicha()">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
-      <polyline points="17 21 17 13 7 13 7 21"/>
-      <polyline points="7 3 7 8 15 8"/>
-    </svg>
-    Salvar inscrição
-  </button>
-  <button class="btn btn--imprimir" onclick="window.print()">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <polyline points="6 9 6 2 18 2 18 9"/>
-      <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
-      <rect x="6" y="14" width="12" height="8"/>
-    </svg>
-    Imprimir ficha
-  </button>
-  <button class="btn btn--cancelar" onclick="voltarAdmin()">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <line x1="19" y1="12" x2="5" y2="12"/>
-      <polyline points="12 19 5 12 12 5"/>
-    </svg>
-    Voltar
-  </button>
-  <p class="toolbar__titulo" id="tituloModo">Nova inscrição · preencha os campos e clique em <strong>Salvar</strong></p>
-</div>
+<div class="app" id="app">
 
-<!-- Folha -->
-<div class="folha">
-
-  <!-- Cabeçalho -->
-  <header class="cabecalho">
-    <div class="cabecalho__titulo">
-      <svg width="22" height="22" viewBox="0 0 100 90" fill="none">
-        <defs>
-          <linearGradient id="gRoxo" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#8b5cf6"/><stop offset="100%" stop-color="#6d28d9"/></linearGradient>
-          <linearGradient id="gRosa" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#f43f5e"/><stop offset="100%" stop-color="#e11d48"/></linearGradient>
-          <linearGradient id="gVerde" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#10b981"/><stop offset="100%" stop-color="#059669"/></linearGradient>
-          <linearGradient id="gLinha" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#ec4899"/><stop offset="50%" stop-color="#8b5cf6"/><stop offset="100%" stop-color="#3b82f6"/></linearGradient>
-        </defs>
-        <path d="M50 12 L82 68 L18 68 Z" stroke="url(#gLinha)" stroke-width="4" stroke-linejoin="round" fill="none"/>
-        <circle cx="50" cy="12" r="7.5" fill="url(#gRoxo)"/>
-        <circle cx="18" cy="68" r="7.5" fill="url(#gRosa)"/>
-        <circle cx="82" cy="68" r="7.5" fill="url(#gVerde)"/>
-        <path d="M44 41 L50 36 L56 41 L50 45 Z" fill="#7c3aed"/>
-      </svg>
-      BANCA DE ESTUDO &amp; REFORÇO ESCOLAR
-    </div>
-    <div class="cabecalho__subtitulo">Tríade Conexão</div>
-    <div class="cabecalho__contatos">
-      <span class="item">
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
-        WhatsApp: (79) 98816-0217
-      </span>
-      <span class="item">
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="3.5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>
-        Instagram: conexao.triade
-      </span>
-      <span class="item">
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-        Rua 16, Nº 365 — Bairro Conjunto Fernando Collor
-      </span>
-    </div>
-  </header>
-
-  <div class="titulo-ficha">Ficha de Inscrição</div>
-
-  <!-- Barra Data / Nº -->
-  <div class="barra">
-    <span class="campo">Data da Inscrição: <input type="text" id="f_data" placeholder="___ / ___ / ______" /></span>
-    <span class="campo">Matrícula Nº: <input type="text" id="f_numero" readonly /></span>
-  </div>
-
-  <!-- 1. Dados do Aluno -->
-  <section class="secao">
-    <div class="secao__titulo"><span class="num">1</span> Dados do Aluno(a)</div>
-    <div class="secao__corpo">
-      <div class="bloco">
-        <label>Nome Completo:</label>
-        <input id="f_nome" />
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-logo">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg>
       </div>
-      <div class="linha">
-        <div class="campo f2">
-          <label>Data de Nascimento:</label>
-          <input class="curto" id="f_dia" maxlength="2" />
-          <label>/</label>
-          <input class="curto" id="f_mes" maxlength="2" />
-          <label>/</label>
-          <input class="medio" id="f_ano" maxlength="4" />
+      <div class="brand-text"><strong>Tríade Conexão</strong><span>Painel Administrador</span></div>
+    </div>
+
+    <div class="nav-title">Principal</div>
+    <div class="nav-item active" data-tab="visao"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg><span>Visão Geral</span></div>
+    <div class="nav-item" data-tab="turmas"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg><span>Turmas</span></div>
+    <div class="nav-item" data-tab="professores"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Professores</span></div>
+    <div class="nav-item" data-tab="alunos"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg><span>Alunos</span></div>
+    <div class="nav-item" data-tab="inscricoes"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg><span>Inscrições</span></div>
+    <div class="nav-item" data-tab="planos"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12V8H6a2 2 0 0 1 0-4h12v4"/><path d="M4 6v12a2 2 0 0 0 2 2h14v-4"/><path d="M18 12a2 2 0 0 0 0 4h4v-4z"/></svg><span>Planos</span></div>
+
+    <div class="nav-title">Gestão</div>
+    <div class="nav-item" data-tab="financeiro"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg><span>Financeiro</span></div>
+    <div class="nav-item" data-tab="boletim"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Boletim</span></div>
+    <div class="nav-item" data-tab="desempenho"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><span>Desempenho</span></div>
+    <div class="nav-item" data-tab="mural"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg><span>Mural de Avisos</span></div>
+
+    <div class="nav-title">Conta</div>
+    <div class="nav-item" data-tab="perfil"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>Perfil</span></div>
+    <div class="nav-item" onclick="logout()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg><span>Sair</span></div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <button class="icon-btn" id="menuBtn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+      <div class="page-title"><h1 id="pageTitle">Visão Geral</h1><p id="pageSub">Resumo geral da plataforma</p></div>
+      <div class="user-chip" data-tab="perfil">
+        <div class="avatar" id="chipAvatar">AD</div>
+        <div class="info"><strong>Administrador</strong><span>admin@triade.com</span></div>
+      </div>
+    </header>
+
+    <main class="content">
+
+      <!-- ============ VISÃO GERAL ============ -->
+      <section class="tab active" id="tab-visao">
+        <div class="grid grid-4" style="margin-bottom:16px;">
+          <div class="card floating stat"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div><div><div class="val" id="kpiAlunos">0</div><div class="lbl">Alunos ativos</div></div></div>
+          <div class="card floating stat"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg></div><div><div class="val" id="kpiProf">0</div><div class="lbl">Professores</div></div></div>
+          <div class="card floating stat"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg></div><div><div class="val" id="kpiTurmas">0</div><div class="lbl">Turmas ativas</div></div></div>
+          <div class="card floating stat"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><div><div class="val" id="kpiReceita">R$ 0</div><div class="lbl">Receita do mês</div></div></div>
         </div>
-        <div class="campo f0">
-          <label>Idade:</label>
-          <input class="curto" id="f_idade" maxlength="2" />
-          <label>anos</label>
-        </div>
-        <div class="campo f0">
-          <label>Turno Escolar:</label>
-          <div class="checks">
-            <label class="check"><input type="checkbox" name="f_turno_escolar" value="Manhã" /> Manhã</label>
-            <label class="check"><input type="checkbox" name="f_turno_escolar" value="Tarde" /> Tarde</label>
+
+        <div class="grid grid-2">
+          <div class="card floating">
+            <div class="card-title">Pagamentos pendentes</div>
+            <div class="card-sub">Mensalidades aguardando confirmação</div>
+            <div class="table-wrap"><table id="tabPendentesVisao"><thead><tr><th>Aluno</th><th>Plano</th><th>Valor</th><th>Vencimento</th></tr></thead><tbody></tbody></table></div>
+          </div>
+          <div class="card floating">
+            <div class="card-title">Avisos recentes</div>
+            <div class="card-sub">Últimas publicações no mural</div>
+            <div id="avisosVisao"></div>
           </div>
         </div>
-      </div>
-      <div class="linha">
-        <div class="campo"><label>Escola onde estuda:</label><input id="f_escola" /></div>
-      </div>
-      <div class="linha">
-        <div class="campo"><label>Série / Ano:</label><input id="f_serie" /></div>
-      </div>
-      <div class="linha wrap">
-        <label style="font-size:8pt;font-weight:700;color:var(--preto);white-space:nowrap;">Nível Escolar:</label>
-        <div class="checks">
-          <label class="check"><input type="checkbox" name="f_nivel" value="Anos Iniciais" /> Anos Iniciais (1º ao 5º ano)</label>
-          <label class="check"><input type="checkbox" name="f_nivel" value="Anos Finais" /> Anos Finais (6º ao 9º ano)</label>
-          <label class="check"><input type="checkbox" name="f_nivel" value="Ensino Médio" /> Ensino Médio</label>
-        </div>
-      </div>
-      <div class="linha wrap">
-        <label style="font-size:8pt;font-weight:700;color:var(--preto);">Possui alguma alergia, condição médica ou necessidade específica?</label>
-        <div class="checks">
-          <label class="check"><input type="checkbox" name="f_alergia" value="Não" /> Não</label>
-          <label class="check"><input type="checkbox" name="f_alergia" value="Sim" /> Sim. Qual?</label>
-          <input id="f_alergia_desc" style="flex:1;min-width:80px;height:12px;border:0;border-bottom:1.2px dotted var(--cinza);background:transparent;font:inherit;font-weight:600;font-size:8pt;padding:0 2px;outline:none;text-transform:uppercase;" />
-        </div>
-      </div>
-    </div>
-  </section>
+      </section>
 
-  <!-- 2. Responsável -->
-  <section class="secao">
-    <div class="secao__titulo"><span class="num">2</span> Dados do Responsável Legal</div>
-    <div class="secao__corpo">
-      <div class="bloco">
-        <label>Nome do Responsável:</label>
-        <input id="f_responsavel" />
-      </div>
-      <div class="linha wrap">
-        <label style="font-size:8pt;font-weight:700;color:var(--preto);">Grau de Parentesco:</label>
-        <div class="checks">
-          <label class="check"><input type="checkbox" name="f_parentesco" value="Mãe" /> Mãe</label>
-          <label class="check"><input type="checkbox" name="f_parentesco" value="Pai" /> Pai</label>
-          <label class="check"><input type="checkbox" name="f_parentesco" value="Avô / Avó" /> Avô / Avó</label>
-          <label class="check"><input type="checkbox" name="f_parentesco" value="Outro" /> Outro</label>
+      <!-- ============ TURMAS ============ -->
+      <section class="tab" id="tab-turmas">
+        <div class="sec-header">
+          <div><h2>Turmas</h2><p>Cadastro e gestão das turmas</p></div>
+          <div class="actions"><button class="btn btn-primary" onclick="novaTurma()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Nova turma</button></div>
         </div>
-      </div>
-      <div class="linha">
-        <div class="campo"><label>CPF:</label><input id="f_cpf" /></div>
-        <div class="campo"><label>RG:</label><input id="f_rg" /></div>
-      </div>
-      <div class="linha">
-        <div class="campo">
-          <label>WhatsApp Principal:</label><label>(79)</label>
-          <input id="f_whatsapp" />
+        <div class="card" id="formTurma" style="display:none;margin-bottom:16px;">
+          <div class="card-title" id="tituloFormTurma">Cadastrar turma</div>
+          <div class="card-sub">Dados básicos da turma</div>
+          <form class="form-grid" onsubmit="salvarTurma(event)">
+            <input type="hidden" id="turmaId" />
+            <div class="field"><label>Nome</label><input id="turmaNome" required placeholder="Ex.: 9º Ano A" /></div>
+            <div class="field"><label>Série / Nível</label>
+              <select id="turmaSerie" required>
+                <option value="">Selecione</option>
+                <optgroup label="Fundamental"><option>6º Ano</option><option>7º Ano</option><option>8º Ano</option><option>9º Ano</option></optgroup>
+                <optgroup label="Médio"><option>1º EM</option><option>2º EM</option><option>3º EM</option></optgroup>
+              </select>
+            </div>
+            <div class="field"><label>Turno</label><select id="turmaTurno" required><option value="">Selecione</option><option>Manhã</option><option>Tarde</option><option>Noite</option></select></div>
+            <div class="field"><label>Professor</label><select id="turmaProfessor" required><option value="">Selecione</option></select></div>
+            <div class="field"><label>Capacidade</label><input id="turmaCapacidade" type="number" min="1" required /></div>
+            <div class="field"><label>Sala</label><input id="turmaSala" /></div>
+            <div class="field"><label>Status</label><select id="turmaStatus"><option>Ativa</option><option>Inativa</option></select></div>
+            <div class="form-actions"><button type="button" class="btn btn-ghost" onclick="fecharForm('formTurma')">Cancelar</button><button type="submit" class="btn btn-primary">Salvar turma</button></div>
+          </form>
         </div>
-        <div class="campo">
-          <label>Contato Emergência:</label><label>(79)</label>
-          <input id="f_emergencia" />
-        </div>
-      </div>
-      <div class="bloco">
-        <label>Endereço Residencial:</label>
-        <input id="f_endereco" />
-      </div>
-    </div>
-  </section>
+        <div class="table-wrap"><table id="tabTurmas">
+          <thead><tr><th>Turma</th><th>Série</th><th>Turno</th><th>Professor</th><th>Alunos</th><th>Status</th><th>Ações</th></tr></thead>
+          <tbody></tbody>
+        </table></div>
+      </section>
 
-  <!-- 3. Plano e Modalidade -->
-  <section class="secao">
-    <div class="secao__titulo"><span class="num">3</span> Plano e Modalidade no Reforço Escolar</div>
-    <div class="secao__corpo">
-      <div class="linha wrap">
-        <label style="font-size:8pt;font-weight:700;color:var(--preto);">Turno no Reforço:</label>
-        <div class="checks">
-          <label class="check"><input type="checkbox" name="f_turno_reforco" value="Manhã" /> Manhã</label>
-          <label class="check"><input type="checkbox" name="f_turno_reforco" value="Tarde" /> Tarde</label>
-          <label class="check"><input type="checkbox" name="f_turno_reforco" value="Noite (especial)" /> Noite (casos extremos)</label>
+      <!-- ============ PROFESSORES ============ -->
+      <section class="tab" id="tab-professores">
+        <div class="sec-header">
+          <div><h2>Professores</h2><p>Corpo docente</p></div>
+          <div class="actions"><button class="btn btn-primary" onclick="novoProfessor()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Novo professor</button></div>
         </div>
-      </div>
-      <div class="linha wrap">
-        <label style="font-size:8pt;font-weight:700;color:var(--preto);">Dias da Semana:</label>
-        <div class="checks">
-          <label class="check"><input type="checkbox" name="f_dias" value="Segunda" /> Segunda</label>
-          <label class="check"><input type="checkbox" name="f_dias" value="Terça" /> Terça</label>
-          <label class="check"><input type="checkbox" name="f_dias" value="Quarta" /> Quarta</label>
-          <label class="check"><input type="checkbox" name="f_dias" value="Quinta" /> Quinta</label>
-          <label class="check"><input type="checkbox" name="f_dias" value="Sexta" /> Sexta</label>
+        <div class="card" id="formProf" style="display:none;margin-bottom:16px;">
+          <div class="card-title" id="tituloFormProf">Cadastrar professor</div>
+          <form class="form-grid" onsubmit="salvarProfessor(event)">
+            <input type="hidden" id="profId" />
+            <div class="field"><label>Nome</label><input id="profNome" required /></div>
+            <div class="field"><label>E-mail</label><input id="profEmail" type="email" required /></div>
+            <div class="field"><label>Celular</label><input id="profCelular" type="tel" required /></div>
+            <div class="field"><label>Graduação</label><input id="profGrad" required /></div>
+            <div class="field"><label>Especialização <span class="hint">(opcional)</span></label><input id="profEsp" /></div>
+            <div class="field"><label>Disciplina</label>
+              <select id="profDisciplina" required>
+                <option value="">Selecione</option>
+                <option>Matemática</option><option>Português</option><option>História</option>
+                <option>Geografia</option><option>Ciências</option><option>Física</option>
+                <option>Química</option><option>Biologia</option><option>Inglês</option>
+              </select>
+            </div>
+            <div class="field"><label>Status</label><select id="profStatus"><option>Ativo</option><option>Inativo</option><option>Férias</option></select></div>
+            <div class="form-actions"><button type="button" class="btn btn-ghost" onclick="fecharForm('formProf')">Cancelar</button><button type="submit" class="btn btn-primary">Salvar professor</button></div>
+          </form>
         </div>
-      </div>
-      <div class="linha wrap">
-        <label style="font-size:8pt;font-weight:700;color:var(--preto);">Serviços Contratados:</label>
-        <div class="checks">
-          <label class="check"><input type="checkbox" name="f_servicos" value="Tarefas de Casa" /> Acompanhamento de Tarefas de Casa</label>
-          <label class="check"><input type="checkbox" name="f_servicos" value="Alfabetização" /> Alfabetização / Letramento</label>
-          <label class="check"><input type="checkbox" name="f_servicos" value="Reforço Específico" /> Reforço Específico (Português, Matemática, etc.)</label>
-          <label class="check"><input type="checkbox" name="f_servicos" value="Preparatório" /> Preparatório para Provas</label>
-        </div>
-      </div>
-    </div>
-  </section>
+        <div class="table-wrap"><table id="tabProfessores">
+          <thead><tr><th>Professor</th><th>Disciplina</th><th>Graduação</th><th>Celular</th><th>Turmas</th><th>Status</th><th>Ações</th></tr></thead>
+          <tbody></tbody>
+        </table></div>
+      </section>
 
-  <!-- 4. Valores -->
-  <section class="secao">
-    <div class="secao__titulo"><span class="num">4</span> Tabela de Valores e Condições de Pagamento</div>
-    <div class="secao__corpo">
-      <table class="tabela">
-        <thead>
-          <tr><th>Categoria / Nível Escolar</th><th>Frequência</th><th>Mensalidade</th></tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><input id="f_cat1" /></td>
-            <td><input id="f_freq1" /></td>
-            <td><input id="f_val1" /></td>
-          </tr>
-          <tr><td><input id="f_cat2" /></td><td><input id="f_freq2" /></td><td><input id="f_val2" /></td></tr>
-          <tr><td><input id="f_cat3" /></td><td><input id="f_freq3" /></td><td><input id="f_val3" /></td></tr>
-        </tbody>
-      </table>
-      <div class="aviso"><strong>Desconto Irmãos:</strong> 10% de desconto na mensalidade do segundo filho.</div>
-      <div class="linha">
-        <div class="campo">
-          <label>Dia de Vencimento:</label>
-          <input class="medio" id="f_vencimento" maxlength="2" />
-          <label>de cada mês.</label>
+      <!-- ============ ALUNOS ============ -->
+      <section class="tab" id="tab-alunos">
+        <div class="sec-header">
+          <div><h2>Alunos</h2><p>Alunos matriculados</p></div>
+          <div class="actions"><button class="btn btn-primary" onclick="novoAluno()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Novo aluno</button></div>
         </div>
-        <div class="campo f0">
-          <label>Forma de Pagamento:</label>
-          <div class="checks">
-            <label class="check"><input type="checkbox" name="f_forma" value="PIX" /> PIX</label>
-            <label class="check"><input type="checkbox" name="f_forma" value="Dinheiro" /> Dinheiro</label>
-            <label class="check"><input type="checkbox" name="f_forma" value="Cartão" /> Cartão</label>
+        <div class="card" id="formAluno" style="display:none;margin-bottom:16px;">
+          <div class="card-title" id="tituloFormAluno">Cadastrar aluno</div>
+          <form class="form-grid" onsubmit="salvarAluno(event)">
+            <input type="hidden" id="alunoId" />
+            <div class="field"><label>Nome</label><input id="alunoNome" required /></div>
+            <div class="field"><label>Nascimento</label><input id="alunoNascimento" type="date" required /></div>
+            <div class="field"><label>Responsável</label><input id="alunoResponsavel" required /></div>
+            <div class="field"><label>Celular do responsável</label><input id="alunoCelular" type="tel" required /></div>
+            <div class="field"><label>Turma</label><select id="alunoTurma" required><option value="">Selecione</option></select></div>
+            <div class="field"><label>Plano</label><select id="alunoPlano" required><option value="">Selecione</option></select></div>
+            <div class="field"><label>Vencimento (dia)</label><input id="alunoVencimento" type="number" min="1" max="31" required /></div>
+            <div class="field"><label>Status</label><select id="alunoStatus"><option>Ativo</option><option>Inativo</option></select></div>
+            <div class="form-actions"><button type="button" class="btn btn-ghost" onclick="fecharForm('formAluno')">Cancelar</button><button type="submit" class="btn btn-primary">Salvar aluno</button></div>
+          </form>
+        </div>
+        <div class="table-wrap"><table id="tabAlunos">
+          <thead><tr><th>Aluno</th><th>Turma</th><th>Plano</th><th>Responsável</th><th>Vencimento</th><th>Status</th><th>Ações</th></tr></thead>
+          <tbody></tbody>
+        </table></div>
+      </section>
+
+      <!-- ============ INSCRIÇÕES ============ -->
+      <section class="tab" id="tab-inscricoes">
+        <div class="sec-header">
+          <div><h2>Inscrições</h2><p>Fichas de inscrição recebidas</p></div>
+          <div class="actions">
+            <button class="btn btn-primary" onclick="novaInscricao()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Nova inscrição
+            </button>
           </div>
         </div>
-      </div>
-    </div>
-  </section>
 
-  <!-- 5. Autorizações -->
-  <section class="secao">
-    <div class="secao__titulo"><span class="num">5</span> Autorizações e Termos</div>
-    <div class="secao__corpo">
-      <div class="bloco">
-        <label>Pessoas autorizadas a buscar o aluno além do responsável:</label>
-      </div>
-      <div class="linha">
-        <div class="campo"><label>1. Nome:</label><input id="f_aut1" /></div>
-        <div class="campo f0"><label>Parentesco:</label><input class="medio" id="f_aut1_parentesco" /></div>
-      </div>
-      <div class="linha">
-        <div class="campo"><label>2. Nome:</label><input id="f_aut2" /></div>
-        <div class="campo f0"><label>Parentesco:</label><input class="medio" id="f_aut2_parentesco" /></div>
-      </div>
-      <div class="linha wrap">
-        <label style="font-size:8pt;font-weight:700;color:var(--preto);">Uso de Imagem:</label>
-        <div class="checks">
-          <span style="font-size:8pt;font-weight:600;">Autorizo o uso de fotos/vídeos em atividades pedagógicas para divulgação?</span>
-          <label class="check"><input type="radio" name="f_imagem" value="SIM" /> SIM</label>
-          <label class="check"><input type="radio" name="f_imagem" value="NÃO" /> NÃO</label>
+        <div class="table-wrap"><table id="tabInscricoes">
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Nº</th>
+              <th>Aluno</th>
+              <th>Série / Nível</th>
+              <th>Responsável</th>
+              <th>WhatsApp</th>
+              <th>Status</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table></div>
+      </section>
+
+      <!-- ============ PLANOS ============ -->
+      <section class="tab" id="tab-planos">
+        <div class="sec-header">
+          <div><h2>Planos</h2><p>Configure os planos semanais</p></div>
+          <div class="actions"><button class="btn btn-primary" onclick="novoPlano()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Novo plano</button></div>
         </div>
-      </div>
-    </div>
-  </section>
+        <div class="card" id="formPlano" style="display:none;margin-bottom:16px;">
+          <div class="card-title" id="tituloFormPlano">Cadastrar plano</div>
+          <form class="form-grid" onsubmit="salvarPlano(event)">
+            <input type="hidden" id="planoId" />
+            <div class="field"><label>Nome</label><input id="planoNome" required placeholder="Ex.: 3 dias na semana" /></div>
+            <div class="field"><label>Dias por semana</label><input id="planoDias" type="number" min="1" max="7" required /></div>
+            <div class="field"><label>Valor (R$)</label><input id="planoValor" type="number" step="0.01" min="0" required /></div>
+            <div class="field"><label>Dia de vencimento</label><input id="planoVencimento" type="number" min="1" max="31" required /></div>
+            <div class="field full"><label>Descrição</label><input id="planoDescricao" /></div>
+            <div class="form-actions"><button type="button" class="btn btn-ghost" onclick="fecharForm('formPlano')">Cancelar</button><button type="submit" class="btn btn-primary">Salvar plano</button></div>
+          </form>
+        </div>
+        <div class="grid grid-3" id="listaPlanos"></div>
+      </section>
 
-  <!-- 6. Declaração -->
-  <section class="secao">
-    <div class="secao__titulo"><span class="num">6</span> Declaração e Assinaturas</div>
-    <div class="secao__corpo">
-      <div class="termo">
-        Declaro que as informações acima são verdadeiras e estou de acordo com os valores, prazos e termos estabelecidos.
-      </div>
-    </div>
-  </section>
+      <!-- ============ FINANCEIRO ============ -->
+      <section class="tab" id="tab-financeiro">
+        <div class="sec-header">
+          <div><h2>Financeiro</h2><p>Confirmação de pagamentos e carnês por cliente</p></div>
+          <div class="actions">
+            <button class="btn btn-ghost" onclick="abrirModalCarnesGerais()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              Ver todos os carnês
+            </button>
+            <button class="btn btn-primary" onclick="gerarPagamentosMes()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Gerar mês atual
+            </button>
+          </div>
+        </div>
 
-  <!-- Assinatura -->
-  <div class="assinatura">
-    <div class="assinatura__local">
-      <span>Nossa Senhora do Socorro / SE,</span>
-      <input id="f_assin_dia" maxlength="2" />
-      <span>de</span>
-      <input id="f_assin_mes" class="largo" />
-      <span>de 2026.</span>
-    </div>
-    <div class="assinatura__linha"></div>
-    <div class="assinatura__nome">Assinatura do Responsável Legal</div>
+        <div class="grid grid-4" style="margin-bottom:16px;">
+          <div class="card floating stat"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><div><div class="val" id="kpiReceitaFin">R$ 0</div><div class="lbl">Receita recebida</div></div></div>
+          <div class="card floating stat"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div><div class="val" id="kpiPendentes">0</div><div class="lbl">Pendentes</div></div></div>
+          <div class="card floating stat"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><div><div class="val" id="kpiPagos">0</div><div class="lbl">Pagos</div></div></div>
+          <div class="card floating stat"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div><div><div class="val" id="kpiAtrasados">0</div><div class="lbl">Atrasados</div></div></div>
+        </div>
+
+        <div class="card floating">
+          <div class="sec-header" style="margin-bottom:12px;">
+            <div><div class="card-title">Pagamentos</div><div class="card-sub" style="margin:0;">Confirme os pagamentos ou abra o carnê do cliente</div></div>
+            <div class="actions">
+              <select id="filtroAnoFin" onchange="renderFinanceiro()" style="padding:9px 12px;border:1px solid var(--cinza-200);border-radius:8px;font-size:13px;"></select>
+              <input type="text" id="buscaFin" placeholder="Buscar aluno..." oninput="filtrarTabela('tabFin','buscaFin')" style="padding:9px 12px;border:1px solid var(--cinza-200);border-radius:8px;font-size:13px;" />
+            </div>
+          </div>
+          <div class="table-wrap"><table id="tabFin">
+            <thead><tr><th>Aluno</th><th>Plano</th><th>Valor</th><th>Vencimento</th><th>Status</th><th>Ações</th></tr></thead>
+            <tbody></tbody>
+          </table></div>
+        </div>
+      </section>
+
+      <!-- ============ BOLETIM ============ -->
+      <section class="tab" id="tab-boletim">
+        <div class="sec-header">
+          <div><h2>Boletim</h2><p>Notas por matéria</p></div>
+          <div class="actions">
+            <select id="selNivel" style="padding:10px 12px;border:1px solid var(--cinza-200);border-radius:8px;font-size:13px;"><option value="fund">Fundamental</option><option value="medio">Médio</option></select>
+            <select id="selTurmaBol" style="padding:10px 12px;border:1px solid var(--cinza-200);border-radius:8px;font-size:13px;"></select>
+            <select id="selBimBol" style="padding:10px 12px;border:1px solid var(--cinza-200);border-radius:8px;font-size:13px;"><option value="1">1º Bimestre</option><option value="2">2º Bimestre</option><option value="3">3º Bimestre</option><option value="4">4º Bimestre</option></select>
+          </div>
+        </div>
+        <div class="card floating">
+          <div class="card-title" id="tituloBol"></div>
+          <div class="card-sub">Clique em uma nota para editar — média mínima 6,0</div>
+          <div class="table-wrap"><table id="tabelaBol"><thead></thead><tbody></tbody></table></div>
+        </div>
+      </section>
+
+      <!-- ============ DESEMPENHO ============ -->
+      <section class="tab" id="tab-desempenho">
+        <div class="sec-header"><div><h2>Desempenho</h2><p>Indicadores calculados em tempo real</p></div></div>
+        <div class="grid grid-3" style="margin-bottom:16px;">
+          <div class="card floating"><div class="card-title">Alunos</div><div class="card-sub">Média por turma</div><div id="desempenhoTurmas" class="donut-list"></div></div>
+          <div class="card floating"><div class="card-title">Professores</div><div class="card-sub">Turmas sob responsabilidade</div><div id="desempenhoProfs" class="donut-list"></div></div>
+          <div class="card floating"><div class="card-title">Plataforma</div><div class="card-sub">Indicadores gerais</div><div id="desempenhoPlataforma" class="donut-list"></div></div>
+        </div>
+        <div class="card floating">
+          <div class="card-title">Resumo por turma</div>
+          <div class="card-sub">Nota média, frequência e status</div>
+          <div class="table-wrap"><table id="tabResumoTurmas">
+            <thead><tr><th>Turma</th><th>Alunos</th><th>Média</th><th>Frequência</th><th>Status</th></tr></thead>
+            <tbody></tbody>
+          </table></div>
+        </div>
+      </section>
+
+      <!-- ============ MURAL ============ -->
+      <section class="tab" id="tab-mural">
+        <div class="sec-header">
+          <div><h2>Mural de Avisos</h2><p>Comunicação integrada</p></div>
+          <div class="actions"><button class="btn btn-primary" onclick="novoAviso()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Novo aviso</button></div>
+        </div>
+        <div class="card" id="formAviso" style="display:none;margin-bottom:16px;">
+          <div class="card-title" id="tituloFormAviso">Publicar aviso</div>
+          <form class="form-grid" onsubmit="salvarAviso(event)">
+            <input type="hidden" id="avisoId" />
+            <div class="field"><label>Título</label><input id="avisoTitulo" required /></div>
+            <div class="field"><label>Público</label><select id="avisoPublico" required><option>Todos</option><option>Alunos</option><option>Professores</option><option>Pais</option></select></div>
+            <div class="field full"><label>Mensagem</label><textarea id="avisoMensagem" rows="4" required></textarea></div>
+            <div class="form-actions"><button type="button" class="btn btn-ghost" onclick="fecharForm('formAviso')">Cancelar</button><button type="submit" class="btn btn-primary">Publicar</button></div>
+          </form>
+        </div>
+        <div class="grid grid-2" id="listaAvisos"></div>
+      </section>
+
+      <!-- ============ PERFIL ============ -->
+      <section class="tab" id="tab-perfil">
+        <div class="perfil-header">
+          <div class="perfil-photo">
+            <span id="perfilInitials" style="font-size:28px;font-weight:700;">AD</span>
+            <img id="perfilImg" alt="" style="display:none;" />
+            <label class="upload" for="perfilFile">Alterar</label>
+            <input type="file" id="perfilFile" accept="image/*" hidden />
+          </div>
+          <div class="perfil-info"><h2 id="perfilNome">Administrador</h2><p id="perfilEmail">admin@triade.com</p></div>
+        </div>
+        <div class="card floating">
+          <div class="card-title">Dados do perfil</div>
+          <div class="card-sub">Informações visíveis em relatórios.</div>
+          <form class="form-grid" onsubmit="salvarPerfil(event)">
+            <div class="field"><label>Nome</label><input id="pNome" /></div>
+            <div class="field"><label>E-mail</label><input id="pEmail" type="email" /></div>
+            <div class="field"><label>Graduação</label><input id="pGrad" placeholder="Ex.: Pedagogia" /></div>
+            <div class="field"><label>Especialização <span class="hint">(opcional)</span></label><input id="pEsp" /></div>
+            <div class="field"><label>Celular</label><input id="pTel" type="tel" placeholder="(00) 00000-0000" /></div>
+            <div class="field"><label>Cargo</label>
+              <select id="pCargo"><option>Administrador</option><option>Coordenador</option><option>Diretor</option></select>
+            </div>
+            <div class="form-actions"><button type="reset" class="btn btn-ghost">Cancelar</button><button type="submit" class="btn btn-primary">Salvar alterações</button></div>
+          </form>
+        </div>
+      </section>
+
+    </main>
   </div>
-
 </div>
 
-<!-- Toast -->
-<div class="toast" id="toast"></div>
+<!-- ============ MODAL: CARNÊ DO ALUNO ============ -->
+<div class="modal-backdrop" id="modalCarne" onclick="if(event.target===this) fecharModalCarne()">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <h3 id="carneTitulo">Carnê do aluno</h3>
+        <p id="carneSubtitulo"></p>
+      </div>
+      <button class="modal-close" onclick="fecharModalCarne()" aria-label="Fechar">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="carne-header">
+        <div class="info">
+          <h4 id="carneNomeAluno"></h4>
+          <p id="carneInfoAluno"></p>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <select id="carneAno" onchange="renderCarneAluno()" style="padding:8px 10px;border:1px solid rgba(255,255,255,.3);border-radius:8px;font-size:13px;background:rgba(255,255,255,.1);color:#fff;"></select>
+          <button class="btn" style="background:#fff;color:var(--azul-700);" onclick="gerarCarneAnual()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Gerar carnê anual
+          </button>
+        </div>
+      </div>
+      <div class="carne-resumo" id="carneResumo"></div>
+      <div class="carne-grid" id="carneGrid"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="fecharModalCarne()">Fechar</button>
+      <button class="btn btn-primary" onclick="imprimirCarne()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+        Imprimir carnê
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MODAL: TODOS OS CARNÊS ============ -->
+<div class="modal-backdrop" id="modalCarnesGerais" onclick="if(event.target===this) fecharModalCarnesGerais()">
+  <div class="modal" style="max-width:900px;">
+    <div class="modal-header">
+      <div>
+        <h3>Visão geral dos carnês</h3>
+        <p>Status consolidado de todos os alunos no ano selecionado</p>
+      </div>
+      <button class="modal-close" onclick="fecharModalCarnesGerais()" aria-label="Fechar">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="sec-header" style="margin-bottom:12px;">
+        <div></div>
+        <div class="actions">
+          <select id="carnesGeraisAno" onchange="renderCarnesGerais()" style="padding:9px 12px;border:1px solid var(--cinza-200);border-radius:8px;font-size:13px;"></select>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table id="tabCarnesGerais">
+          <thead><tr><th>Aluno</th><th>Turma</th><th>Total</th><th>Pago</th><th>Pendente</th><th>Atrasado</th><th>Ações</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="fecharModalCarnesGerais()">Fechar</button>
+    </div>
+  </div>
+</div>
 
 <script src="db.js"></script>
+<script src="shared.js"></script>
 <script>
 /* ============================================================
-   FICHA DE INSCRIÇÃO — página standalone
-   Modos:
-   - sem parâmetro  → nova inscrição
-   - com ?id=xxx    → editar inscrição existente
+   ADMIN — lógica
    ============================================================ */
 
-let inscricaoAtual = null;
+const user = Auth.require('admin');
+if (!user) throw new Error('Sem sessão');
 
-/* ---------- Helpers ---------- */
-function $(id) { return document.getElementById(id); }
+const DISCIPLINAS_FUND = ['Português','Matemática','Ciências','História','Geografia','Inglês','Artes','Ed. Física'];
+const DISCIPLINAS_MEDIO = ['Português','Matemática','Física','Química','Biologia','História','Geografia','Filosofia','Sociologia','Inglês'];
 
-function getQuery(k) {
-  return new URLSearchParams(location.search).get(k);
+initTabs({
+  visao:       ['Visão Geral', 'Resumo geral da plataforma'],
+  turmas:      ['Turmas', 'Cadastro e gestão de turmas'],
+  professores: ['Professores', 'Corpo docente'],
+  alunos:      ['Alunos', 'Alunos matriculados'],
+  inscricoes:  ['Inscrições', 'Fichas de inscrição recebidas'],
+  planos:      ['Planos', 'Planos semanais'],
+  financeiro:  ['Financeiro', 'Confirmação de pagamentos e carnês'],
+  boletim:     ['Boletim', 'Notas por matéria'],
+  desempenho:  ['Desempenho', 'Indicadores'],
+  mural:       ['Mural de Avisos', 'Comunicação integrada'],
+  perfil:      ['Perfil', 'Seus dados']
+});
+preencherUsuarioUI(user);
+initUploadPerfil();
+
+/* ============================================================
+   TURMAS
+   ============================================================ */
+function popularSelectProfessores() {
+  const sel = document.getElementById('turmaProfessor');
+  if (!sel) return;
+  const profs = DB.list('professores');
+  sel.innerHTML = '<option value="">Selecione</option>' +
+    profs.map(p => `<option>${p.nome}</option>`).join('');
 }
 
-function toast(msg, erro = false) {
-  const t = $('toast');
-  t.textContent = msg;
-  t.className = 'toast show' + (erro ? ' erro' : '');
-  setTimeout(() => t.className = 'toast', 2400);
+function novaTurma() {
+  document.getElementById('turmaId').value = '';
+  document.getElementById('tituloFormTurma').textContent = 'Cadastrar turma';
+  document.querySelector('#formTurma form').reset();
+  popularSelectProfessores();
+  abrirForm('formTurma');
 }
 
-function fmtDataBR(iso) {
-  if (!iso) return '';
-  const d = new Date(iso + 'T00:00:00');
-  if (isNaN(d)) return iso;
-  const dd = String(d.getDate()).padStart(2,'0');
-  const mm = String(d.getMonth() + 1).padStart(2,'0');
-  const yyyy = d.getFullYear();
-  return `${dd}/${mm}/${yyyy}`;
+function editarTurma(id) {
+  const t = DB.get('turmas', id);
+  if (!t) return;
+  document.getElementById('turmaId').value = t.id;
+  document.getElementById('tituloFormTurma').textContent = 'Editar turma';
+  popularSelectProfessores();
+  document.getElementById('turmaNome').value = t.nome;
+  document.getElementById('turmaSerie').value = t.serie;
+  document.getElementById('turmaTurno').value = t.turno;
+  document.getElementById('turmaProfessor').value = t.professor;
+  document.getElementById('turmaCapacidade').value = t.capacidade;
+  document.getElementById('turmaSala').value = t.sala || '';
+  document.getElementById('turmaStatus').value = t.status;
+  abrirForm('formTurma');
 }
 
-function gerarNumero() {
-  const lista = DB.list('inscricoes');
-  if (!lista.length) return '0001';
-  const ultimo = lista
-    .map(i => parseInt(String(i.numero || '0').replace(/\D/g, ''), 10) || 0)
-    .sort((a, b) => b - a)[0];
-  return String(ultimo + 1).padStart(4, '0');
-}
-
-function valoresCheckboxes(name) {
-  return Array.from(document.querySelectorAll(`input[name="${name}"]:checked`))
-    .map(cb => cb.value);
-}
-
-function marcarCheckboxes(name, valores) {
-  document.querySelectorAll(`input[name="${name}"]`).forEach(cb => {
-    cb.checked = (valores || []).includes(cb.value);
-  });
-}
-
-/* ---------- Coleta dos dados do formulário ---------- */
-function coletarDados() {
-  const nascimento = ($('f_ano').value && $('f_mes').value && $('f_dia').value)
-    ? `${$('f_ano').value}-${$('f_mes').value.padStart(2,'0')}-${$('f_dia').value.padStart(2,'0')}`
-    : '';
-
-  return {
-    numero: $('f_numero').value.trim(),
-    dataInscricao: new Date().toISOString().slice(0,10),
-    dataInscricaoTexto: $('f_data').value.trim(),
-    nome: $('f_nome').value.trim(),
-    nascimento,
-    idade: $('f_idade').value.trim(),
-    escola: $('f_escola').value.trim(),
-    serie: $('f_serie').value.trim(),
-    turnoEscolar: valoresCheckboxes('f_turno_escolar'),
-    nivel: valoresCheckboxes('f_nivel'),
-    alergia: valoresCheckboxes('f_alergia'),
-    alergia_desc: $('f_alergia_desc').value.trim(),
-    responsavel: $('f_responsavel').value.trim(),
-    parentesco: (valoresCheckboxes('f_parentesco')[0]) || '',
-    cpf: $('f_cpf').value.trim(),
-    rg: $('f_rg').value.trim(),
-    whatsapp: $('f_whatsapp').value.trim(),
-    emergencia: $('f_emergencia').value.trim(),
-    endereco: $('f_endereco').value.trim(),
-    turnoReforco: valoresCheckboxes('f_turno_reforco'),
-    dias: valoresCheckboxes('f_dias'),
-    servicos: valoresCheckboxes('f_servicos'),
-    tabela: [
-      { categoria: $('f_cat1').value.trim(), frequencia: $('f_freq1').value.trim(), mensalidade: $('f_val1').value.trim() },
-      { categoria: $('f_cat2').value.trim(), frequencia: $('f_freq2').value.trim(), mensalidade: $('f_val2').value.trim() },
-      { categoria: $('f_cat3').value.trim(), frequencia: $('f_freq3').value.trim(), mensalidade: $('f_val3').value.trim() }
-    ],
-    vencimento: $('f_vencimento').value.trim(),
-    forma: valoresCheckboxes('f_forma'),
-    aut1: $('f_aut1').value.trim(),
-    aut1_parentesco: $('f_aut1_parentesco').value.trim(),
-    aut2: $('f_aut2').value.trim(),
-    aut2_parentesco: $('f_aut2_parentesco').value.trim(),
-    imagem: document.querySelector('input[name="f_imagem"]:checked')?.value || '',
-    assin_dia: $('f_assin_dia').value.trim(),
-    assin_mes: $('f_assin_mes').value.trim(),
-    status: inscricaoAtual?.status || 'Pendente'
+function salvarTurma(e) {
+  e.preventDefault();
+  const id = document.getElementById('turmaId').value;
+  const serie = document.getElementById('turmaSerie').value;
+  const nivel = /EM/.test(serie) ? 'medio' : 'fund';
+  const dados = {
+    nome: document.getElementById('turmaNome').value.trim(),
+    serie, nivel,
+    turno: document.getElementById('turmaTurno').value,
+    professor: document.getElementById('turmaProfessor').value,
+    capacidade: +document.getElementById('turmaCapacidade').value,
+    sala: document.getElementById('turmaSala').value.trim(),
+    status: document.getElementById('turmaStatus').value
   };
+  if (id) { DB.update('turmas', id, dados); toast('Turma atualizada.'); }
+  else    { DB.create('turmas', dados);       toast('Turma cadastrada.'); }
+  fecharForm('formTurma');
+  renderTurmas(); renderTudo();
 }
 
-/* ---------- Preenche o formulário com dados salvos ---------- */
-function preencherFormulario(d) {
-  $('f_numero').value = d.numero || '';
-  $('f_data').value = d.dataInscricaoTexto || fmtDataBR(d.dataInscricao);
-  $('f_nome').value = d.nome || '';
-
-  // Nascimento
-  if (d.nascimento) {
-    const [y, m, dd] = d.nascimento.split('-');
-    $('f_ano').value = y || '';
-    $('f_mes').value = m || '';
-    $('f_dia').value = dd || '';
-  }
-  $('f_idade').value = d.idade || '';
-  $('f_escola').value = d.escola || '';
-  $('f_serie').value = d.serie || '';
-  $('f_responsavel').value = d.responsavel || '';
-  $('f_cpf').value = d.cpf || '';
-  $('f_rg').value = d.rg || '';
-  $('f_whatsapp').value = d.whatsapp || '';
-  $('f_emergencia').value = d.emergencia || '';
-  $('f_endereco').value = d.endereco || '';
-  $('f_alergia_desc').value = d.alergia_desc || '';
-
-  marcarCheckboxes('f_turno_escolar', d.turnoEscolar);
-  marcarCheckboxes('f_nivel', d.nivel);
-  marcarCheckboxes('f_alergia', d.alergia);
-  marcarCheckboxes('f_parentesco', d.parentesco ? [d.parentesco] : []);
-  marcarCheckboxes('f_turno_reforco', d.turnoReforco);
-  marcarCheckboxes('f_dias', d.dias);
-  marcarCheckboxes('f_servicos', d.servicos);
-  marcarCheckboxes('f_forma', d.forma);
-
-  // Tabela
-  const t = d.tabela || [];
-  for (let i = 0; i < 3; i++) {
-    const item = t[i] || {};
-    $(`f_cat${i+1}`).value  = item.categoria || '';
-    $(`f_freq${i+1}`).value = item.frequencia || '';
-    $(`f_val${i+1}`).value  = item.mensalidade || '';
-  }
-
-  $('f_vencimento').value = d.vencimento || '';
-  $('f_aut1').value = d.aut1 || '';
-  $('f_aut1_parentesco').value = d.aut1_parentesco || '';
-  $('f_aut2').value = d.aut2 || '';
-  $('f_aut2_parentesco').value = d.aut2_parentesco || '';
-  $('f_assin_dia').value = d.assin_dia || '';
-  $('f_assin_mes').value = d.assin_mes || '';
-
-  const img = document.querySelector(`input[name="f_imagem"][value="${d.imagem || ''}"]`);
-  if (img) img.checked = true;
+function excluirTurma(id) {
+  if (!confirm('Excluir esta turma?')) return;
+  DB.remove('turmas', id);
+  toast('Turma excluída.');
+  renderTurmas(); renderTudo();
 }
 
-/* ---------- Salvar ---------- */
-function salvarFicha() {
-  const dados = coletarDados();
-  if (!dados.nome) {
-    toast('Informe o nome do aluno.', true);
-    $('f_nome').focus();
+function renderTurmas() {
+  const turmas = DB.list('turmas');
+  const alunos = DB.list('alunos');
+  const tbody = document.querySelector('#tabTurmas tbody');
+  tbody.innerHTML = turmas.map(t => {
+    const qtd = alunos.filter(a => a.turma === t.nome).length;
+    const cap = qtd >= t.capacidade;
+    const badge = t.status === 'Ativa'
+      ? (cap ? '<span class="badge badge-warn">Lotada</span>' : '<span class="badge badge-ok">Ativa</span>')
+      : '<span class="badge badge-bad">Inativa</span>';
+    return `<tr>
+      <td><strong>${t.nome}</strong></td>
+      <td>${t.serie}</td>
+      <td>${t.turno}</td>
+      <td>${t.professor}</td>
+      <td>${qtd}/${t.capacidade}</td>
+      <td>${badge}</td>
+      <td>
+        <button class="btn btn-ghost btn-sm" onclick="editarTurma('${t.id}')">Editar</button>
+        <button class="btn btn-danger btn-sm" onclick="excluirTurma('${t.id}')">Excluir</button>
+      </td>
+    </tr>`;
+  }).join('') || '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--cinza-500);">Nenhuma turma cadastrada.</td></tr>';
+}
+
+/* ============================================================
+   PROFESSORES
+   ============================================================ */
+function novoProfessor() {
+  document.getElementById('profId').value = '';
+  document.getElementById('tituloFormProf').textContent = 'Cadastrar professor';
+  document.querySelector('#formProf form').reset();
+  abrirForm('formProf');
+}
+
+function editarProfessor(id) {
+  const p = DB.get('professores', id);
+  if (!p) return;
+  document.getElementById('profId').value = p.id;
+  document.getElementById('tituloFormProf').textContent = 'Editar professor';
+  document.getElementById('profNome').value = p.nome;
+  document.getElementById('profEmail').value = p.email;
+  document.getElementById('profCelular').value = p.celular;
+  document.getElementById('profGrad').value = p.graduacao;
+  document.getElementById('profEsp').value = p.especializacao || '';
+  document.getElementById('profDisciplina').value = p.disciplina;
+  document.getElementById('profStatus').value = p.status;
+  abrirForm('formProf');
+}
+
+function salvarProfessor(e) {
+  e.preventDefault();
+  const id = document.getElementById('profId').value;
+  const dados = {
+    nome: document.getElementById('profNome').value.trim(),
+    email: document.getElementById('profEmail').value.trim(),
+    celular: document.getElementById('profCelular').value.trim(),
+    graduacao: document.getElementById('profGrad').value.trim(),
+    especializacao: document.getElementById('profEsp').value.trim(),
+    disciplina: document.getElementById('profDisciplina').value,
+    status: document.getElementById('profStatus').value
+  };
+  if (id) { DB.update('professores', id, dados); toast('Professor atualizado.'); }
+  else    { DB.create('professores', dados);       toast('Professor cadastrado.'); }
+  fecharForm('formProf');
+  renderProfessores(); renderTudo();
+}
+
+function excluirProfessor(id) {
+  if (!confirm('Excluir este professor?')) return;
+  DB.remove('professores', id);
+  toast('Professor excluído.');
+  renderProfessores(); renderTudo();
+}
+
+function renderProfessores() {
+  const profs = DB.list('professores');
+  const turmas = DB.list('turmas');
+  const tbody = document.querySelector('#tabProfessores tbody');
+  tbody.innerHTML = profs.map(p => {
+    const qtd = turmas.filter(t => t.professor === p.nome).length;
+    const cor = p.status === 'Ativo' ? 'badge-ok' : (p.status === 'Férias' ? 'badge-warn' : 'badge-bad');
+    return `<tr>
+      <td><strong>${p.nome}</strong></td>
+      <td>${p.disciplina}</td>
+      <td>${p.graduacao}</td>
+      <td>${p.celular}</td>
+      <td>${qtd}</td>
+      <td><span class="badge ${cor}">${p.status}</span></td>
+      <td>
+        <button class="btn btn-ghost btn-sm" onclick="editarProfessor('${p.id}')">Editar</button>
+        <button class="btn btn-danger btn-sm" onclick="excluirProfessor('${p.id}')">Excluir</button>
+      </td>
+    </tr>`;
+  }).join('') || '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--cinza-500);">Nenhum professor cadastrado.</td></tr>';
+}
+
+/* ============================================================
+   ALUNOS
+   ============================================================ */
+function popularSelectTurmas() {
+  const sel = document.getElementById('alunoTurma');
+  if (!sel) return;
+  const turmas = DB.list('turmas');
+  sel.innerHTML = '<option value="">Selecione</option>' +
+    turmas.map(t => `<option>${t.nome}</option>`).join('');
+}
+
+function popularSelectPlanos() {
+  const sel = document.getElementById('alunoPlano');
+  if (!sel) return;
+  const planos = DB.list('planos');
+  sel.innerHTML = '<option value="">Selecione</option>' +
+    planos.map(p => `<option>${p.nome}</option>`).join('');
+}
+
+function novoAluno() {
+  document.getElementById('alunoId').value = '';
+  document.getElementById('tituloFormAluno').textContent = 'Cadastrar aluno';
+  document.querySelector('#formAluno form').reset();
+  popularSelectTurmas(); popularSelectPlanos();
+  abrirForm('formAluno');
+}
+
+function editarAluno(id) {
+  const a = DB.get('alunos', id);
+  if (!a) return;
+  document.getElementById('alunoId').value = a.id;
+  document.getElementById('tituloFormAluno').textContent = 'Editar aluno';
+  popularSelectTurmas(); popularSelectPlanos();
+  document.getElementById('alunoNome').value = a.nome;
+  document.getElementById('alunoNascimento').value = a.nascimento;
+  document.getElementById('alunoResponsavel').value = a.responsavel;
+  document.getElementById('alunoCelular').value = a.celularResponsavel;
+  document.getElementById('alunoTurma').value = a.turma;
+  document.getElementById('alunoPlano').value = a.plano;
+  document.getElementById('alunoVencimento').value = a.vencimento;
+  document.getElementById('alunoStatus').value = a.status;
+  abrirForm('formAluno');
+}
+
+function salvarAluno(e) {
+  e.preventDefault();
+  const id = document.getElementById('alunoId').value;
+  const dados = {
+    nome: document.getElementById('alunoNome').value.trim(),
+    nascimento: document.getElementById('alunoNascimento').value,
+    responsavel: document.getElementById('alunoResponsavel').value.trim(),
+    celularResponsavel: document.getElementById('alunoCelular').value.trim(),
+    turma: document.getElementById('alunoTurma').value,
+    plano: document.getElementById('alunoPlano').value,
+    vencimento: +document.getElementById('alunoVencimento').value,
+    status: document.getElementById('alunoStatus').value
+  };
+  if (id) { DB.update('alunos', id, dados); toast('Aluno atualizado.'); }
+  else    { DB.create('alunos', dados);       toast('Aluno cadastrado.'); }
+  fecharForm('formAluno');
+  renderAlunos(); renderTudo();
+}
+
+function excluirAluno(id) {
+  if (!confirm('Excluir este aluno?')) return;
+  DB.remove('alunos', id);
+  toast('Aluno excluído.');
+  renderAlunos(); renderTudo();
+}
+
+function renderAlunos() {
+  const alunos = DB.list('alunos');
+  const tbody = document.querySelector('#tabAlunos tbody');
+  tbody.innerHTML = alunos.map(a => {
+    const cor = a.status === 'Ativo' ? 'badge-ok' : 'badge-bad';
+    return `<tr>
+      <td><strong>${a.nome}</strong></td>
+      <td>${a.turma}</td>
+      <td>${a.plano}</td>
+      <td>${a.responsavel}</td>
+      <td>Dia ${a.vencimento}</td>
+      <td><span class="badge ${cor}">${a.status}</span></td>
+      <td>
+        <button class="btn btn-ghost btn-sm" onclick="editarAluno('${a.id}')">Editar</button>
+        <button class="btn btn-danger btn-sm" onclick="excluirAluno('${a.id}')">Excluir</button>
+      </td>
+    </tr>`;
+  }).join('') || '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--cinza-500);">Nenhum aluno cadastrado.</td></tr>';
+}
+
+/* ============================================================
+   INSCRIÇÕES
+   ============================================================ */
+function novaInscricao() {
+  window.location.href = 'ficha-inscricao.html';
+}
+
+function editarInscricao(id) {
+  window.location.href = 'ficha-inscricao.html?id=' + encodeURIComponent(id);
+}
+
+function excluirInscricao(id) {
+  if (!confirm('Excluir esta inscrição?')) return;
+  DB.remove('inscricoes', id);
+  toast('Inscrição excluída.');
+  renderInscricoes();
+}
+
+function converterEmAluno(id) {
+  const i = DB.get('inscricoes', id);
+  if (!i) return;
+  if (!confirm(`Converter ${i.nome} em aluno matriculado?`)) return;
+
+  const jaExiste = DB.list('alunos').some(a => a.nome.toLowerCase() === i.nome.toLowerCase());
+  if (jaExiste) { alert('Já existe um aluno com este nome.'); return; }
+
+  DB.create('alunos', {
+    nome: i.nome,
+    nascimento: i.nascimento,
+    responsavel: i.responsavel,
+    celularResponsavel: i.whatsapp,
+    turma: '',
+    plano: '',
+    vencimento: +i.vencimento || 10,
+    status: 'Ativo'
+  });
+
+  DB.update('inscricoes', id, { status: 'Matriculado' });
+  toast('Aluno matriculado com sucesso.');
+  renderInscricoes(); renderAlunos(); renderTudo();
+}
+
+function renderInscricoes() {
+  const lista = DB.list('inscricoes').slice().sort((a, b) => (b.criadoEm || '').localeCompare(a.criadoEm || ''));
+  const tbody = document.querySelector('#tabInscricoes tbody');
+
+  if (!lista.length) {
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--cinza-500);">Nenhuma inscrição registrada.</td></tr>';
     return;
   }
 
-  if (inscricaoAtual && inscricaoAtual.id) {
-    DB.update('inscricoes', inscricaoAtual.id, dados);
-    toast('Inscrição atualizada.');
-    inscricaoAtual = { ...inscricaoAtual, ...dados };
-  } else {
-    const novo = DB.create('inscricoes', dados);
-    inscricaoAtual = novo;
-    $('f_numero').value = novo.numero;
-    toast('Inscrição salva.');
-    $('tituloModo').innerHTML = 'Editando inscrição · Nº ' + novo.numero;
-  }
-
-  // Atualiza URL para modo edição
-  if (!getQuery('id')) {
-    history.replaceState(null, '', `?id=${inscricaoAtual.id}`);
-  }
-
-  // Volta para o admin após 900ms
-  setTimeout(() => { window.location.href = 'admin.html'; }, 900);
+  tbody.innerHTML = lista.map(i => {
+    const corStatus = i.status === 'Matriculado' ? 'badge-ok' : 'badge-warn';
+    const serieNivel = [i.serie, (i.nivel && i.nivel.length ? i.nivel.join(', ') : '')]
+      .filter(Boolean).join(' · ') || '—';
+    return `<tr>
+      <td>${fmtData(i.dataInscricao)}</td>
+      <td><strong>${i.numero || '—'}</strong></td>
+      <td><strong>${i.nome}</strong></td>
+      <td>${serieNivel}</td>
+      <td>${i.responsavel || '—'}</td>
+      <td>${i.whatsapp || '—'}</td>
+      <td><span class="badge ${corStatus}">${i.status}</span></td>
+      <td style="white-space:nowrap;">
+        <button class="btn btn-ghost btn-sm" onclick="editarInscricao('${i.id}')">Editar</button>
+        <button class="btn btn-success btn-sm" onclick="converterEmAluno('${i.id}')">Matricular</button>
+        <button class="btn btn-danger btn-sm" onclick="excluirInscricao('${i.id}')">Excluir</button>
+      </td>
+    </tr>`;
+  }).join('');
 }
 
-/* ---------- Voltar ---------- */
-function voltarAdmin() {
-  const temDados = ['f_nome','f_responsavel','f_serie'].some(id => $(id).value.trim());
-  if (temDados && !confirm('Descartar alterações não salvas?')) return;
-  window.location.href = 'admin.html';
+/* ============================================================
+   PLANOS
+   ============================================================ */
+function novoPlano() {
+  document.getElementById('planoId').value = '';
+  document.getElementById('tituloFormPlano').textContent = 'Cadastrar plano';
+  document.querySelector('#formPlano form').reset();
+  abrirForm('formPlano');
 }
 
-/* ---------- Boot ---------- */
-(function init() {
-  const id = getQuery('id');
+function editarPlano(id) {
+  const p = DB.get('planos', id);
+  if (!p) return;
+  document.getElementById('planoId').value = p.id;
+  document.getElementById('tituloFormPlano').textContent = 'Editar plano';
+  document.getElementById('planoNome').value = p.nome;
+  document.getElementById('planoDias').value = p.dias;
+  document.getElementById('planoValor').value = p.valor;
+  document.getElementById('planoVencimento').value = p.vencimento;
+  document.getElementById('planoDescricao').value = p.descricao || '';
+  abrirForm('formPlano');
+}
 
-  if (id) {
-    // Modo edição
-    const existente = DB.get('inscricoes', id);
-    if (existente) {
-      inscricaoAtual = existente;
-      preencherFormulario(existente);
-      $('tituloModo').innerHTML = 'Editando inscrição · Nº ' + (existente.numero || '—');
-    } else {
-      toast('Inscrição não encontrada.', true);
-    }
-  } else {
-    // Modo nova
-    $('f_numero').value = gerarNumero();
-    $('f_data').value = fmtDataBR(new Date().toISOString().slice(0, 10));
-    $('tituloModo').innerHTML = 'Nova inscrição · preencha os campos e clique em <strong>Salvar</strong>';
-  }
+function salvarPlano(e) {
+  e.preventDefault();
+  const id = document.getElementById('planoId').value;
+  const dados = {
+    nome: document.getElementById('planoNome').value.trim(),
+    dias: +document.getElementById('planoDias').value,
+    valor: +document.getElementById('planoValor').value,
+    vencimento: +document.getElementById('planoVencimento').value,
+    descricao: document.getElementById('planoDescricao').value.trim()
+  };
+  if (id) { DB.update('planos', id, dados); toast('Plano atualizado.'); }
+  else    { DB.create('planos', dados);       toast('Plano cadastrado.'); }
+  fecharForm('formPlano');
+  renderPlanos(); renderTudo();
+}
 
-  // Enter no formulário não envia nada (não há form), mas evita refresh
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && e.target.tagName === 'INPUT') e.preventDefault();
+function excluirPlano(id) {
+  if (!confirm('Excluir este plano?')) return;
+  DB.remove('planos', id);
+  toast('Plano excluído.');
+  renderPlanos(); renderTudo();
+}
+
+function renderPlanos() {
+  const planos = DB.list('planos');
+  const cont = document.getElementById('listaPlanos');
+  cont.innerHTML = planos.map(p => `
+    <div class="plano-card">
+      <h3>${p.nome}</h3>
+      <div class="preco">${fmtMoeda(p.valor)}<small>/mês</small></div>
+      <ul>
+        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>${p.descricao || (p.dias + ' aulas semanais')}</li>
+        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>Vencimento dia ${p.vencimento}</li>
+      </ul>
+      <div style="display:flex;gap:6px;margin-top:8px;">
+        <button class="btn btn-ghost btn-sm" onclick="editarPlano('${p.id}')">Editar</button>
+        <button class="btn btn-danger btn-sm" onclick="excluirPlano('${p.id}')">Excluir</button>
+      </div>
+    </div>
+  `).join('') || '<div class="placeholder" style="grid-column:1/-1;"><h3>Nenhum plano</h3><p>Cadastre um plano para começar.</p></div>';
+}
+
+/* ============================================================
+   FINANCEIRO
+   ============================================================ */
+let carneAlunoAtual = null;
+
+function confirmarPagamento(id) {
+  const hoje = new Date();
+  const dataPagamento =
+    String(hoje.getDate()).padStart(2,'0') + '/' +
+    String(hoje.getMonth() + 1).padStart(2,'0') + '/' +
+    hoje.getFullYear();
+
+  DB.update('pagamentos', id, {
+    status: 'Pago',
+    pagoEm: new Date().toISOString(),
+    dataPagamento: dataPagamento
   });
-})();
+  toast('Pagamento confirmado.');
+  renderFinanceiro();
+  if (carneAlunoAtual) renderCarneAluno();
+  renderVisao();
+}
+
+function estornarPagamento(id) {
+  if (!confirm('Marcar como pendente novamente?')) return;
+  DB.update('pagamentos', id, { status: 'Pendente', pagoEm: null, dataPagamento: null });
+  toast('Pagamento estornado.');
+  renderFinanceiro();
+  if (carneAlunoAtual) renderCarneAluno();
+  renderVisao();
+}
+
+function excluirPagamento(id) {
+  if (!confirm('Excluir este registro de pagamento?')) return;
+  DB.remove('pagamentos', id);
+  toast('Pagamento excluído.');
+  renderFinanceiro();
+  if (carneAlunoAtual) renderCarneAluno();
+  renderVisao();
+}
+
+function gerarPagamentosMes() {
+  const hoje = new Date();
+  const mes = hoje.getMonth() + 1;
+  const ano = hoje.getFullYear();
+  const alunos = DB.list('alunos').filter(a => a.status === 'Ativo');
+  const planos = DB.list('planos');
+  const pagamentos = DB.list('pagamentos');
+  let criados = 0;
+  alunos.forEach(a => {
+    const existe = pagamentos.some(p => p.aluno === a.nome && p.mes === mes && p.ano === ano);
+    if (existe) return;
+    const plano = planos.find(pl => pl.nome === a.plano);
+    const valor = plano ? plano.valor : 0;
+    const venc = String(a.vencimento).padStart(2, '0');
+    DB.create('pagamentos', {
+      aluno: a.nome, plano: a.plano, valor, mes, ano,
+      vencimento: `${venc}/${String(mes).padStart(2,'0')}/${ano}`,
+      status: 'Pendente',
+      dataPagamento: null
+    });
+    criados++;
+  });
+  toast(criados ? criados + ' pagamento(s) gerado(s).' : 'Nenhum novo pagamento a gerar.');
+  renderFinanceiro(); renderVisao();
+}
+
+function anosDisponiveis() {
+  const pags = DB.list('pagamentos');
+  const anos = [...new Set(pags.map(p => p.ano).filter(Boolean))].sort((a, b) => b - a);
+  if (!anos.length) anos.push(new Date().getFullYear());
+  return anos;
+}
+
+function popularFiltrosAno() {
+  const anos = anosDisponiveis();
+  const opts = anos.map(a => `<option value="${a}">${a}</option>`).join('');
+  const selFin = document.getElementById('filtroAnoFin');
+  const selCarne = document.getElementById('carneAno');
+  const selGerais = document.getElementById('carnesGeraisAno');
+  if (selFin) { const v = selFin.value; selFin.innerHTML = opts; selFin.value = v && anos.includes(+v) ? v : anos[0]; }
+  if (selCarne) { const v = selCarne.value; selCarne.innerHTML = opts; selCarne.value = v && anos.includes(+v) ? v : anos[0]; }
+  if (selGerais) { const v = selGerais.value; selGerais.innerHTML = opts; selGerais.value = v && anos.includes(+v) ? v : anos[0]; }
+}
+
+function renderFinanceiro() {
+  popularFiltrosAno();
+
+  const anoFiltro = +document.getElementById('filtroAnoFin').value || new Date().getFullYear();
+  const pags = DB.list('pagamentos').filter(p => p.ano === anoFiltro);
+
+  const recebido = pags.filter(p => p.status === 'Pago').reduce((s, p) => s + p.valor, 0);
+  const pendentes = pags.filter(p => p.status === 'Pendente').length;
+  const pagos = pags.filter(p => p.status === 'Pago').length;
+  const atrasados = pags.filter(p => p.status === 'Atrasado').length;
+
+  document.getElementById('kpiReceitaFin').textContent = fmtMoeda(recebido);
+  document.getElementById('kpiPendentes').textContent = pendentes;
+  document.getElementById('kpiPagos').textContent = pagos;
+  document.getElementById('kpiAtrasados').textContent = atrasados;
+
+  const tbody = document.querySelector('#tabFin tbody');
+  tbody.innerHTML = pags
+    .slice().sort((a, b) => (a.aluno || '').localeCompare(b.aluno || '') || (a.mes - b.mes))
+    .map(p => {
+      let badge = 'badge-warn';
+      if (p.status === 'Pago') badge = 'badge-ok';
+      if (p.status === 'Atrasado') badge = 'badge-bad';
+      const acoes = p.status === 'Pago'
+        ? `<button class="btn btn-ghost btn-sm" onclick="estornarPagamento('${p.id}')">Estornar</button>`
+        : `<button class="btn btn-success btn-sm" onclick="confirmarPagamento('${p.id}')">Confirmar</button>`;
+      return `<tr>
+        <td><strong>${p.aluno}</strong></td>
+        <td>${p.plano}</td>
+        <td>${fmtMoeda(p.valor)}</td>
+        <td>${p.vencimento}</td>
+        <td><span class="badge ${badge}">${p.status}</span>${p.dataPagamento ? `<div style="font-size:11px;color:var(--cinza-500);margin-top:3px;">Pago em ${p.dataPagamento}</div>` : ''}</td>
+        <td style="white-space:nowrap;">
+          ${acoes}
+          <button class="btn btn-ghost btn-sm" onclick="abrirCarneAluno('${p.aluno}')" title="Abrir carnê">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            Carnê
+          </button>
+          <button class="btn btn-danger btn-sm" onclick="excluirPagamento('${p.id}')">Excluir</button>
+        </td>
+      </tr>`;
+    }).join('') || '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--cinza-500);">Nenhum pagamento neste ano.</td></tr>';
+}
+
+/* ============================================================
+   CARNÊ POR CLIENTE
+   ============================================================ */
+function abrirCarneAluno(nomeAluno) {
+  const aluno = DB.list('alunos').find(a => a.nome === nomeAluno);
+  if (!aluno) { toast('Aluno não encontrado.', 'erro'); return; }
+  carneAlunoAtual = aluno;
+  document.getElementById('carneTitulo').textContent = 'Carnê de ' + aluno.nome;
+  document.getElementById('carneSubtitulo').textContent = 'Mensalidades do aluno';
+  document.getElementById('carneNomeAluno').textContent = aluno.nome;
+  document.getElementById('carneInfoAluno').textContent =
+    `${aluno.turma} · Plano: ${aluno.plano} · Vencimento: dia ${aluno.vencimento}`;
+  popularFiltrosAno();
+  document.getElementById('carneAno').value = new Date().getFullYear();
+  renderCarneAluno();
+  document.getElementById('modalCarne').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function fecharModalCarne() {
+  document.getElementById('modalCarne').classList.remove('open');
+  document.body.style.overflow = '';
+  carneAlunoAtual = null;
+}
+
+function renderCarneAluno() {
+  if (!carneAlunoAtual) return;
+  const aluno = carneAlunoAtual;
+  const ano = +document.getElementById('carneAno').value || new Date().getFullYear();
+
+  const pags = DB.list('pagamentos')
+    .filter(p => p.aluno === aluno.nome && p.ano === ano)
+    .sort((a, b) => a.mes - b.mes);
+
+  const total = pags.reduce((s, p) => s + p.valor, 0);
+  const pago = pags.filter(p => p.status === 'Pago').reduce((s, p) => s + p.valor, 0);
+  const pendente = pags.filter(p => p.status === 'Pendente').reduce((s, p) => s + p.valor, 0);
+  const atrasado = pags.filter(p => p.status === 'Atrasado').reduce((s, p) => s + p.valor, 0);
+
+  document.getElementById('carneResumo').innerHTML = `
+    <div class="item"><strong>${fmtMoeda(total)}</strong><span>Total ano</span></div>
+    <div class="item"><strong style="color:var(--verde-600);">${fmtMoeda(pago)}</strong><span>Pago</span></div>
+    <div class="item"><strong style="color:var(--amarelo-600);">${fmtMoeda(pendente)}</strong><span>Pendente</span></div>
+    <div class="item"><strong style="color:var(--vermelho-600);">${fmtMoeda(atrasado)}</strong><span>Atrasado</span></div>
+  `;
+
+  const grid = document.getElementById('carneGrid');
+  if (!pags.length) {
+    grid.innerHTML = `<div class="placeholder" style="grid-column:1/-1;">
+      <h3>Sem parcelas em ${ano}</h3>
+      <p>Use o botão "Gerar carnê anual" para criar as 12 parcelas do ano.</p>
+    </div>`;
+    return;
+  }
+
+  grid.innerHTML = pags.map(p => {
+    const statusClass = p.status.toLowerCase() === 'pago' ? 'pago'
+                      : p.status.toLowerCase() === 'atrasado' ? 'atrasado' : 'pendente';
+    const badge = p.status === 'Pago' ? 'badge-ok'
+                : p.status === 'Atrasado' ? 'badge-bad' : 'badge-warn';
+    const acoes = p.status === 'Pago'
+      ? `<button class="btn btn-ghost btn-sm" onclick="estornarPagamento('${p.id}')">Estornar</button>`
+      : `<button class="btn btn-success btn-sm" onclick="confirmarPagamento('${p.id}')">Confirmar</button>`;
+    const venc = p.vencimento || (String(aluno.vencimento).padStart(2,'0') + '/' + String(p.mes).padStart(2,'0') + '/' + ano);
+    return `<div class="carne-parcela ${statusClass}">
+      <div class="parc-num">Parcela ${p.mes}/${ano}</div>
+      <div class="parc-valor">${fmtMoeda(p.valor)}</div>
+      <div class="parc-venc">Vencimento: ${venc}${p.dataPagamento ? `<br>Pago em: ${p.dataPagamento}` : ''}</div>
+      <div class="parc-status"><span class="badge ${badge}">${p.status}</span></div>
+      <div class="parc-acoes">
+        ${acoes}
+        <button class="btn btn-ghost btn-sm" onclick="excluirPagamento('${p.id}')">Excluir</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function gerarCarneAnual() {
+  if (!carneAlunoAtual) return;
+  const aluno = carneAlunoAtual;
+  const ano = +document.getElementById('carneAno').value || new Date().getFullYear();
+
+  const plano = DB.list('planos').find(p => p.nome === aluno.plano);
+  const valor = plano ? plano.valor : 0;
+  const diaVenc = String(aluno.vencimento).padStart(2, '0');
+
+  const existentes = DB.list('pagamentos').filter(p => p.aluno === aluno.nome && p.ano === ano);
+  let criadas = 0;
+
+  for (let mes = 1; mes <= 12; mes++) {
+    if (existentes.some(p => p.mes === mes)) continue;
+    DB.create('pagamentos', {
+      aluno: aluno.nome,
+      plano: aluno.plano,
+      valor,
+      mes,
+      ano,
+      vencimento: `${diaVenc}/${String(mes).padStart(2,'0')}/${ano}`,
+      status: 'Pendente',
+      dataPagamento: null
+    });
+    criadas++;
+  }
+
+  toast(criadas ? criadas + ' parcela(s) gerada(s) para ' + aluno.nome : 'Carnê já está completo.');
+  renderCarneAluno();
+  renderFinanceiro();
+  renderVisao();
+}
+
+function imprimirCarne() {
+  if (!carneAlunoAtual) return;
+  const ano = document.getElementById('carneAno').value || new Date().getFullYear();
+  const url = 'carne.html?aluno=' + encodeURIComponent(carneAlunoAtual.nome) + '&ano=' + ano;
+  window.open(url, '_blank');
+}
+
+/* ============================================================
+   VISÃO GERAL DOS CARNÊS
+   ============================================================ */
+function abrirModalCarnesGerais() {
+  popularFiltrosAno();
+  document.getElementById('carnesGeraisAno').value = new Date().getFullYear();
+  renderCarnesGerais();
+  document.getElementById('modalCarnesGerais').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function fecharModalCarnesGerais() {
+  document.getElementById('modalCarnesGerais').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function renderCarnesGerais() {
+  const ano = +document.getElementById('carnesGeraisAno').value || new Date().getFullYear();
+  const alunos = DB.list('alunos');
+  const pags = DB.list('pagamentos').filter(p => p.ano === ano);
+
+  const tbody = document.querySelector('#tabCarnesGerais tbody');
+  tbody.innerHTML = alunos.map(a => {
+    const doAluno = pags.filter(p => p.aluno === a.nome);
+    if (!doAluno.length) {
+      return `<tr>
+        <td><strong>${a.nome}</strong></td>
+        <td>${a.turma}</td>
+        <td colspan="4" style="color:var(--cinza-500);font-size:12.5px;">Sem parcelas em ${ano}</td>
+        <td><button class="btn btn-ghost btn-sm" onclick="fecharModalCarnesGerais(); abrirCarneAluno('${a.nome}')">Gerar carnê</button></td>
+      </tr>`;
+    }
+    const total = doAluno.length;
+    const pago = doAluno.filter(p => p.status === 'Pago').length;
+    const pend = doAluno.filter(p => p.status === 'Pendente').length;
+    const atras = doAluno.filter(p => p.status === 'Atrasado').length;
+    return `<tr>
+      <td><strong>${a.nome}</strong></td>
+      <td>${a.turma}</td>
+      <td>${total}</td>
+      <td><span class="badge badge-ok">${pago}</span></td>
+      <td><span class="badge badge-warn">${pend}</span></td>
+      <td><span class="badge badge-bad">${atras}</span></td>
+      <td><button class="btn btn-ghost btn-sm" onclick="fecharModalCarnesGerais(); abrirCarneAluno('${a.nome}')">Abrir carnê</button></td>
+    </tr>`;
+  }).join('') || '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--cinza-500);">Nenhum aluno cadastrado.</td></tr>';
+}
+
+/* ============================================================
+   BOLETIM
+   ============================================================ */
+function disciplinasPorNivel(nivel) {
+  return nivel === 'medio' ? DISCIPLINAS_MEDIO : DISCIPLINAS_FUND;
+}
+
+function popularTurmasBoletim() {
+  const nivel = document.getElementById('selNivel').value;
+  const turmas = DB.list('turmas').filter(t => t.nivel === nivel);
+  const sel = document.getElementById('selTurmaBol');
+  sel.innerHTML = turmas.map(t => `<option>${t.nome}</option>`).join('');
+}
+
+function renderBoletim() {
+  const nivel = document.getElementById('selNivel').value;
+  const turma = document.getElementById('selTurmaBol').value;
+  const bimestre = +document.getElementById('selBimBol').value;
+  const disciplinas = disciplinasPorNivel(nivel);
+
+  document.getElementById('tituloBol').textContent = turma ? 'Boletim — ' + turma : 'Selecione uma turma';
+
+  if (!turma) {
+    document.querySelector('#tabelaBol thead').innerHTML = '';
+    document.querySelector('#tabelaBol tbody').innerHTML = '<tr><td style="text-align:center;padding:24px;color:var(--cinza-500);">Sem turma selecionada.</td></tr>';
+    return;
+  }
+
+  const alunos = DB.list('alunos').filter(a => a.turma === turma);
+  const notas = DB.list('notas').filter(n => n.turma === turma && n.bimestre === bimestre);
+
+  const thead = '<tr><th>Aluno</th>' + disciplinas.map(d => `<th>${d}</th>`).join('') + '<th>Média</th></tr>';
+
+  const tbody = alunos.map(a => {
+    const notasAluno = disciplinas.map(d => {
+      const n = notas.find(x => x.aluno === a.nome && x.disciplina === d);
+      return n ? n.nota : null;
+    });
+    const validas = notasAluno.filter(n => n !== null);
+    const m = validas.length ? media(validas) : 0;
+    const corMedia = m >= 6 ? 'badge-ok' : 'badge-bad';
+
+    const cells = notasAluno.map((n, i) => {
+      const d = disciplinas[i];
+      if (n === null) {
+        return `<td><button class="btn btn-ghost btn-sm" onclick="lancarNota('${a.nome}','${turma}','${d}',${bimestre})">+ lançar</button></td>`;
+      }
+      const cor = n >= 6 ? 'var(--verde-600)' : 'var(--vermelho-600)';
+      return `<td style="cursor:pointer;" onclick="lancarNota('${a.nome}','${turma}','${d}',${bimestre})"><strong style="color:${cor}">${n.toFixed(1)}</strong></td>`;
+    }).join('');
+
+    return `<tr>
+      <td><strong>${a.nome}</strong></td>
+      ${cells}
+      <td><span class="badge ${corMedia}">${m.toFixed(1)}</span></td>
+    </tr>`;
+  }).join('');
+
+  document.querySelector('#tabelaBol thead').innerHTML = thead;
+  document.querySelector('#tabelaBol tbody').innerHTML = tbody ||
+    `<tr><td colspan="${disciplinas.length + 2}" style="text-align:center;padding:24px;color:var(--cinza-500);">Nenhum aluno nesta turma.</td></tr>`;
+}
+
+function lancarNota(aluno, turma, disciplina, bimestre) {
+  const existente = DB.list('notas').find(n =>
+    n.aluno === aluno && n.turma === turma && n.disciplina === disciplina && n.bimestre === bimestre
+  );
+  const valorAtual = existente ? existente.nota : '';
+  const entrada = prompt(`Nota de ${aluno} em ${disciplina} (0 a 10):`, valorAtual);
+  if (entrada === null) return;
+  const nota = parseFloat(entrada.replace(',', '.'));
+  if (isNaN(nota) || nota < 0 || nota > 10) { alert('Nota inválida. Use valores entre 0 e 10.'); return; }
+  if (existente) DB.update('notas', existente.id, { nota });
+  else           DB.create('notas', { aluno, turma, disciplina, bimestre, nota });
+  toast('Nota salva.');
+  renderBoletim(); renderTudo();
+}
+
+/* ============================================================
+   DESEMPENHO
+   ============================================================ */
+function renderDesempenho() {
+  const turmas = DB.list('turmas');
+  const alunos = DB.list('alunos');
+  const professores = DB.list('professores');
+  const faltas = DB.list('faltas');
+  const pagamentos = DB.list('pagamentos');
+
+  const contTurmas = document.getElementById('desempenhoTurmas');
+  contTurmas.className = 'donut-list';
+  contTurmas.innerHTML = turmas.length
+    ? turmas.map(t => {
+        const m = calcularMediaTurma(t.nome, 1);
+        return donutItem({
+          percent: notaParaPct(m),
+          cor: corPorNota(m),
+          texto: m.toFixed(1).replace('.', ','),
+          nome: t.nome,
+          valor: `Média ${m.toFixed(1)}`
+        });
+      }).join('')
+    : '<p style="font-size:13px;color:var(--cinza-500);">Sem turmas.</p>';
+
+  const contProfs = document.getElementById('desempenhoProfs');
+  contProfs.className = 'donut-list';
+  contProfs.innerHTML = professores.length
+    ? professores.map(p => {
+        const qtd = turmas.filter(t => t.professor === p.nome).length;
+        const pct = Math.min(100, qtd * 33);
+        return donutItem({
+          percent: pct,
+          cor: corPorPct(pct),
+          texto: pct + '%',
+          nome: p.nome,
+          valor: `${qtd} turma${qtd !== 1 ? 's' : ''} sob responsabilidade`
+        });
+      }).join('')
+    : '<p style="font-size:13px;color:var(--cinza-500);">Sem professores.</p>';
+
+  const totalFaltas = faltas.length;
+  const presentes = faltas.filter(f => f.status === 'Presente').length;
+  const freqGeral = totalFaltas ? Math.round((presentes / totalFaltas) * 100) : 100;
+  const adimpl = pagamentos.length
+    ? Math.round((pagamentos.filter(p => p.status === 'Pago').length / pagamentos.length) * 100)
+    : 100;
+  const ocupacao = turmas.length
+    ? Math.round(
+        turmas.reduce((s, t) => {
+          const n = alunos.filter(a => a.turma === t.nome).length;
+          return s + (n / Math.max(1, t.capacidade)) * 100;
+        }, 0) / turmas.length
+      )
+    : 0;
+
+  const elPlat = document.getElementById('desempenhoPlataforma');
+  elPlat.className = 'donut-list';
+  elPlat.innerHTML = [
+    donutItem({ percent: freqGeral, cor: corPorPct(freqGeral), nome: 'Frequência', valor: `${presentes}/${totalFaltas} presenças` }),
+    donutItem({ percent: adimpl,    cor: corPorPct(adimpl),    nome: 'Adimplência', valor: `${pagamentos.filter(p => p.status === 'Pago').length}/${pagamentos.length} pagos` }),
+    donutItem({ percent: ocupacao,  cor: corPorPct(ocupacao),  nome: 'Ocupação', valor: `${alunos.length} alunos em ${turmas.length} turmas` })
+  ].join('');
+
+  const tbody = document.querySelector('#tabResumoTurmas tbody');
+  tbody.innerHTML = turmas.length
+    ? turmas.map(t => {
+        const lista = alunos.filter(a => a.turma === t.nome);
+        const m = calcularMediaTurma(t.nome, 1);
+        const freq = lista.length
+          ? Math.round(lista.reduce((s, a) => s + calcularFrequencia(a.nome, t.nome), 0) / lista.length)
+          : 100;
+        const status = m >= 8 ? 'Ótimo' : m >= 6 ? 'Bom' : 'Atenção';
+        const cor = m >= 8 ? 'badge-ok' : m >= 6 ? 'badge-info' : 'badge-warn';
+        const mini = donutSVG(notaParaPct(m), corPorNota(m), m.toFixed(1).replace('.', ','));
+        return `<tr>
+          <td>${t.nome}</td>
+          <td>${lista.length}</td>
+          <td style="width:70px;padding:6px 8px;">
+            <div style="transform:scale(.75);transform-origin:left center;">${mini}</div>
+          </td>
+          <td>${freq}%</td>
+          <td><span class="badge ${cor}">${status}</span></td>
+        </tr>`;
+      }).join('')
+    : '<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--cinza-500);">Sem dados.</td></tr>';
+}
+
+/* ============================================================
+   MURAL
+   ============================================================ */
+function novoAviso() {
+  document.getElementById('avisoId').value = '';
+  document.getElementById('tituloFormAviso').textContent = 'Publicar aviso';
+  document.querySelector('#formAviso form').reset();
+  abrirForm('formAviso');
+}
+
+function editarAviso(id) {
+  const a = DB.get('avisos', id);
+  if (!a) return;
+  document.getElementById('avisoId').value = a.id;
+  document.getElementById('tituloFormAviso').textContent = 'Editar aviso';
+  document.getElementById('avisoTitulo').value = a.titulo;
+  document.getElementById('avisoPublico').value = a.publico;
+  document.getElementById('avisoMensagem').value = a.mensagem;
+  abrirForm('formAviso');
+}
+
+function salvarAviso(e) {
+  e.preventDefault();
+  const id = document.getElementById('avisoId').value;
+  const dados = {
+    titulo: document.getElementById('avisoTitulo').value.trim(),
+    publico: document.getElementById('avisoPublico').value,
+    mensagem: document.getElementById('avisoMensagem').value.trim(),
+    autor: user.nome,
+    data: hojeISO()
+  };
+  if (id) { DB.update('avisos', id, dados); toast('Aviso atualizado.'); }
+  else    { DB.create('avisos', dados);       toast('Aviso publicado.'); }
+  fecharForm('formAviso');
+  renderAvisos(); renderVisao();
+}
+
+function excluirAviso(id) {
+  if (!confirm('Excluir este aviso?')) return;
+  DB.remove('avisos', id);
+  toast('Aviso excluído.');
+  renderAvisos(); renderVisao();
+}
+
+function renderAvisos() {
+  const avisos = DB.list('avisos').slice().sort((a, b) => (b.data || '').localeCompare(a.data || ''));
+  const cont = document.getElementById('listaAvisos');
+  const corBadge = { 'Alunos': 'badge-info', 'Professores': 'badge-warn', 'Pais': 'badge-bad', 'Todos': 'badge-info' };
+  cont.innerHTML = avisos.map(a => `
+    <div class="aviso">
+      <div class="meta">
+        <span class="badge ${corBadge[a.publico] || 'badge-info'}">${a.publico}</span>
+        ${fmtData(a.data)} — ${a.autor || 'Admin'}
+      </div>
+      <h4>${a.titulo}</h4>
+      <p>${a.mensagem}</p>
+      <div style="margin-top:10px;display:flex;gap:6px;">
+        <button class="btn btn-ghost btn-sm" onclick="editarAviso('${a.id}')">Editar</button>
+        <button class="btn btn-danger btn-sm" onclick="excluirAviso('${a.id}')">Excluir</button>
+      </div>
+    </div>
+  `).join('') || '<div class="placeholder" style="grid-column:1/-1;"><h3>Nenhum aviso</h3><p>Publique um aviso para começar.</p></div>';
+}
+
+/* ============================================================
+   VISÃO GERAL
+   ============================================================ */
+function renderVisao() {
+  const alunos = DB.list('alunos').filter(a => a.status === 'Ativo');
+  const professores = DB.list('professores');
+  const turmas = DB.list('turmas').filter(t => t.status === 'Ativa');
+  const pagamentos = DB.list('pagamentos');
+  const receita = pagamentos.filter(p => p.status === 'Pago').reduce((s, p) => s + p.valor, 0);
+
+  document.getElementById('kpiAlunos').textContent = alunos.length;
+  document.getElementById('kpiProf').textContent = professores.length;
+  document.getElementById('kpiTurmas').textContent = turmas.length;
+  document.getElementById('kpiReceita').textContent = fmtMoeda(receita);
+
+  const pendentes = pagamentos.filter(p => p.status !== 'Pago').slice(0, 5);
+  document.querySelector('#tabPendentesVisao tbody').innerHTML = pendentes.map(p => `
+    <tr><td>${p.aluno}</td><td>${p.plano}</td><td>${fmtMoeda(p.valor)}</td><td>${p.vencimento}</td></tr>
+  `).join('') || '<tr><td colspan="4" style="text-align:center;padding:24px;color:var(--cinza-500);">Nenhum pagamento pendente.</td></tr>';
+
+  const avisos = DB.list('avisos').slice().sort((a, b) => (b.data || '').localeCompare(a.data || '')).slice(0, 2);
+  const corBadge = { 'Alunos': 'badge-info', 'Professores': 'badge-warn', 'Pais': 'badge-bad', 'Todos': 'badge-info' };
+  document.getElementById('avisosVisao').innerHTML = avisos.map(a => `
+    <div class="aviso">
+      <div class="meta"><span class="badge ${corBadge[a.publico]}">${a.publico}</span> ${fmtData(a.data)}</div>
+      <h4>${a.titulo}</h4>
+      <p>${a.mensagem}</p>
+    </div>
+  `).join('') || '<p style="font-size:13px;color:var(--cinza-500);">Sem avisos.</p>';
+}
+
+/* ============================================================
+   RENDER GERAL
+   ============================================================ */
+function renderTudo() {
+  renderVisao();
+  renderTurmas();
+  renderProfessores();
+  renderAlunos();
+  renderInscricoes();
+  renderPlanos();
+  renderFinanceiro();
+  renderDesempenho();
+  renderAvisos();
+  popularSelectProfessores();
+  popularSelectTurmas();
+  popularSelectPlanos();
+  popularTurmasBoletim();
+  renderBoletim();
+}
+
+document.getElementById('selNivel').addEventListener('change', () => { popularTurmasBoletim(); renderBoletim(); });
+document.getElementById('selTurmaBol').addEventListener('change', renderBoletim);
+document.getElementById('selBimBol').addEventListener('change', renderBoletim);
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    if (document.getElementById('modalCarne').classList.contains('open')) fecharModalCarne();
+    if (document.getElementById('modalCarnesGerais').classList.contains('open')) fecharModalCarnesGerais();
+  }
+});
+
+renderTudo();
 </script>
 
 </body>
