@@ -6,7 +6,7 @@
 <title>Tríade Conexão — Administrador</title>
 <link rel="stylesheet" href="shared.css" />
 <style>
-  /* ===== Modal (carnê) ===== */
+  /* ===== Modal ===== */
   .modal-backdrop {
     position: fixed; inset: 0; z-index: 1000;
     background: rgba(15,23,42,.6);
@@ -41,7 +41,7 @@
   }
   .modal-close:hover { background: var(--cinza-100); }
 
-  /* ===== Carnê (modal) ===== */
+  /* ===== Carnê (dentro do modal) ===== */
   .carne-header {
     display: flex; align-items: center; justify-content: space-between;
     gap: 12px; flex-wrap: wrap;
@@ -76,9 +76,7 @@
   .carne-parcela.pago { border-left: 4px solid var(--verde-600); }
   .carne-parcela.pendente { border-left: 4px solid var(--amarelo-600); }
   .carne-parcela.atrasado { border-left: 4px solid var(--vermelho-600); }
-  .carne-parcela .parc-acoes {
-    display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap;
-  }
+  .carne-parcela .parc-acoes { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
 
   .carne-resumo {
     display: grid; grid-template-columns: repeat(4, 1fr);
@@ -94,6 +92,60 @@
   @media (max-width: 700px) {
     .carne-grid { grid-template-columns: 1fr; }
     .carne-resumo { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  /* ============================================================
+     FICHA DE INSCRIÇÃO (embutida no admin)
+     ============================================================ */
+  .ficha-wrap {
+    background: #fff;
+    border: 1px solid var(--cinza-200);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  .ficha-form {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  .ficha-form .full { grid-column: 1 / -1; }
+  .ficha-form .field input,
+  .ficha-form .field select {
+    padding: 9px 11px;
+    font-size: 13px;
+  }
+  .ficha-form .grupo {
+    grid-column: 1 / -1;
+    border-top: 1px solid var(--cinza-200);
+    padding-top: 12px;
+    margin-top: 4px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  .ficha-form .grupo > h4 {
+    grid-column: 1 / -1;
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--azul-700);
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    margin-bottom: 4px;
+  }
+  .ficha-form .checks-inline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    font-size: 12.5px;
+  }
+  .ficha-form .checks-inline label {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-weight: 600; color: var(--preto-800); cursor: pointer;
+  }
+  .ficha-form .checks-inline input[type="checkbox"] {
+    width: 15px; height: 15px; accent-color: var(--azul-600);
   }
 </style>
 </head>
@@ -114,6 +166,7 @@
     <div class="nav-item" data-tab="turmas"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg><span>Turmas</span></div>
     <div class="nav-item" data-tab="professores"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Professores</span></div>
     <div class="nav-item" data-tab="alunos"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg><span>Alunos</span></div>
+    <div class="nav-item" data-tab="inscricoes"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg><span>Inscrições</span></div>
     <div class="nav-item" data-tab="planos"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12V8H6a2 2 0 0 1 0-4h12v4"/><path d="M4 6v12a2 2 0 0 0 2 2h14v-4"/><path d="M18 12a2 2 0 0 0 0 4h4v-4z"/></svg><span>Planos</span></div>
 
     <div class="nav-title">Gestão</div>
@@ -251,6 +304,35 @@
         </div>
         <div class="table-wrap"><table id="tabAlunos">
           <thead><tr><th>Aluno</th><th>Turma</th><th>Plano</th><th>Responsável</th><th>Vencimento</th><th>Status</th><th>Ações</th></tr></thead>
+          <tbody></tbody>
+        </table></div>
+      </section>
+
+      <!-- ============ INSCRIÇÕES ============ -->
+      <section class="tab" id="tab-inscricoes">
+        <div class="sec-header">
+          <div><h2>Inscrições</h2><p>Fichas de inscrição recebidas</p></div>
+          <div class="actions">
+            <button class="btn btn-primary" onclick="novaInscricao()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Nova inscrição
+            </button>
+          </div>
+        </div>
+
+        <div class="table-wrap"><table id="tabInscricoes">
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Nº</th>
+              <th>Aluno</th>
+              <th>Série / Nível</th>
+              <th>Responsável</th>
+              <th>WhatsApp</th>
+              <th>Status</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
           <tbody></tbody>
         </table></div>
       </section>
@@ -412,7 +494,6 @@
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
-
     <div class="modal-body">
       <div class="carne-header">
         <div class="info">
@@ -427,11 +508,9 @@
           </button>
         </div>
       </div>
-
       <div class="carne-resumo" id="carneResumo"></div>
       <div class="carne-grid" id="carneGrid"></div>
     </div>
-
     <div class="modal-footer">
       <button class="btn btn-ghost" onclick="fecharModalCarne()">Fechar</button>
       <button class="btn btn-primary" onclick="imprimirCarne()">
@@ -474,6 +553,151 @@
   </div>
 </div>
 
+<!-- ============ MODAL: FICHA DE INSCRIÇÃO ============ -->
+<div class="modal-backdrop" id="modalFicha" onclick="if(event.target===this) fecharModalFicha()">
+  <div class="modal" style="max-width:820px;">
+    <div class="modal-header">
+      <div>
+        <h3 id="fichaTitulo">Nova Inscrição</h3>
+        <p>Preencha a ficha de inscrição</p>
+      </div>
+      <button class="modal-close" onclick="fecharModalFicha()" aria-label="Fechar">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <form id="formFicha" class="ficha-form" onsubmit="salvarFicha(event)">
+        <input type="hidden" id="fichaId" />
+
+        <!-- 1. Dados do Aluno -->
+        <div class="grupo">
+          <h4>1. Dados do Aluno(a)</h4>
+          <div class="field full"><label>Nome Completo</label><input id="f_nome" required /></div>
+          <div class="field"><label>Data de Nascimento</label><input id="f_nascimento" type="date" /></div>
+          <div class="field"><label>Idade</label><input id="f_idade" type="number" min="0" /></div>
+          <div class="field"><label>Escola onde estuda</label><input id="f_escola" /></div>
+          <div class="field"><label>Série / Ano</label><input id="f_serie" /></div>
+          <div class="field full">
+            <label>Turno Escolar</label>
+            <div class="checks-inline">
+              <label><input type="checkbox" name="f_turno_escolar" value="Manhã" /> Manhã</label>
+              <label><input type="checkbox" name="f_turno_escolar" value="Tarde" /> Tarde</label>
+            </div>
+          </div>
+          <div class="field full">
+            <label>Nível Escolar</label>
+            <div class="checks-inline">
+              <label><input type="checkbox" name="f_nivel" value="Anos Iniciais" /> Anos Iniciais (1º ao 5º)</label>
+              <label><input type="checkbox" name="f_nivel" value="Anos Finais" /> Anos Finais (6º ao 9º)</label>
+              <label><input type="checkbox" name="f_nivel" value="Ensino Médio" /> Ensino Médio</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Responsável -->
+        <div class="grupo">
+          <h4>2. Dados do Responsável Legal</h4>
+          <div class="field full"><label>Nome do Responsável</label><input id="f_responsavel" /></div>
+          <div class="field">
+            <label>Grau de Parentesco</label>
+            <select id="f_parentesco">
+              <option value="">Selecione</option>
+              <option>Mãe</option><option>Pai</option><option>Avô / Avó</option><option>Outro</option>
+            </select>
+          </div>
+          <div class="field"><label>CPF</label><input id="f_cpf" /></div>
+          <div class="field"><label>RG</label><input id="f_rg" /></div>
+          <div class="field"><label>WhatsApp Principal</label><input id="f_whatsapp" type="tel" /></div>
+          <div class="field"><label>Contato de Emergência</label><input id="f_emergencia" type="tel" /></div>
+          <div class="field full"><label>Endereço Residencial</label><input id="f_endereco" /></div>
+        </div>
+
+        <!-- 3. Plano e Modalidade -->
+        <div class="grupo">
+          <h4>3. Plano e Modalidade</h4>
+          <div class="field full">
+            <label>Turno no Reforço</label>
+            <div class="checks-inline">
+              <label><input type="checkbox" name="f_turno_reforco" value="Manhã" /> Manhã</label>
+              <label><input type="checkbox" name="f_turno_reforco" value="Tarde" /> Tarde</label>
+              <label><input type="checkbox" name="f_turno_reforco" value="Noite (especial)" /> Noite (especial)</label>
+            </div>
+          </div>
+          <div class="field full">
+            <label>Dias da Semana</label>
+            <div class="checks-inline">
+              <label><input type="checkbox" name="f_dias" value="Segunda" /> Segunda</label>
+              <label><input type="checkbox" name="f_dias" value="Terça" /> Terça</label>
+              <label><input type="checkbox" name="f_dias" value="Quarta" /> Quarta</label>
+              <label><input type="checkbox" name="f_dias" value="Quinta" /> Quinta</label>
+              <label><input type="checkbox" name="f_dias" value="Sexta" /> Sexta</label>
+            </div>
+          </div>
+          <div class="field full">
+            <label>Serviços Contratados</label>
+            <div class="checks-inline">
+              <label><input type="checkbox" name="f_servicos" value="Tarefas de Casa" /> Tarefas de Casa</label>
+              <label><input type="checkbox" name="f_servicos" value="Alfabetização" /> Alfabetização / Letramento</label>
+              <label><input type="checkbox" name="f_servicos" value="Reforço Específico" /> Reforço Específico</label>
+              <label><input type="checkbox" name="f_servicos" value="Preparatório" /> Preparatório para Provas</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Valores -->
+        <div class="grupo">
+          <h4>4. Valores e Pagamento</h4>
+          <div class="field"><label>Mensalidade (R$)</label><input id="f_mensalidade" type="text" placeholder="Ex.: 180,00" /></div>
+          <div class="field"><label>Dia de Vencimento</label><input id="f_vencimento" type="number" min="1" max="31" /></div>
+          <div class="field full">
+            <label>Forma de Pagamento</label>
+            <div class="checks-inline">
+              <label><input type="checkbox" name="f_forma" value="PIX" /> PIX</label>
+              <label><input type="checkbox" name="f_forma" value="Dinheiro" /> Dinheiro</label>
+              <label><input type="checkbox" name="f_forma" value="Cartão" /> Cartão</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. Autorizações -->
+        <div class="grupo">
+          <h4>5. Autorizações</h4>
+          <div class="field full"><label>Pessoa autorizada a buscar (1)</label><input id="f_aut1" /></div>
+          <div class="field"><label>Parentesco</label><input id="f_aut1_parentesco" /></div>
+          <div class="field full"><label>Pessoa autorizada a buscar (2)</label><input id="f_aut2" /></div>
+          <div class="field"><label>Parentesco</label><input id="f_aut2_parentesco" /></div>
+          <div class="field full">
+            <label>Uso de Imagem</label>
+            <div class="checks-inline">
+              <label><input type="radio" name="f_imagem" value="SIM" /> Autorizo</label>
+              <label><input type="radio" name="f_imagem" value="NÃO" /> Não autorizo</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- 6. Observações -->
+        <div class="grupo">
+          <h4>6. Observações</h4>
+          <div class="field full"><label>Observações</label><textarea id="f_observacoes" rows="3"></textarea></div>
+        </div>
+      </form>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="fecharModalFicha()">Cancelar</button>
+      <button class="btn btn-ghost" onclick="imprimirFicha()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+        Imprimir ficha
+      </button>
+      <button class="btn btn-primary" onclick="salvarFicha()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        Salvar inscrição
+      </button>
+    </div>
+  </div>
+</div>
+
 <script src="db.js"></script>
 <script src="shared.js"></script>
 <script>
@@ -492,6 +716,7 @@ initTabs({
   turmas:      ['Turmas', 'Cadastro e gestão de turmas'],
   professores: ['Professores', 'Corpo docente'],
   alunos:      ['Alunos', 'Alunos matriculados'],
+  inscricoes:  ['Inscrições', 'Fichas de inscrição recebidas'],
   planos:      ['Planos', 'Planos semanais'],
   financeiro:  ['Financeiro', 'Confirmação de pagamentos e carnês'],
   boletim:     ['Boletim', 'Notas por matéria'],
@@ -544,8 +769,7 @@ function salvarTurma(e) {
   const nivel = /EM/.test(serie) ? 'medio' : 'fund';
   const dados = {
     nome: document.getElementById('turmaNome').value.trim(),
-    serie,
-    nivel,
+    serie, nivel,
     turno: document.getElementById('turmaTurno').value,
     professor: document.getElementById('turmaProfessor').value,
     capacidade: +document.getElementById('turmaCapacidade').value,
@@ -753,6 +977,521 @@ function renderAlunos() {
 }
 
 /* ============================================================
+   INSCRIÇÕES
+   ============================================================ */
+function proximoNumeroInscricao() {
+  const lista = DB.list('inscricoes');
+  if (!lista.length) return '0001';
+  const ultimo = lista
+    .map(i => parseInt(String(i.numero || '0').replace(/\D/g, ''), 10) || 0)
+    .sort((a, b) => b - a)[0];
+  return String(ultimo + 1).padStart(4, '0');
+}
+
+function novaInscricao() {
+  document.getElementById('fichaId').value = '';
+  document.getElementById('fichaTitulo').textContent = 'Nova Inscrição';
+  document.querySelector('#formFicha').reset();
+  document.getElementById('f_numero').value = proximoNumeroInscricao();
+  document.getElementById('modalFicha').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function editarInscricao(id) {
+  const i = DB.get('inscricoes', id);
+  if (!i) return;
+  document.getElementById('fichaId').value = i.id;
+  document.getElementById('fichaTitulo').textContent = 'Editar Inscrição — Nº ' + i.numero;
+
+  // Campos simples
+  document.getElementById('f_numero').value = i.numero || '';
+  document.getElementById('f_nome').value = i.nome || '';
+  document.getElementById('f_nascimento').value = i.nascimento || '';
+  document.getElementById('f_idade').value = i.idade || '';
+  document.getElementById('f_escola').value = i.escola || '';
+  document.getElementById('f_serie').value = i.serie || '';
+  document.getElementById('f_responsavel').value = i.responsavel || '';
+  document.getElementById('f_parentesco').value = i.parentesco || '';
+  document.getElementById('f_cpf').value = i.cpf || '';
+  document.getElementById('f_rg').value = i.rg || '';
+  document.getElementById('f_whatsapp').value = i.whatsapp || '';
+  document.getElementById('f_emergencia').value = i.emergencia || '';
+  document.getElementById('f_endereco').value = i.endereco || '';
+  document.getElementById('f_aut1').value = i.aut1 || '';
+  document.getElementById('f_aut1_parentesco').value = i.aut1_parentesco || '';
+  document.getElementById('f_aut2').value = i.aut2 || '';
+  document.getElementById('f_aut2_parentesco').value = i.aut2_parentesco || '';
+  document.getElementById('f_observacoes').value = i.observacoes || '';
+
+  // Checkboxes
+  marcarCheckboxes('f_turno_escolar', i.turnoEscolar || []);
+  marcarCheckboxes('f_nivel', i.nivel || []);
+  marcarCheckboxes('f_turno_reforco', i.turnoReforco || []);
+  marcarCheckboxes('f_dias', i.dias || []);
+  marcarCheckboxes('f_servicos', i.servicos || []);
+  marcarCheckboxes('f_forma', i.forma || []);
+  const radioImg = document.querySelector(`input[name="f_imagem"][value="${i.imagem || ''}"]`);
+  if (radioImg) radioImg.checked = true;
+
+  document.getElementById('modalFicha').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function marcarCheckboxes(name, valores) {
+  document.querySelectorAll(`input[name="${name}"]`).forEach(cb => {
+    cb.checked = valores.includes(cb.value);
+  });
+}
+
+function valoresCheckboxes(name) {
+  return Array.from(document.querySelectorAll(`input[name="${name}"]:checked`))
+    .map(cb => cb.value);
+}
+
+function fecharModalFicha() {
+  document.getElementById('modalFicha').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function salvarFicha(e) {
+  if (e) e.preventDefault();
+  const id = document.getElementById('fichaId').value;
+
+  const dados = {
+    numero: document.getElementById('f_numero').value.trim(),
+    nome: document.getElementById('f_nome').value.trim(),
+    nascimento: document.getElementById('f_nascimento').value,
+    idade: document.getElementById('f_idade').value,
+    escola: document.getElementById('f_escola').value.trim(),
+    serie: document.getElementById('f_serie').value.trim(),
+    turnoEscolar: valoresCheckboxes('f_turno_escolar'),
+    nivel: valoresCheckboxes('f_nivel'),
+    responsavel: document.getElementById('f_responsavel').value.trim(),
+    parentesco: document.getElementById('f_parentesco').value,
+    cpf: document.getElementById('f_cpf').value.trim(),
+    rg: document.getElementById('f_rg').value.trim(),
+    whatsapp: document.getElementById('f_whatsapp').value.trim(),
+    emergencia: document.getElementById('f_emergencia').value.trim(),
+    endereco: document.getElementById('f_endereco').value.trim(),
+    turnoReforco: valoresCheckboxes('f_turno_reforco'),
+    dias: valoresCheckboxes('f_dias'),
+    servicos: valoresCheckboxes('f_servicos'),
+    mensalidade: document.getElementById('f_mensalidade')?.value.trim() || '',
+    vencimento: document.getElementById('f_vencimento')?.value || '',
+    forma: valoresCheckboxes('f_forma'),
+    aut1: document.getElementById('f_aut1').value.trim(),
+    aut1_parentesco: document.getElementById('f_aut1_parentesco').value.trim(),
+    aut2: document.getElementById('f_aut2').value.trim(),
+    aut2_parentesco: document.getElementById('f_aut2_parentesco').value.trim(),
+    imagem: document.querySelector('input[name="f_imagem"]:checked')?.value || '',
+    observacoes: document.getElementById('f_observacoes').value.trim(),
+    dataInscricao: new Date().toISOString().slice(0, 10),
+    status: 'Pendente'
+  };
+
+  if (!dados.nome) { alert('Informe o nome do aluno.'); return; }
+
+  if (id) {
+    DB.update('inscricoes', id, dados);
+    toast('Inscrição atualizada.');
+  } else {
+    DB.create('inscricoes', dados);
+    toast('Inscrição registrada.');
+  }
+
+  fecharModalFicha();
+  renderInscricoes();
+}
+
+function excluirInscricao(id) {
+  if (!confirm('Excluir esta inscrição?')) return;
+  DB.remove('inscricoes', id);
+  toast('Inscrição excluída.');
+  renderInscricoes();
+}
+
+function converterEmAluno(id) {
+  const i = DB.get('inscricoes', id);
+  if (!i) return;
+  if (!confirm(`Converter ${i.nome} em aluno matriculado?`)) return;
+
+  // Verifica se já existe
+  const jaExiste = DB.list('alunos').some(a => a.nome.toLowerCase() === i.nome.toLowerCase());
+  if (jaExiste) { alert('Já existe um aluno com este nome.'); return; }
+
+  DB.create('alunos', {
+    nome: i.nome,
+    nascimento: i.nascimento,
+    responsavel: i.responsavel,
+    celularResponsavel: i.whatsapp,
+    turma: '',
+    plano: '',
+    vencimento: +i.vencimento || 10,
+    status: 'Ativo'
+  });
+
+  DB.update('inscricoes', id, { status: 'Matriculado' });
+  toast('Aluno matriculado com sucesso.');
+  renderInscricoes(); renderAlunos(); renderTudo();
+}
+
+function renderInscricoes() {
+  const lista = DB.list('inscricoes').slice().sort((a, b) => (b.criadoEm || '').localeCompare(a.criadoEm || ''));
+  const tbody = document.querySelector('#tabInscricoes tbody');
+
+  if (!lista.length) {
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--cinza-500);">Nenhuma inscrição registrada.</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = lista.map(i => {
+    const corStatus = i.status === 'Matriculado' ? 'badge-ok' : 'badge-warn';
+    return `<tr>
+      <td>${fmtData(i.dataInscricao)}</td>
+      <td><strong>${i.numero || '—'}</strong></td>
+      <td><strong>${i.nome}</strong></td>
+      <td>${i.serie || '—'}${i.nivel?.length ? ' · ' + i.nivel.join(', ') : ''}</td>
+      <td>${i.responsavel || '—'}</td>
+      <td>${i.whatsapp || '—'}</td>
+      <td><span class="badge ${corStatus}">${i.status}</span></td>
+      <td style="white-space:nowrap;">
+        <button class="btn btn-ghost btn-sm" onclick="editarInscricao('${i.id}')">Editar</button>
+        <button class="btn btn-ghost btn-sm" onclick="imprimirFichaPorId('${i.id}')">Imprimir</button>
+        <button class="btn btn-success btn-sm" onclick="converterEmAluno('${i.id}')">Matricular</button>
+        <button class="btn btn-danger btn-sm" onclick="excluirInscricao('${i.id}')">Excluir</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+/* ============================================================
+   IMPRESSÃO DA FICHA (1 folha A4)
+   ============================================================ */
+function imprimirFicha() {
+  const dados = coletarFichaAtual();
+  imprimirFichaComDados(dados);
+}
+
+function imprimirFichaPorId(id) {
+  const i = DB.get('inscricoes', id);
+  if (!i) return;
+  imprimirFichaComDados(i);
+}
+
+function coletarFichaAtual() {
+  return {
+    numero: document.getElementById('f_numero').value.trim(),
+    nome: document.getElementById('f_nome').value.trim(),
+    nascimento: document.getElementById('f_nascimento').value,
+    idade: document.getElementById('f_idade').value,
+    escola: document.getElementById('f_escola').value.trim(),
+    serie: document.getElementById('f_serie').value.trim(),
+    turnoEscolar: valoresCheckboxes('f_turno_escolar'),
+    nivel: valoresCheckboxes('f_nivel'),
+    responsavel: document.getElementById('f_responsavel').value.trim(),
+    parentesco: document.getElementById('f_parentesco').value,
+    cpf: document.getElementById('f_cpf').value.trim(),
+    rg: document.getElementById('f_rg').value.trim(),
+    whatsapp: document.getElementById('f_whatsapp').value.trim(),
+    emergencia: document.getElementById('f_emergencia').value.trim(),
+    endereco: document.getElementById('f_endereco').value.trim(),
+    turnoReforco: valoresCheckboxes('f_turno_reforco'),
+    dias: valoresCheckboxes('f_dias'),
+    servicos: valoresCheckboxes('f_servicos'),
+    mensalidade: document.getElementById('f_mensalidade')?.value.trim() || '',
+    vencimento: document.getElementById('f_vencimento')?.value || '',
+    forma: valoresCheckboxes('f_forma'),
+    aut1: document.getElementById('f_aut1').value.trim(),
+    aut1_parentesco: document.getElementById('f_aut1_parentesco').value.trim(),
+    aut2: document.getElementById('f_aut2').value.trim(),
+    aut2_parentesco: document.getElementById('f_aut2_parentesco').value.trim(),
+    imagem: document.querySelector('input[name="f_imagem"]:checked')?.value || '',
+    observacoes: document.getElementById('f_observacoes').value.trim(),
+    dataInscricao: new Date().toISOString().slice(0, 10)
+  };
+}
+
+function imprimirFichaComDados(d) {
+  const check = (cond) => cond ? '☑' : '☐';
+  const v = (val) => val ? String(val).toUpperCase() : '';
+
+  const turnoEsc = (d.turnoEscolar || []);
+  const nivelArr = (d.nivel || []);
+  const turnoRef = (d.turnoReforco || []);
+  const dias = (d.dias || []);
+  const servicos = (d.servicos || []);
+  const forma = (d.forma || []);
+
+  const html = `
+  <!DOCTYPE html>
+  <html lang="pt-BR">
+  <head>
+  <meta charset="UTF-8">
+  <title>Ficha de Inscrição — ${d.nome}</title>
+  <style>
+    @page { size: A4; margin: 8mm; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter','Segoe UI',system-ui,sans-serif;
+      color: #0f172a;
+      font-size: 8pt;
+      padding: 4mm;
+    }
+    .cabecalho {
+      position: relative;
+      padding: 3mm 4mm;
+      border: 2px solid #2563eb;
+      border-radius: 8px;
+      background: linear-gradient(135deg,#fff,#eff6ff);
+      text-align: center;
+      margin-bottom: 2mm;
+    }
+    .cabecalho::before,.cabecalho::after {
+      content:""; position:absolute; left:0; right:0; height:3px;
+    }
+    .cabecalho::before { top:0; background: linear-gradient(90deg,#6d28d9,#3b82f6,#10b981); }
+    .cabecalho::after  { bottom:0; background: linear-gradient(90deg,#f43f5e,#f97316,#facc15); }
+    .cabecalho__marca { display:flex; align-items:center; justify-content:center; gap:8px; }
+    .cabecalho__titulo {
+      font-size: 13pt; font-weight: 900; letter-spacing:.02em;
+      text-transform: uppercase; color:#1e3a8a;
+    }
+    .cabecalho__subtitulo {
+      font-size: 9pt; font-weight: 800; letter-spacing:.12em;
+      text-transform: uppercase; color:#f97316; margin-top:1mm;
+    }
+    .titulo-ficha {
+      display:inline-block; margin-top:1.5mm; padding:1.2mm 8mm;
+      border-radius:999px;
+      background: linear-gradient(135deg,#1d4ed8,#1e3a8a);
+      color:#fff; font-size:10pt; font-weight:900;
+      letter-spacing:.14em; text-transform:uppercase;
+    }
+    .barra {
+      display:flex; justify-content:space-between; align-items:center;
+      padding: 1.5mm 3mm; margin-bottom: 2mm;
+      background:#eff6ff; border:1px solid #dbeafe; border-radius:6px;
+      font-size:8pt; font-weight:700; color:#1e3a8a;
+    }
+    .barra .valor { border-bottom:1px dotted #64748b; padding:0 4px; min-width:30mm; display:inline-block; }
+    .secao {
+      border:1px solid #e2e8f0; border-radius:6px; overflow:hidden;
+      margin-bottom: 1.6mm;
+    }
+    .secao__titulo {
+      background: linear-gradient(135deg,#1d4ed8,#1e3a8a);
+      color:#fff; padding: 1.2mm 3mm;
+      font-size:8.5pt; font-weight:800; letter-spacing:.04em;
+      text-transform: uppercase;
+    }
+    .secao__corpo { padding: 1.8mm 3mm; }
+    .linha { display:flex; gap:3mm; flex-wrap:wrap; align-items:flex-end; margin-bottom:1mm; }
+    .campo { display:flex; align-items:flex-end; gap:3px; flex:1; min-width:0; }
+    .campo label { font-weight:700; white-space:nowrap; font-size:7.5pt; }
+    .campo .val { flex:1; border-bottom:1px dotted #64748b; min-height:11px; font-weight:700; font-size:8pt; padding:0 2px; }
+    .bloco { display:flex; flex-direction:column; gap:1px; margin-bottom:1mm; }
+    .bloco label { font-weight:700; font-size:7.5pt; }
+    .bloco .val { border-bottom:1px dotted #64748b; min-height:12px; font-weight:700; font-size:8pt; padding:0 2px; }
+    .checks { display:flex; flex-wrap:wrap; gap:2mm 5mm; }
+    .check { font-size:7.5pt; font-weight:600; }
+    table.tabela { width:100%; border-collapse:collapse; font-size:7.5pt; }
+    table.tabela thead th {
+      background: linear-gradient(135deg,#1d4ed8,#1e3a8a);
+      color:#fff; text-align:left; padding:1.2mm 2mm;
+      font-size:7.5pt; font-weight:800; text-transform:uppercase;
+    }
+    table.tabela tbody td {
+      padding:1.5mm 2mm; border-bottom:1px solid #e2e8f0; height:6mm;
+    }
+    .aviso { padding:1.2mm 2mm; background:#fef9c3; border-left:3px solid #ca8a04; border-radius:3px; font-size:7.5pt; font-weight:600; color:#78350f; margin:1.5mm 0; }
+    .termo { padding:1.8mm 3mm; border:1px solid #e2e8f0; border-left:3px solid #2563eb; border-radius:4px; background:#eff6ff; font-size:7.5pt; line-height:1.4; margin-bottom:1.6mm; }
+    .assinatura { margin-top:3mm; text-align:center; }
+    .assinatura__linha { width:80mm; height:1px; background:#0f172a; margin:6mm auto 1mm; }
+    .assinatura__nome { font-size:8pt; font-weight:800; letter-spacing:.06em; text-transform:uppercase; }
+  </style>
+  </head>
+  <body>
+
+    <div class="cabecalho">
+      <div class="cabecalho__marca">
+        <svg width="26" height="26" viewBox="0 0 100 90" fill="none">
+          <defs>
+            <linearGradient id="gRoxo" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#8b5cf6"/><stop offset="100%" stop-color="#6d28d9"/></linearGradient>
+            <linearGradient id="gRosa" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#f43f5e"/><stop offset="100%" stop-color="#e11d48"/></linearGradient>
+            <linearGradient id="gVerde" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#10b981"/><stop offset="100%" stop-color="#059669"/></linearGradient>
+            <linearGradient id="gLinha" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#ec4899"/><stop offset="50%" stop-color="#8b5cf6"/><stop offset="100%" stop-color="#3b82f6"/></linearGradient>
+          </defs>
+          <path d="M50 12 L82 68 L18 68 Z" stroke="url(#gLinha)" stroke-width="4" stroke-linejoin="round" fill="none"/>
+          <circle cx="50" cy="12" r="7.5" fill="url(#gRoxo)"/>
+          <circle cx="18" cy="68" r="7.5" fill="url(#gRosa)"/>
+          <circle cx="82" cy="68" r="7.5" fill="url(#gVerde)"/>
+          <path d="M44 41 L50 36 L56 41 L50 45 Z" fill="#7c3aed"/>
+        </svg>
+        <span class="cabecalho__titulo">Banca de Estudo &amp; Reforço Escolar</span>
+      </div>
+      <div class="cabecalho__subtitulo">Tríade Conexão</div>
+      <div class="titulo-ficha">Ficha de Inscrição</div>
+    </div>
+
+    <div class="barra">
+      <span>Data da Inscrição: <span class="valor">${d.dataInscricao ? new Date(d.dataInscricao).toLocaleDateString('pt-BR') : ''}</span></span>
+      <span>Matrícula Nº: <span class="valor">${d.numero || ''}</span></span>
+    </div>
+
+    <div class="secao">
+      <div class="secao__titulo">1. Dados do Aluno(a)</div>
+      <div class="secao__corpo">
+        <div class="bloco"><label>Nome Completo:</label><div class="val">${v(d.nome)}</div></div>
+        <div class="linha">
+          <div class="campo"><label>Data de Nascimento:</label><div class="val">${d.nascimento || ''}</div></div>
+          <div class="campo"><label>Idade:</label><div class="val">${d.idade || ''}</div><label>anos</label></div>
+        </div>
+        <div class="linha">
+          <div class="campo"><label>Escola onde estuda:</label><div class="val">${v(d.escola)}</div></div>
+          <div class="campo"><label>Série / Ano:</label><div class="val">${v(d.serie)}</div></div>
+        </div>
+        <div class="linha">
+          <label>Turno Escolar:</label>
+          <div class="checks">
+            <span class="check">${check(turnoEsc.includes('Manhã'))} Manhã</span>
+            <span class="check">${check(turnoEsc.includes('Tarde'))} Tarde</span>
+          </div>
+        </div>
+        <div class="linha">
+          <label>Nível Escolar:</label>
+          <div class="checks">
+            <span class="check">${check(nivelArr.includes('Anos Iniciais'))} Anos Iniciais (1º ao 5º)</span>
+            <span class="check">${check(nivelArr.includes('Anos Finais'))} Anos Finais (6º ao 9º)</span>
+            <span class="check">${check(nivelArr.includes('Ensino Médio'))} Ensino Médio</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="secao">
+      <div class="secao__titulo">2. Dados do Responsável Legal</div>
+      <div class="secao__corpo">
+        <div class="bloco"><label>Nome do Responsável:</label><div class="val">${v(d.responsavel)}</div></div>
+        <div class="linha">
+          <div class="campo"><label>Parentesco:</label><div class="val">${v(d.parentesco)}</div></div>
+          <div class="campo"><label>CPF:</label><div class="val">${d.cpf || ''}</div></div>
+          <div class="campo"><label>RG:</label><div class="val">${d.rg || ''}</div></div>
+        </div>
+        <div class="linha">
+          <div class="campo"><label>WhatsApp Principal:</label><div class="val">${d.whatsapp || ''}</div></div>
+          <div class="campo"><label>Contato Emergência:</label><div class="val">${d.emergencia || ''}</div></div>
+        </div>
+        <div class="bloco"><label>Endereço Residencial:</label><div class="val">${v(d.endereco)}</div></div>
+      </div>
+    </div>
+
+    <div class="secao">
+      <div class="secao__titulo">3. Plano e Modalidade no Reforço</div>
+      <div class="secao__corpo">
+        <div class="linha">
+          <label>Turno no Reforço:</label>
+          <div class="checks">
+            <span class="check">${check(turnoRef.includes('Manhã'))} Manhã</span>
+            <span class="check">${check(turnoRef.includes('Tarde'))} Tarde</span>
+            <span class="check">${check(turnoRef.includes('Noite (especial)'))} Noite (especial)</span>
+          </div>
+        </div>
+        <div class="linha">
+          <label>Dias da Semana:</label>
+          <div class="checks">
+            <span class="check">${check(dias.includes('Segunda'))} Segunda</span>
+            <span class="check">${check(dias.includes('Terça'))} Terça</span>
+            <span class="check">${check(dias.includes('Quarta'))} Quarta</span>
+            <span class="check">${check(dias.includes('Quinta'))} Quinta</span>
+            <span class="check">${check(dias.includes('Sexta'))} Sexta</span>
+          </div>
+        </div>
+        <div class="linha">
+          <label>Serviços Contratados:</label>
+          <div class="checks">
+            <span class="check">${check(servicos.includes('Tarefas de Casa'))} Tarefas de Casa</span>
+            <span class="check">${check(servicos.includes('Alfabetização'))} Alfabetização</span>
+            <span class="check">${check(servicos.includes('Reforço Específico'))} Reforço Específico</span>
+            <span class="check">${check(servicos.includes('Preparatório'))} Preparatório</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="secao">
+      <div class="secao__titulo">4. Tabela de Valores e Condições de Pagamento</div>
+      <div class="secao__corpo">
+        <table class="tabela">
+          <thead><tr><th>Categoria / Nível Escolar</th><th>Frequência</th><th>Mensalidade</th></tr></thead>
+          <tbody>
+            <tr><td>${v(d.mensalidade) ? 'Mensalidade' : ''}</td><td></td><td>${v(d.mensalidade)}</td></tr>
+            <tr><td></td><td></td><td></td></tr>
+            <tr><td></td><td></td><td></td></tr>
+          </tbody>
+        </table>
+        <div class="aviso"><strong>Desconto Irmãos:</strong> 10% de desconto na mensalidade do segundo filho.</div>
+        <div class="linha">
+          <div class="campo"><label>Dia de Vencimento:</label><div class="val">${d.vencimento || ''}</div><label>de cada mês.</label></div>
+          <div class="campo"><label>Forma de Pagamento:</label>
+            <div class="val">
+              ${check(forma.includes('PIX'))} PIX &nbsp;
+              ${check(forma.includes('Dinheiro'))} Dinheiro &nbsp;
+              ${check(forma.includes('Cartão'))} Cartão
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="secao">
+      <div class="secao__titulo">5. Autorizações e Termos</div>
+      <div class="secao__corpo">
+        <div class="linha">
+          <div class="campo"><label>1. Nome:</label><div class="val">${v(d.aut1)}</div></div>
+          <div class="campo"><label>Parentesco:</label><div class="val">${v(d.aut1_parentesco)}</div></div>
+        </div>
+        <div class="linha">
+          <div class="campo"><label>2. Nome:</label><div class="val">${v(d.aut2)}</div></div>
+          <div class="campo"><label>Parentesco:</label><div class="val">${v(d.aut2_parentesco)}</div></div>
+        </div>
+        <div class="linha">
+          <label>Uso de Imagem:</label>
+          <div class="checks">
+            <span class="check">${check(d.imagem === 'SIM')} Autorizo</span>
+            <span class="check">${check(d.imagem === 'NÃO')} Não autorizo</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="secao">
+      <div class="secao__titulo">6. Declaração</div>
+      <div class="secao__corpo">
+        <div class="termo">
+          Declaro que as informações acima são verdadeiras e estou de acordo com os valores, prazos e termos estabelecidos.
+        </div>
+      </div>
+    </div>
+
+    <div class="assinatura">
+      Nossa Senhora do Socorro / SE, ____ / ____ / 2026.
+      <div class="assinatura__linha"></div>
+      <div class="assinatura__nome">Assinatura do Responsável Legal</div>
+    </div>
+
+  </body>
+  </html>`;
+
+  const win = window.open('', '_blank');
+  win.document.open();
+  win.document.write(html);
+  win.document.close();
+  win.onload = () => {
+    setTimeout(() => { win.focus(); win.print(); }, 300);
+  };
+}
+
+/* ============================================================
    PLANOS
    ============================================================ */
 function novoPlano() {
@@ -842,11 +1581,7 @@ function confirmarPagamento(id) {
 
 function estornarPagamento(id) {
   if (!confirm('Marcar como pendente novamente?')) return;
-  DB.update('pagamentos', id, {
-    status: 'Pendente',
-    pagoEm: null,
-    dataPagamento: null
-  });
+  DB.update('pagamentos', id, { status: 'Pendente', pagoEm: null, dataPagamento: null });
   toast('Pagamento estornado.');
   renderFinanceiro();
   if (carneAlunoAtual) renderCarneAluno();
@@ -1194,7 +1929,7 @@ function lancarNota(aluno, turma, disciplina, bimestre) {
 }
 
 /* ============================================================
-   DESEMPENHO (com donuts)
+   DESEMPENHO
    ============================================================ */
 function renderDesempenho() {
   const turmas = DB.list('turmas');
@@ -1384,6 +2119,7 @@ function renderTudo() {
   renderTurmas();
   renderProfessores();
   renderAlunos();
+  renderInscricoes();
   renderPlanos();
   renderFinanceiro();
   renderDesempenho();
@@ -1403,6 +2139,7 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
     if (document.getElementById('modalCarne').classList.contains('open')) fecharModalCarne();
     if (document.getElementById('modalCarnesGerais').classList.contains('open')) fecharModalCarnesGerais();
+    if (document.getElementById('modalFicha').classList.contains('open')) fecharModalFicha();
   }
 });
 
