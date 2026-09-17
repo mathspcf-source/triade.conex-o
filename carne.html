@@ -16,10 +16,12 @@
   }
 
   body {
-    font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+    font-family: 'Inter', 'Segoe UI', Tahoma, Arial, sans-serif;
     background: linear-gradient(135deg, #e0e7ff 0%, #f1f5f9 100%);
     padding: 20px 10px;
     min-height: 100vh;
+    color: #0f172a;
+    -webkit-font-smoothing: antialiased;
   }
 
   /* ===== Barra de ações (não imprime) ===== */
@@ -38,7 +40,7 @@
     color: #1e293b;
   }
   .barra-acoes .icone { flex-shrink: 0; color: var(--azul); }
-  .barra-acoes strong { color: var(--azul); }
+  .barra-acoes strong { color: var(--azul); font-weight: 800; letter-spacing: -.01em; }
   .barra-acoes .btn {
     padding: 8px 14px;
     border: none;
@@ -57,7 +59,7 @@
   .barra-acoes .btn-voltar:hover { background: #cbd5e1; }
   .barra-acoes .grupo { margin-left: auto; display: flex; gap: 8px; }
 
-  /* ===== Aviso (quando não acha o aluno) ===== */
+  /* ===== Aviso (quando algo não bate) ===== */
   .aviso-sistema {
     max-width: 210mm;
     margin: 0 auto 16px;
@@ -80,12 +82,13 @@
     color: #991b1b;
   }
   .aviso-sistema svg { flex-shrink: 0; margin-top: 1px; }
-  .aviso-sistema strong { display: block; margin-bottom: 3px; font-size: 14px; }
+  .aviso-sistema strong { display: block; margin-bottom: 3px; font-size: 14px; font-weight: 800; }
   .aviso-sistema code {
     background: rgba(0,0,0,.08);
     padding: 1px 5px;
     border-radius: 4px;
-    font-family: monospace;
+    font-family: 'SFMono-Regular', Consolas, monospace;
+    font-size: 12.5px;
   }
 
   /* ===== FOLHA A4 ===== */
@@ -217,6 +220,7 @@
     display: flex;
     align-items: center;
     gap: 5px;
+    letter-spacing: -.01em;
   }
   .via .titulo svg { color: var(--azul-medio); flex-shrink: 0; }
   .via .parcela-tag {
@@ -373,7 +377,7 @@
 </head>
 <body>
 
-<!-- Barra de ações -->
+<!-- ================= BARRA DE AÇÕES ================= -->
 <div class="barra-acoes">
   <svg class="icone" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
@@ -404,15 +408,15 @@
   </div>
 </div>
 
-<!-- Aviso do sistema (quando algo não bate) -->
+<!-- ================= AVISO DO SISTEMA ================= -->
 <div id="avisoSistema"></div>
 
-<!-- Container das folhas -->
+<!-- ================= CONTAINER DAS FOLHAS ================= -->
 <div id="paginas"></div>
 
 <script>
 /* ============================================================
-   CARNÊ — geração com fallback e diagnóstico visível
+   CARNÊ — geração dinâmica com fallbacks visíveis
    ============================================================ */
 
 const ICONE_ESCOLA = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg>`;
@@ -441,7 +445,9 @@ function mostrarAviso(tipo, html) {
   cont.innerHTML = `<div class="aviso-sistema ${tipo}">${ICONE_ALERTA}<div>${html}</div></div>`;
 }
 
-// ---------- Boot ----------
+/* ============================================================
+   BOOT
+   ============================================================ */
 (function gerarCarne() {
   const params = new URLSearchParams(location.search);
   const nomeAluno = params.get('aluno');
@@ -449,9 +455,7 @@ function mostrarAviso(tipo, html) {
 
   const infoAluno = document.getElementById('infoAluno');
   const infoSub = document.getElementById('infoSub');
-  const container = document.getElementById('paginas');
 
-  // Diagnóstico: mostra o que está no localStorage
   const todosAlunos = lerLS('triade_alunos');
   const todosPags = lerLS('triade_pagamentos');
   const todosPlanos = lerLS('triade_planos');
@@ -461,7 +465,7 @@ function mostrarAviso(tipo, html) {
   console.log('[CARNE] Aluno solicitado:', nomeAluno);
   console.log('[CARNE] Ano solicitado:', anoParam);
 
-  // ---------- Modo 1: sem parâmetro ----------
+  /* ---------- Modo 1: sem parâmetro (demonstração) ---------- */
   if (!nomeAluno) {
     infoAluno.textContent = 'Demonstração';
     infoSub.textContent = 'Nenhum aluno informado — exibindo exemplo com dados fictícios.';
@@ -469,7 +473,7 @@ function mostrarAviso(tipo, html) {
     mostrarAviso('amarelo', `
       <strong>Modo demonstração</strong>
       Você abriu o <code>carne.html</code> direto, sem o parâmetro <code>?aluno=</code>.
-      Aqui está um carnê de exemplo. Para gerar o carnê de um aluno real,
+      Abaixo um carnê de exemplo. Para gerar o carnê de um aluno real,
       use o botão <strong>Imprimir carnê</strong> na aba Financeiro do painel admin.
     `);
 
@@ -492,18 +496,17 @@ function mostrarAviso(tipo, html) {
     return;
   }
 
-  // ---------- Modo 2: com parâmetro, mas sem dados no localStorage ----------
+  /* ---------- Modo 2: sem dados no localStorage ---------- */
   if (!todosAlunos.length) {
     infoAluno.textContent = 'Sem dados salvos';
     infoSub.textContent = nomeAluno;
 
     mostrarAviso('vermelho', `
       <strong>Nenhum dado encontrado no localStorage</strong>
-      O <code>localStorage</code> deste navegador está vazio.
-      Isso geralmente acontece quando:
+      O <code>localStorage</code> deste navegador está vazio. Isso geralmente acontece quando:
       <ul style="margin:8px 0 0 18px;font-size:12.5px;">
         <li>O admin ainda não cadastrou nenhum aluno;</li>
-        <li>Ou você abriu o admin e o carnê em <strong>caminhos diferentes</strong> (ex.: <code>file://</code> vs <code>http://</code>) — nesse caso os dados não são compartilhados.</li>
+        <li>Ou o admin e o carnê estão em <strong>caminhos diferentes</strong> (ex.: <code>file://</code> vs <code>http://</code>) — nesse caso, os dados não são compartilhados.</li>
       </ul>
     `);
 
@@ -519,7 +522,7 @@ function mostrarAviso(tipo, html) {
     return;
   }
 
-  // ---------- Modo 3: aluno não encontrado ----------
+  /* ---------- Modo 3: aluno não encontrado ---------- */
   const aluno = todosAlunos.find(a => a.nome === nomeAluno);
   if (!aluno) {
     infoAluno.textContent = 'Aluno não encontrado';
@@ -542,7 +545,7 @@ function mostrarAviso(tipo, html) {
     return;
   }
 
-  // ---------- Modo 4: caminho feliz ----------
+  /* ---------- Modo 4: caminho feliz ---------- */
   const pagamentos = todosPags
     .filter(p => p.aluno === aluno.nome && p.ano === anoParam)
     .sort((a, b) => a.mes - b.mes);
@@ -565,8 +568,8 @@ function mostrarAviso(tipo, html) {
     }
     mostrarAviso('amarelo', `
       <strong>Nenhum pagamento lançado para ${aluno.nome} em ${anoParam}</strong>
-      O carnê abaixo foi gerado usando o valor do plano <code>${aluno.plano}</code> (${fmtMoeda(valorPadrao)}/mês)
-      e o vencimento cadastrado (dia ${aluno.vencimento}).
+      O carnê abaixo foi gerado usando o valor do plano <code>${aluno.plano}</code>
+      (${fmtMoeda(valorPadrao)}/mês) e o vencimento cadastrado (dia ${aluno.vencimento}).
     `);
   }
 
@@ -576,7 +579,9 @@ function mostrarAviso(tipo, html) {
   renderCarne({ aluno, parcelas, anoParam });
 })();
 
-// ---------- Render ----------
+/* ============================================================
+   RENDER
+   ============================================================ */
 function renderCarne({ aluno, parcelas, anoParam }) {
   const container = document.getElementById('paginas');
   const meses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
