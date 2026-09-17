@@ -98,23 +98,6 @@
     .carne-grid { grid-template-columns: 1fr; }
     .carne-resumo { grid-template-columns: repeat(2, 1fr); }
   }
-
-  /* ===== Impressão ===== */
-  @media print {
-    body * { visibility: hidden; }
-    #modalCarne, #modalCarne * { visibility: visible; }
-    #modalCarne { position: absolute; inset: 0; background: #fff; padding: 0; display: block; }
-    #modalCarne .modal { box-shadow: none; max-width: 100%; }
-    #modalCarne .modal-header,
-    #modalCarne .modal-footer,
-    #modalCarne .parc-acoes { display: none !important; }
-    #modalCarne .carne-header {
-      background: #1E3A8A !important;
-      -webkit-print-color-adjust: exact;
-      print-color-adjust: exact;
-    }
-    .carne-parcela { break-inside: avoid; }
-  }
 </style>
 </head>
 <body>
@@ -1067,8 +1050,12 @@ function gerarCarneAnual() {
   renderVisao();
 }
 
+/* ⬇⬇⬇ AQUI ESTÁ A ÚNICA MUDANÇA — aponta para carne.html ⬇⬇⬇ */
 function imprimirCarne() {
-  window.print();
+  if (!carneAlunoAtual) return;
+  const ano = document.getElementById('carneAno').value || new Date().getFullYear();
+  const url = 'carne.html?aluno=' + encodeURIComponent(carneAlunoAtual.nome) + '&ano=' + ano;
+  window.open(url, '_blank');
 }
 
 /* ============================================================
@@ -1379,7 +1366,6 @@ document.getElementById('selNivel').addEventListener('change', () => { popularTu
 document.getElementById('selTurmaBol').addEventListener('change', renderBoletim);
 document.getElementById('selBimBol').addEventListener('change', renderBoletim);
 
-/* Fecha modal com ESC */
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
     if (document.getElementById('modalCarne').classList.contains('open')) fecharModalCarne();
