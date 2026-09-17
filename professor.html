@@ -56,7 +56,7 @@
           <div class="card floating">
             <div class="card-title">Minhas turmas</div>
             <div class="card-sub">Resumo rápido</div>
-            <div id="visaoTurmas" style="display:flex;flex-direction:column;gap:14px;"></div>
+            <div id="visaoTurmas" class="donut-list"></div>
           </div>
           <div class="card floating">
             <div class="card-title">Avisos recentes</div>
@@ -71,13 +71,16 @@
         <div class="grid grid-3" id="listaTurmas"></div>
       </section>
 
+      <!-- ============ ATIVIDADES (com questões) ============ -->
       <section class="tab" id="tab-atividades">
         <div class="sec-header">
-          <div><h2>Atividades</h2><p>Cadastre atividades para suas turmas</p></div>
+          <div><h2>Atividades</h2><p>Cadastre atividades e crie questões para os alunos responderem</p></div>
           <div class="actions"><button class="btn btn-primary" onclick="novaAtividade()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Nova atividade</button></div>
         </div>
+
         <div class="card" id="formAtiv" style="display:none;margin-bottom:16px;">
           <div class="card-title" id="tituloFormAtiv">Cadastrar atividade</div>
+          <div class="card-sub">Preencha os dados e adicione questões</div>
           <form class="form-grid" onsubmit="salvarAtividade(event)">
             <input type="hidden" id="ativId" />
             <div class="field"><label>Título</label><input id="ativTitulo" required /></div>
@@ -85,11 +88,27 @@
             <div class="field"><label>Disciplina</label><input id="ativDisciplina" required /></div>
             <div class="field"><label>Prazo de entrega</label><input id="ativPrazo" type="date" required /></div>
             <div class="field full"><label>Descrição</label><textarea id="ativDescricao" rows="3"></textarea></div>
-            <div class="form-actions"><button type="button" class="btn btn-ghost" onclick="fecharForm('formAtiv')">Cancelar</button><button type="submit" class="btn btn-primary">Salvar</button></div>
+
+            <div class="field full">
+              <label style="display:flex;justify-content:space-between;align-items:center;">
+                <span>Questões</span>
+                <button type="button" class="btn btn-ghost btn-sm" onclick="adicionarQuestao()">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  Adicionar questão
+                </button>
+              </label>
+              <div id="questoesLista" class="questoes-lista"></div>
+            </div>
+
+            <div class="form-actions">
+              <button type="button" class="btn btn-ghost" onclick="fecharForm('formAtiv')">Cancelar</button>
+              <button type="submit" class="btn btn-primary">Salvar atividade</button>
+            </div>
           </form>
         </div>
+
         <div class="table-wrap"><table id="tabAtiv">
-          <thead><tr><th>Atividade</th><th>Turma</th><th>Disciplina</th><th>Prazo</th><th>Entregues</th><th>Ações</th></tr></thead>
+          <thead><tr><th>Atividade</th><th>Turma</th><th>Disciplina</th><th>Prazo</th><th>Questões</th><th>Entregues</th><th>Ações</th></tr></thead>
           <tbody></tbody>
         </table></div>
       </section>
@@ -122,7 +141,7 @@
           <div class="card-title">Chamada</div>
           <div class="card-sub">Marque presente/falta por aluno</div>
           <div class="table-wrap"><table id="tabelaFaltas">
-            <thead><tr><th>Aluno</th><th>Status hoje</th><th>Ações</th></tr></thead>
+            <thead><tr><th>Aluno</th><th>Status</th><th>Ações</th></tr></thead>
             <tbody></tbody>
           </table></div>
         </div>
@@ -131,8 +150,8 @@
       <section class="tab" id="tab-desempenho">
         <div class="sec-header"><div><h2>Desempenho</h2><p>Análise das suas turmas</p></div></div>
         <div class="grid grid-2">
-          <div class="card floating"><div class="card-title">Média das minhas turmas</div><div class="card-sub">Nota média por turma</div><div id="desempenhoMinhasTurmas" style="display:flex;flex-direction:column;gap:14px;"></div></div>
-          <div class="card floating"><div class="card-title">Frequência das turmas</div><div class="card-sub">Presença por turma</div><div id="desempenhoMinhasFreq" style="display:flex;flex-direction:column;gap:14px;"></div></div>
+          <div class="card floating"><div class="card-title">Média das minhas turmas</div><div class="card-sub">Nota média por turma</div><div id="desempenhoMinhasTurmas" class="donut-list"></div></div>
+          <div class="card floating"><div class="card-title">Frequência das turmas</div><div class="card-sub">Presença por turma</div><div id="desempenhoMinhasFreq" class="donut-list"></div></div>
         </div>
       </section>
 
@@ -190,6 +209,25 @@
   </div>
 </div>
 
+<!-- MODAL: respostas do aluno -->
+<div class="modal-backdrop" id="modalRespostas" onclick="if(event.target===this) fecharModalRespostas()">
+  <div class="modal" style="max-width:720px;">
+    <div class="modal-header">
+      <div>
+        <h3 id="respTitulo">Respostas</h3>
+        <p id="respSub"></p>
+      </div>
+      <button class="modal-close" onclick="fecharModalRespostas()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body" id="respBody"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="fecharModalRespostas()">Fechar</button>
+    </div>
+  </div>
+</div>
+
 <script src="db.js"></script>
 <script src="shared.js"></script>
 <script>
@@ -211,11 +249,10 @@ function meusAlunos() {
   return DB.list('alunos').filter(a => turmas.includes(a.turma));
 }
 
-/* ---------- Init ---------- */
 initTabs({
   visao:      ['Visão Geral', 'Suas turmas e atividades'],
   turmas:     ['Minhas Turmas', 'Turmas sob sua responsabilidade'],
-  atividades: ['Atividades', 'Cadastre atividades'],
+  atividades: ['Atividades', 'Cadastre atividades e questões'],
   notas:      ['Notas', 'Lance notas das turmas'],
   faltas:     ['Faltas', 'Registro de presença'],
   desempenho: ['Desempenho', 'Análise das turmas'],
@@ -238,33 +275,38 @@ function renderVisao() {
   document.getElementById('kpiAlunos').textContent = alunos.length;
   document.getElementById('kpiAtiv').textContent = atividades.length;
 
-  // Frequência média
   const faltas = DB.list('faltas').filter(f => turmas.map(t => t.nome).includes(f.turma));
   const freq = faltas.length ? Math.round((faltas.filter(f => f.status === 'Presente').length / faltas.length) * 100) : 100;
   document.getElementById('kpiFreq').textContent = freq + '%';
 
-  // Minhas turmas
-  document.getElementById('visaoTurmas').innerHTML = turmas.map(t => {
-    const m = calcularMediaTurma(t.nome, 1);
-    return `<div>
-      <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;"><span>${t.nome}</span><strong>${m.toFixed(1)}</strong></div>
-      <div class="progress"><span style="width:${m * 10}%"></span></div>
-    </div>`;
-  }).join('') || '<p style="font-size:13px;color:var(--cinza-500);">Sem turmas atribuídas.</p>';
+  const contTurmas = document.getElementById('visaoTurmas');
+  contTurmas.innerHTML = turmas.length
+    ? turmas.map(t => {
+        const m = calcularMediaTurma(t.nome, 1);
+        return donutItem({
+          percent: notaParaPct(m),
+          cor: corPorNota(m),
+          texto: m.toFixed(1).replace('.', ','),
+          nome: t.nome,
+          valor: `Média ${m.toFixed(1)}`
+        });
+      }).join('')
+    : '<p style="font-size:13px;color:var(--cinza-500);">Sem turmas atribuídas.</p>';
 
-  // Avisos
   const avisos = DB.list('avisos')
     .filter(a => a.publico === 'Todos' || a.publico === 'Professores')
     .slice().sort((a, b) => (b.data || '').localeCompare(a.data || ''))
     .slice(0, 3);
   const corBadge = { 'Alunos': 'badge-info', 'Professores': 'badge-warn', 'Pais': 'badge-bad', 'Todos': 'badge-info' };
-  document.getElementById('visaoAvisos').innerHTML = avisos.map(a => `
-    <div class="aviso">
-      <div class="meta"><span class="badge ${corBadge[a.publico] || 'badge-info'}">${a.publico}</span> ${fmtData(a.data)}</div>
-      <h4>${a.titulo}</h4>
-      <p>${a.mensagem}</p>
-    </div>
-  `).join('') || '<p style="font-size:13px;color:var(--cinza-500);">Sem avisos.</p>';
+  document.getElementById('visaoAvisos').innerHTML = avisos.length
+    ? avisos.map(a => `
+      <div class="aviso">
+        <div class="meta"><span class="badge ${corBadge[a.publico] || 'badge-info'}">${a.publico}</span> ${fmtData(a.data)}</div>
+        <h4>${a.titulo}</h4>
+        <p>${a.mensagem}</p>
+      </div>
+    `).join('')
+    : '<p style="font-size:13px;color:var(--cinza-500);">Sem avisos.</p>';
 }
 
 /* ============================================================
@@ -273,20 +315,28 @@ function renderVisao() {
 function renderMinhasTurmas() {
   const turmas = minhasTurmas();
   const alunos = DB.list('alunos');
-  document.getElementById('listaTurmas').innerHTML = turmas.map(t => {
-    const lista = alunos.filter(a => a.turma === t.nome);
-    const m = calcularMediaTurma(t.nome, 1);
-    return `<div class="card floating">
-      <div class="card-title">${t.nome}</div>
-      <div class="card-sub">${t.turno} — ${t.sala || 'Sem sala'}</div>
-      <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;"><span>${lista.length} aluno(s)</span><strong>${m.toFixed(1)} média</strong></div>
-      <div class="progress"><span style="width:${m * 10}%"></span></div>
-    </div>`;
-  }).join('') || '<div class="placeholder" style="grid-column:1/-1;"><h3>Sem turmas</h3><p>Você ainda não foi designado a nenhuma turma.</p></div>';
+  const cont = document.getElementById('listaTurmas');
+  cont.innerHTML = turmas.length
+    ? turmas.map(t => {
+        const lista = alunos.filter(a => a.turma === t.nome);
+        const m = calcularMediaTurma(t.nome, 1);
+        return `<div class="card floating">
+          <div class="card-title">${t.nome}</div>
+          <div class="card-sub">${t.turno} — ${t.sala || 'Sem sala'}</div>
+          <div class="donut-item" style="padding:6px 0;border:none;">
+            ${donutSVG(notaParaPct(m), corPorNota(m), m.toFixed(1).replace('.', ','))}
+            <div class="donut-info">
+              <div class="nome">${lista.length} aluno(s)</div>
+              <div class="valor">Média da turma</div>
+            </div>
+          </div>
+        </div>`;
+      }).join('')
+    : '<div class="placeholder" style="grid-column:1/-1;"><h3>Sem turmas</h3><p>Você ainda não foi designado a nenhuma turma.</p></div>';
 }
 
 /* ============================================================
-   ATIVIDADES
+   ATIVIDADES + QUESTÕES
    ============================================================ */
 function popularSelectTurmasProf() {
   const sel = document.getElementById('ativTurma');
@@ -295,12 +345,120 @@ function popularSelectTurmasProf() {
   sel.innerHTML = turmas.map(t => `<option>${t.nome}</option>`).join('') || '<option value="">Sem turmas</option>';
 }
 
+/* ----- Editor de questões ----- */
+let questoesTemp = []; // estado local do formulário
+
+function adicionarQuestao() {
+  questoesTemp.push({
+    id: 'q_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+    tipo: 'multipla',
+    enunciado: '',
+    alternativas: ['', '', '', ''],
+    gabarito: 0
+  });
+  renderQuestoesEditor();
+}
+
+function removerQuestao(id) {
+  questoesTemp = questoesTemp.filter(q => q.id !== id);
+  renderQuestoesEditor();
+}
+
+function mudarTipoQuestao(id, tipo) {
+  const q = questoesTemp.find(x => x.id === id);
+  if (!q) return;
+  q.tipo = tipo;
+  if (tipo === 'dissertativa') {
+    q.alternativas = [];
+    q.gabarito = null;
+  } else {
+    if (!q.alternativas || !q.alternativas.length) q.alternativas = ['', '', '', ''];
+    if (q.gabarito === null || q.gabarito === undefined) q.gabarito = 0;
+  }
+  renderQuestoesEditor();
+}
+
+function atualizarEnunciado(id, valor) {
+  const q = questoesTemp.find(x => x.id === id);
+  if (q) q.enunciado = valor;
+}
+
+function atualizarAlternativa(id, index, valor) {
+  const q = questoesTemp.find(x => x.id === id);
+  if (q && q.alternativas) q.alternativas[index] = valor;
+}
+
+function definirGabarito(id, index) {
+  const q = questoesTemp.find(x => x.id === id);
+  if (q) q.gabarito = index;
+}
+
+function renderQuestoesEditor() {
+  const cont = document.getElementById('questoesLista');
+  if (!cont) return;
+
+  if (!questoesTemp.length) {
+    cont.innerHTML = '<div class="questoes-vazio">Nenhuma questão adicionada. Clique em "Adicionar questão".</div>';
+    return;
+  }
+
+  const letras = ['A', 'B', 'C', 'D'];
+  cont.innerHTML = questoesTemp.map((q, i) => {
+    const isMulti = q.tipo === 'multipla';
+    return `
+      <div class="questao-card">
+        <div class="q-header">
+          <span class="q-num">Questão ${i + 1}</span>
+          <button type="button" class="q-remove" onclick="removerQuestao('${q.id}')">Remover</button>
+        </div>
+        <div class="form-grid">
+          <div class="field">
+            <label>Tipo</label>
+            <select onchange="mudarTipoQuestao('${q.id}', this.value)">
+              <option value="multipla" ${isMulti ? 'selected' : ''}>Múltipla escolha</option>
+              <option value="dissertativa" ${!isMulti ? 'selected' : ''}>Dissertativa</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Enunciado</label>
+            <textarea rows="2" placeholder="Digite o enunciado da questão..." oninput="atualizarEnunciado('${q.id}', this.value)">${q.enunciado || ''}</textarea>
+          </div>
+          ${isMulti ? `
+            <div class="field">
+              <label>Alternativas (marque a correta)</label>
+              <div class="q-alternativas">
+                ${letras.map((letra, idx) => `
+                  <div class="q-alt-linha">
+                    <span class="letra">${letra}</span>
+                    <input type="text" placeholder="Alternativa ${letra}" value="${(q.alternativas && q.alternativas[idx]) || ''}"
+                           oninput="atualizarAlternativa('${q.id}', ${idx}, this.value)" />
+                    <span class="gabarito-label">Correta</span>
+                    <input type="radio" name="gab_${q.id}" ${q.gabarito === idx ? 'checked' : ''}
+                           onchange="definirGabarito('${q.id}', ${idx})" />
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          ` : `
+            <div class="field">
+              <label>Resposta esperada <span class="hint">(opcional, só para referência)</span></label>
+              <textarea rows="2" placeholder="Digite a resposta modelo...">${q.respostaModelo || ''}</textarea>
+            </div>
+          `}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+/* ----- Abrir/criar atividade ----- */
 function novaAtividade() {
   document.getElementById('ativId').value = '';
   document.getElementById('tituloFormAtiv').textContent = 'Cadastrar atividade';
   document.querySelector('#formAtiv form').reset();
   popularSelectTurmasProf();
   document.getElementById('ativDisciplina').value = user.disciplina || '';
+  questoesTemp = [];
+  renderQuestoesEditor();
   abrirForm('formAtiv');
 }
 
@@ -315,11 +473,30 @@ function editarAtividade(id) {
   document.getElementById('ativDisciplina').value = a.disciplina;
   document.getElementById('ativPrazo').value = a.prazo;
   document.getElementById('ativDescricao').value = a.descricao || '';
+  questoesTemp = JSON.parse(JSON.stringify(a.questoes || []));
+  renderQuestoesEditor();
   abrirForm('formAtiv');
 }
 
 function salvarAtividade(e) {
   e.preventDefault();
+
+  // Validação: enunciados não podem estar vazios
+  for (let i = 0; i < questoesTemp.length; i++) {
+    const q = questoesTemp[i];
+    if (!q.enunciado || !q.enunciado.trim()) {
+      alert(`A questão ${i + 1} está sem enunciado.`);
+      return;
+    }
+    if (q.tipo === 'multipla') {
+      const vazias = (q.alternativas || []).filter(a => !a || !a.trim()).length;
+      if (vazias) {
+        alert(`A questão ${i + 1} tem alternativas em branco.`);
+        return;
+      }
+    }
+  }
+
   const id = document.getElementById('ativId').value;
   const dados = {
     titulo: document.getElementById('ativTitulo').value.trim(),
@@ -327,49 +504,182 @@ function salvarAtividade(e) {
     disciplina: document.getElementById('ativDisciplina').value.trim(),
     prazo: document.getElementById('ativPrazo').value,
     descricao: document.getElementById('ativDescricao').value.trim(),
-    professor: user.nome
+    professor: user.nome,
+    questoes: questoesTemp
   };
-  if (id) { DB.update('atividades', id, dados); toast('Atividade atualizada.'); }
-  else    { DB.create('atividades', { ...dados, entregas: [] }); toast('Atividade cadastrada.'); }
+
+  if (id) {
+    DB.update('atividades', id, dados);
+    toast('Atividade atualizada.');
+  } else {
+    DB.create('atividades', { ...dados, entregas: [], respostas: {} });
+    toast('Atividade cadastrada.');
+  }
   fecharForm('formAtiv');
-  renderAtividades(); renderVisao();
+  questoesTemp = [];
+  renderAtividades();
+  renderVisao();
 }
 
 function excluirAtividade(id) {
-  if (!confirm('Excluir esta atividade?')) return;
+  if (!confirm('Excluir esta atividade? As respostas dos alunos também serão perdidas.')) return;
   DB.remove('atividades', id);
   toast('Atividade excluída.');
-  renderAtividades(); renderVisao();
+  renderAtividades();
+  renderVisao();
 }
 
 function renderAtividades() {
   const atividades = DB.list('atividades').filter(a => a.professor === user.nome);
   const alunos = DB.list('alunos');
   const tbody = document.querySelector('#tabAtiv tbody');
-  tbody.innerHTML = atividades.map(a => {
-    const total = alunos.filter(x => x.turma === a.turma).length;
-    const entregues = (a.entregas || []).length;
-    return `<tr>
-      <td><strong>${a.titulo}</strong></td>
-      <td>${a.turma}</td>
-      <td>${a.disciplina}</td>
-      <td>${fmtData(a.prazo)}</td>
-      <td>${entregues}/${total}</td>
-      <td>
-        <button class="btn btn-ghost btn-sm" onclick="verEntregas('${a.id}')">Ver entregas</button>
-        <button class="btn btn-ghost btn-sm" onclick="editarAtividade('${a.id}')">Editar</button>
-        <button class="btn btn-danger btn-sm" onclick="excluirAtividade('${a.id}')">Excluir</button>
-      </td>
-    </tr>`;
-  }).join('') || '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--cinza-500);">Nenhuma atividade cadastrada.</td></tr>';
+
+  tbody.innerHTML = atividades.length
+    ? atividades.map(a => {
+        const total = alunos.filter(x => x.turma === a.turma).length;
+        const entregues = (a.entregas || []).length;
+        const qtdQuestoes = (a.questoes || []).length;
+        return `<tr>
+          <td><strong>${a.titulo}</strong></td>
+          <td>${a.turma}</td>
+          <td>${a.disciplina}</td>
+          <td>${fmtData(a.prazo)}</td>
+          <td>${qtdQuestoes ? qtdQuestoes : '<span style="color:var(--cinza-500);">—</span>'}</td>
+          <td>${entregues}/${total}</td>
+          <td style="white-space:nowrap;">
+            <button class="btn btn-ghost btn-sm" onclick="verRespostas('${a.id}')">Respostas</button>
+            <button class="btn btn-ghost btn-sm" onclick="editarAtividade('${a.id}')">Editar</button>
+            <button class="btn btn-danger btn-sm" onclick="excluirAtividade('${a.id}')">Excluir</button>
+          </td>
+        </tr>`;
+      }).join('')
+    : '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--cinza-500);">Nenhuma atividade cadastrada.</td></tr>';
 }
 
-function verEntregas(id) {
+/* ============================================================
+   MODAL DE RESPOSTAS
+   ============================================================ */
+let respostasAtividade = null;
+
+function verRespostas(id) {
   const a = DB.get('atividades', id);
   if (!a) return;
-  const entregas = a.entregas || [];
-  if (!entregas.length) { alert('Nenhum aluno entregou esta atividade ainda.'); return; }
-  alert('Entregas:\n\n' + entregas.map(e => `${e.aluno} — ${fmtData(e.data)}`).join('\n'));
+  respostasAtividade = a;
+
+  document.getElementById('respTitulo').textContent = 'Respostas — ' + a.titulo;
+  document.getElementById('respSub').textContent = `${a.turma} · ${a.disciplina} · Prazo ${fmtData(a.prazo)}`;
+
+  const questoes = a.questoes || [];
+  const respostas = a.respostas || {};
+  const alunos = Object.keys(respostas);
+
+  const body = document.getElementById('respBody');
+
+  if (!questoes.length) {
+    body.innerHTML = '<div class="placeholder"><h3>Sem questões</h3><p>Esta atividade não possui questões cadastradas.</p></div>';
+    document.getElementById('modalRespostas').classList.add('open');
+    document.body.style.overflow = 'hidden';
+    return;
+  }
+
+  if (!alunos.length) {
+    body.innerHTML = `
+      <div class="placeholder" style="margin-bottom:16px;">
+        <h3>Nenhuma resposta ainda</h3>
+        <p>Nenhum aluno respondeu esta atividade.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">Gabarito</div>
+        <div class="card-sub">${questoes.length} questão(ões)</div>
+        ${renderGabarito(questoes)}
+      </div>`;
+    document.getElementById('modalRespostas').classList.add('open');
+    document.body.style.overflow = 'hidden';
+    return;
+  }
+
+  // Mostra cada aluno com as respostas
+  body.innerHTML = alunos.map(nomeAluno => {
+    const r = respostas[nomeAluno];
+    const acertos = contarAcertos(questoes, r);
+    const totalMulti = questoes.filter(q => q.tipo === 'multipla').length;
+    return `
+      <div class="card" style="margin-bottom:12px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+          <div>
+            <div class="card-title" style="margin:0;">${nomeAluno}</div>
+            <div class="card-sub" style="margin:0;">Enviado em ${fmtData(r.data)}</div>
+          </div>
+          ${totalMulti ? `<span class="badge ${acertos.total === totalMulti ? 'badge-ok' : 'badge-info'}">${acertos.total}/${totalMulti} acertos</span>` : ''}
+        </div>
+        ${questoes.map((q, i) => {
+          const resposta = r.respostas[q.id];
+          if (q.tipo === 'multipla') {
+            const idx = typeof resposta === 'number' ? resposta : -1;
+            const acertou = idx === q.gabarito;
+            return `<div class="resposta-questao" style="padding:10px;">
+              <div class="r-enunciado" style="font-size:13px;">
+                <span class="r-num">${i + 1}.</span>${q.enunciado}
+                <span class="badge ${acertou ? 'badge-ok' : 'badge-bad'}" style="margin-left:8px;">${acertou ? 'Correta' : 'Errada'}</span>
+              </div>
+              <div style="font-size:12.5px;color:var(--preto-700);">
+                Respondeu: <strong>${idx >= 0 ? ['A','B','C','D'][idx] : '—'}</strong> ·
+                Gabarito: <strong>${['A','B','C','D'][q.gabarito]}</strong>
+              </div>
+            </div>`;
+          }
+          return `<div class="resposta-questao" style="padding:10px;">
+            <div class="r-enunciado" style="font-size:13px;">
+              <span class="r-num">${i + 1}.</span>${q.enunciado}
+            </div>
+            <div style="font-size:12.5px;color:var(--preto-700);background:var(--cinza-100);padding:8px;border-radius:6px;">
+              ${resposta ? String(resposta).replace(/</g,'&lt;') : '<em>Sem resposta</em>'}
+            </div>
+          </div>`;
+        }).join('')}
+      </div>`;
+  }).join('');
+
+  document.getElementById('modalRespostas').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function renderGabarito(questoes) {
+  return questoes.map((q, i) => {
+    if (q.tipo === 'multipla') {
+      return `<div class="resposta-questao">
+        <div class="r-enunciado"><span class="r-num">${i + 1}.</span>${q.enunciado}</div>
+        <div class="r-alternativas">
+          ${q.alternativas.map((alt, idx) => `
+            <div class="r-alt" style="cursor:default;${idx === q.gabarito ? 'background:var(--verde-100);border-color:var(--verde-600);' : ''}">
+              <strong>${['A','B','C','D'][idx]})</strong> ${alt}
+              ${idx === q.gabarito ? '<span class="badge badge-ok" style="margin-left:auto;">Correta</span>' : ''}
+            </div>
+          `).join('')}
+        </div>
+      </div>`;
+    }
+    return `<div class="resposta-questao">
+      <div class="r-enunciado"><span class="r-num">${i + 1}.</span>${q.enunciado}</div>
+      <p style="font-size:12.5px;color:var(--cinza-500);">Questão dissertativa</p>
+    </div>`;
+  }).join('');
+}
+
+function contarAcertos(questoes, resposta) {
+  let total = 0;
+  questoes.forEach(q => {
+    if (q.tipo === 'multipla') {
+      if (resposta.respostas[q.id] === q.gabarito) total++;
+    }
+  });
+  return { total };
+}
+
+function fecharModalRespostas() {
+  document.getElementById('modalRespostas').classList.remove('open');
+  document.body.style.overflow = '';
+  respostasAtividade = null;
 }
 
 /* ============================================================
@@ -382,9 +692,9 @@ function popularSelectTurmaNotas() {
 }
 
 function disciplinasDaTurma(turmaNome) {
-  const turma = DB.get('turmas', DB.list('turmas').find(t => t.nome === turmaNome)?.id);
-  if (!turma) return DISCIPLINAS_FUND;
-  return turma.nivel === 'medio' ? DISCIPLINAS_MEDIO : DISCIPLINAS_FUND;
+  const t = DB.list('turmas').find(x => x.nome === turmaNome);
+  if (!t) return DISCIPLINAS_FUND;
+  return t.nivel === 'medio' ? DISCIPLINAS_MEDIO : DISCIPLINAS_FUND;
 }
 
 function renderNotas() {
@@ -460,21 +770,23 @@ function renderFaltas() {
   );
 
   const tbody = document.querySelector('#tabelaFaltas tbody');
-  tbody.innerHTML = alunos.map(a => {
-    const r = registros.find(x => x.aluno === a.nome);
-    const status = r ? r.status : null;
-    const badge = status === 'Presente' ? '<span class="badge badge-ok">Presente</span>'
-                : status === 'Falta'    ? '<span class="badge badge-bad">Falta</span>'
-                : '<span class="badge badge-info">Não registrado</span>';
-    return `<tr>
-      <td><strong>${a.nome}</strong></td>
-      <td>${badge}</td>
-      <td>
-        <button class="btn btn-success btn-sm" onclick="marcarFalta('${a.nome}','${turma}','${data}','${disciplina}','Presente')">Presente</button>
-        <button class="btn btn-danger btn-sm" onclick="marcarFalta('${a.nome}','${turma}','${data}','${disciplina}','Falta')">Falta</button>
-      </td>
-    </tr>`;
-  }).join('') || '<tr><td colspan="3" style="text-align:center;padding:24px;color:var(--cinza-500);">Sem alunos.</td></tr>';
+  tbody.innerHTML = alunos.length
+    ? alunos.map(a => {
+        const r = registros.find(x => x.aluno === a.nome);
+        const status = r ? r.status : null;
+        const badge = status === 'Presente' ? '<span class="badge badge-ok">Presente</span>'
+                    : status === 'Falta'    ? '<span class="badge badge-bad">Falta</span>'
+                    : '<span class="badge badge-info">Não registrado</span>';
+        return `<tr>
+          <td><strong>${a.nome}</strong></td>
+          <td>${badge}</td>
+          <td>
+            <button class="btn btn-success btn-sm" onclick="marcarFalta('${a.nome}','${turma}','${data}','${disciplina}','Presente')">Presente</button>
+            <button class="btn btn-danger btn-sm" onclick="marcarFalta('${a.nome}','${turma}','${data}','${disciplina}','Falta')">Falta</button>
+          </td>
+        </tr>`;
+      }).join('')
+    : '<tr><td colspan="3" style="text-align:center;padding:24px;color:var(--cinza-500);">Sem alunos.</td></tr>';
 }
 
 function marcarFalta(aluno, turma, data, disciplina, status) {
@@ -493,22 +805,34 @@ function marcarFalta(aluno, turma, data, disciplina, status) {
 function renderDesempenho() {
   const turmas = minhasTurmas();
 
-  document.getElementById('desempenhoMinhasTurmas').innerHTML = turmas.map(t => {
-    const m = calcularMediaTurma(t.nome, 1);
-    return `<div>
-      <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;"><span>${t.nome}</span><strong>${m.toFixed(1)}</strong></div>
-      <div class="progress"><span style="width:${m * 10}%"></span></div>
-    </div>`;
-  }).join('') || '<p style="font-size:13px;color:var(--cinza-500);">Sem turmas.</p>';
+  const contMedia = document.getElementById('desempenhoMinhasTurmas');
+  contMedia.innerHTML = turmas.length
+    ? turmas.map(t => {
+        const m = calcularMediaTurma(t.nome, 1);
+        return donutItem({
+          percent: notaParaPct(m),
+          cor: corPorNota(m),
+          texto: m.toFixed(1).replace('.', ','),
+          nome: t.nome,
+          valor: `Média ${m.toFixed(1)}`
+        });
+      }).join('')
+    : '<p style="font-size:13px;color:var(--cinza-500);">Sem turmas.</p>';
 
-  document.getElementById('desempenhoMinhasFreq').innerHTML = turmas.map(t => {
-    const faltas = DB.list('faltas').filter(f => f.turma === t.nome);
-    const pct = faltas.length ? Math.round((faltas.filter(f => f.status === 'Presente').length / faltas.length) * 100) : 100;
-    return `<div>
-      <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;"><span>${t.nome}</span><strong>${pct}%</strong></div>
-      <div class="progress"><span style="width:${pct}%"></span></div>
-    </div>`;
-  }).join('') || '<p style="font-size:13px;color:var(--cinza-500);">Sem dados.</p>';
+  const contFreq = document.getElementById('desempenhoMinhasFreq');
+  contFreq.innerHTML = turmas.length
+    ? turmas.map(t => {
+        const faltas = DB.list('faltas').filter(f => f.turma === t.nome);
+        const pct = faltas.length ? Math.round((faltas.filter(f => f.status === 'Presente').length / faltas.length) * 100) : 100;
+        return donutItem({
+          percent: pct,
+          cor: corPorPct(pct),
+          texto: pct + '%',
+          nome: t.nome,
+          valor: `${faltas.filter(f => f.status === 'Presente').length}/${faltas.length} presenças`
+        });
+      }).join('')
+    : '<p style="font-size:13px;color:var(--cinza-500);">Sem dados.</p>';
 }
 
 /* ============================================================
@@ -566,34 +890,38 @@ function excluirRelatorio(id) {
 
 function renderRelatorios() {
   const rels = DB.list('relatorios').filter(r => r.professor === user.nome);
-  document.getElementById('listaRelatorios').innerHTML = rels.map(r => `
-    <div class="card floating">
-      <div class="card-title">${r.aluno}</div>
-      <div class="card-sub">${r.periodo} — ${fmtData(r.data)}</div>
-      <p style="font-size:13px;color:var(--preto-700);">${r.observacoes}</p>
-      <div style="display:flex;gap:6px;margin-top:10px;">
-        <button class="btn btn-ghost btn-sm" onclick="editarRelatorio('${r.id}')">Editar</button>
-        <button class="btn btn-danger btn-sm" onclick="excluirRelatorio('${r.id}')">Excluir</button>
+  document.getElementById('listaRelatorios').innerHTML = rels.length
+    ? rels.map(r => `
+      <div class="card floating">
+        <div class="card-title">${r.aluno}</div>
+        <div class="card-sub">${r.periodo} — ${fmtData(r.data)}</div>
+        <p style="font-size:13px;color:var(--preto-700);">${r.observacoes}</p>
+        <div style="display:flex;gap:6px;margin-top:10px;">
+          <button class="btn btn-ghost btn-sm" onclick="editarRelatorio('${r.id}')">Editar</button>
+          <button class="btn btn-danger btn-sm" onclick="excluirRelatorio('${r.id}')">Excluir</button>
+        </div>
       </div>
-    </div>
-  `).join('') || '<div class="placeholder" style="grid-column:1/-1;"><h3>Nenhum relatório</h3><p>Crie um relatório para um aluno.</p></div>';
+    `).join('')
+    : '<div class="placeholder" style="grid-column:1/-1;"><h3>Nenhum relatório</h3><p>Crie um relatório para um aluno.</p></div>';
 }
 
 /* ============================================================
-   MURAL (somente leitura)
+   MURAL
    ============================================================ */
 function renderMural() {
   const avisos = DB.list('avisos')
     .filter(a => a.publico === 'Todos' || a.publico === 'Professores')
     .slice().sort((a, b) => (b.data || '').localeCompare(a.data || ''));
   const corBadge = { 'Alunos': 'badge-info', 'Professores': 'badge-warn', 'Pais': 'badge-bad', 'Todos': 'badge-info' };
-  document.getElementById('listaMuralProf').innerHTML = avisos.map(a => `
-    <div class="aviso">
-      <div class="meta"><span class="badge ${corBadge[a.publico] || 'badge-info'}">${a.publico}</span> ${fmtData(a.data)} — ${a.autor}</div>
-      <h4>${a.titulo}</h4>
-      <p>${a.mensagem}</p>
-    </div>
-  `).join('') || '<p style="color:var(--cinza-500);">Sem avisos.</p>';
+  document.getElementById('listaMuralProf').innerHTML = avisos.length
+    ? avisos.map(a => `
+      <div class="aviso">
+        <div class="meta"><span class="badge ${corBadge[a.publico] || 'badge-info'}">${a.publico}</span> ${fmtData(a.data)} — ${a.autor}</div>
+        <h4>${a.titulo}</h4>
+        <p>${a.mensagem}</p>
+      </div>
+    `).join('')
+    : '<p style="color:var(--cinza-500);">Sem avisos.</p>';
 }
 
 /* ============================================================
@@ -613,14 +941,18 @@ function renderTudo() {
   popularSelectAlunosRel();
 }
 
-/* ---------- Eventos ---------- */
 document.getElementById('selTurmaProf').addEventListener('change', renderNotas);
 document.getElementById('selBimProf').addEventListener('change', renderNotas);
 document.getElementById('selTurmaFalta').addEventListener('change', renderFaltas);
 document.getElementById('dataFalta').addEventListener('change', renderFaltas);
 document.getElementById('discFalta').addEventListener('input', renderFaltas);
 
-/* ---------- Boot ---------- */
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && document.getElementById('modalRespostas').classList.contains('open')) {
+    fecharModalRespostas();
+  }
+});
+
 renderTudo();
 </script>
 
