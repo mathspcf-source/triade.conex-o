@@ -6,7 +6,7 @@
 <title>Tríade Conexão — Administrador</title>
 <link rel="stylesheet" href="shared.css" />
 <style>
-  /* ===== Modal (usado no carnê) ===== */
+  /* ===== Modal (carnê) ===== */
   .modal-backdrop {
     position: fixed; inset: 0; z-index: 1000;
     background: rgba(15,23,42,.6);
@@ -41,7 +41,7 @@
   }
   .modal-close:hover { background: var(--cinza-100); }
 
-  /* ===== Carnê ===== */
+  /* ===== Carnê (modal) ===== */
   .carne-header {
     display: flex; align-items: center; justify-content: space-between;
     gap: 12px; flex-wrap: wrap;
@@ -101,7 +101,6 @@
 
 <div class="app" id="app">
 
-  <!-- ============ SIDEBAR ============ -->
   <aside class="sidebar">
     <div class="brand">
       <div class="brand-logo">
@@ -824,7 +823,17 @@ function renderPlanos() {
 let carneAlunoAtual = null;
 
 function confirmarPagamento(id) {
-  DB.update('pagamentos', id, { status: 'Pago', pagoEm: new Date().toISOString() });
+  const hoje = new Date();
+  const dataPagamento =
+    String(hoje.getDate()).padStart(2,'0') + '/' +
+    String(hoje.getMonth() + 1).padStart(2,'0') + '/' +
+    hoje.getFullYear();
+
+  DB.update('pagamentos', id, {
+    status: 'Pago',
+    pagoEm: new Date().toISOString(),
+    dataPagamento: dataPagamento
+  });
   toast('Pagamento confirmado.');
   renderFinanceiro();
   if (carneAlunoAtual) renderCarneAluno();
@@ -833,7 +842,11 @@ function confirmarPagamento(id) {
 
 function estornarPagamento(id) {
   if (!confirm('Marcar como pendente novamente?')) return;
-  DB.update('pagamentos', id, { status: 'Pendente', pagoEm: null });
+  DB.update('pagamentos', id, {
+    status: 'Pendente',
+    pagoEm: null,
+    dataPagamento: null
+  });
   toast('Pagamento estornado.');
   renderFinanceiro();
   if (carneAlunoAtual) renderCarneAluno();
@@ -866,7 +879,8 @@ function gerarPagamentosMes() {
     DB.create('pagamentos', {
       aluno: a.nome, plano: a.plano, valor, mes, ano,
       vencimento: `${venc}/${String(mes).padStart(2,'0')}/${ano}`,
-      status: 'Pendente'
+      status: 'Pendente',
+      dataPagamento: null
     });
     criados++;
   });
@@ -923,7 +937,7 @@ function renderFinanceiro() {
         <td>${p.plano}</td>
         <td>${fmtMoeda(p.valor)}</td>
         <td>${p.vencimento}</td>
-        <td><span class="badge ${badge}">${p.status}</span></td>
+        <td><span class="badge ${badge}">${p.status}</span>${p.dataPagamento ? `<div style="font-size:11px;color:var(--cinza-500);margin-top:3px;">Pago em ${p.dataPagamento}</div>` : ''}</td>
         <td style="white-space:nowrap;">
           ${acoes}
           <button class="btn btn-ghost btn-sm" onclick="abrirCarneAluno('${p.aluno}')" title="Abrir carnê">
@@ -1003,7 +1017,7 @@ function renderCarneAluno() {
     return `<div class="carne-parcela ${statusClass}">
       <div class="parc-num">Parcela ${p.mes}/${ano}</div>
       <div class="parc-valor">${fmtMoeda(p.valor)}</div>
-      <div class="parc-venc">Vencimento: ${venc}</div>
+      <div class="parc-venc">Vencimento: ${venc}${p.dataPagamento ? `<br>Pago em: ${p.dataPagamento}` : ''}</div>
       <div class="parc-status"><span class="badge ${badge}">${p.status}</span></div>
       <div class="parc-acoes">
         ${acoes}
@@ -1034,7 +1048,8 @@ function gerarCarneAnual() {
       mes,
       ano,
       vencimento: `${diaVenc}/${String(mes).padStart(2,'0')}/${ano}`,
-      status: 'Pendente'
+      status: 'Pendente',
+      dataPagamento: null
     });
     criadas++;
   }
