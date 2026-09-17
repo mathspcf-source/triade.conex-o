@@ -97,13 +97,6 @@
   /* ============================================================
      FICHA DE INSCRIÇÃO (embutida no admin)
      ============================================================ */
-  .ficha-wrap {
-    background: #fff;
-    border: 1px solid var(--cinza-200);
-    border-radius: var(--radius-md);
-    padding: 16px;
-    margin-bottom: 16px;
-  }
   .ficha-form {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -145,6 +138,9 @@
     font-weight: 600; color: var(--preto-800); cursor: pointer;
   }
   .ficha-form .checks-inline input[type="checkbox"] {
+    width: 15px; height: 15px; accent-color: var(--azul-600);
+  }
+  .ficha-form .checks-inline input[type="radio"] {
     width: 15px; height: 15px; accent-color: var(--azul-600);
   }
 </style>
@@ -570,6 +566,19 @@
       <form id="formFicha" class="ficha-form" onsubmit="salvarFicha(event)">
         <input type="hidden" id="fichaId" />
 
+        <!-- Número da Inscrição -->
+        <div class="grupo">
+          <h4>Matrícula</h4>
+          <div class="field">
+            <label>Número da Inscrição</label>
+            <input id="f_numero" readonly style="background:var(--cinza-100);font-weight:700;" />
+          </div>
+          <div class="field">
+            <label>Data</label>
+            <input id="f_data" type="date" readonly style="background:var(--cinza-100);" />
+          </div>
+        </div>
+
         <!-- 1. Dados do Aluno -->
         <div class="grupo">
           <h4>1. Dados do Aluno(a)</h4>
@@ -993,6 +1002,7 @@ function novaInscricao() {
   document.getElementById('fichaTitulo').textContent = 'Nova Inscrição';
   document.querySelector('#formFicha').reset();
   document.getElementById('f_numero').value = proximoNumeroInscricao();
+  document.getElementById('f_data').value = new Date().toISOString().slice(0, 10);
   document.getElementById('modalFicha').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
@@ -1003,8 +1013,8 @@ function editarInscricao(id) {
   document.getElementById('fichaId').value = i.id;
   document.getElementById('fichaTitulo').textContent = 'Editar Inscrição — Nº ' + i.numero;
 
-  // Campos simples
   document.getElementById('f_numero').value = i.numero || '';
+  document.getElementById('f_data').value = i.dataInscricao || '';
   document.getElementById('f_nome').value = i.nome || '';
   document.getElementById('f_nascimento').value = i.nascimento || '';
   document.getElementById('f_idade').value = i.idade || '';
@@ -1017,13 +1027,14 @@ function editarInscricao(id) {
   document.getElementById('f_whatsapp').value = i.whatsapp || '';
   document.getElementById('f_emergencia').value = i.emergencia || '';
   document.getElementById('f_endereco').value = i.endereco || '';
+  document.getElementById('f_mensalidade').value = i.mensalidade || '';
+  document.getElementById('f_vencimento').value = i.vencimento || '';
   document.getElementById('f_aut1').value = i.aut1 || '';
   document.getElementById('f_aut1_parentesco').value = i.aut1_parentesco || '';
   document.getElementById('f_aut2').value = i.aut2 || '';
   document.getElementById('f_aut2_parentesco').value = i.aut2_parentesco || '';
   document.getElementById('f_observacoes').value = i.observacoes || '';
 
-  // Checkboxes
   marcarCheckboxes('f_turno_escolar', i.turnoEscolar || []);
   marcarCheckboxes('f_nivel', i.nivel || []);
   marcarCheckboxes('f_turno_reforco', i.turnoReforco || []);
@@ -1058,7 +1069,8 @@ function salvarFicha(e) {
   const id = document.getElementById('fichaId').value;
 
   const dados = {
-    numero: document.getElementById('f_numero').value.trim(),
+    numero: document.getElementById('f_numero').value.trim() || proximoNumeroInscricao(),
+    dataInscricao: document.getElementById('f_data').value || new Date().toISOString().slice(0, 10),
     nome: document.getElementById('f_nome').value.trim(),
     nascimento: document.getElementById('f_nascimento').value,
     idade: document.getElementById('f_idade').value,
@@ -1076,8 +1088,8 @@ function salvarFicha(e) {
     turnoReforco: valoresCheckboxes('f_turno_reforco'),
     dias: valoresCheckboxes('f_dias'),
     servicos: valoresCheckboxes('f_servicos'),
-    mensalidade: document.getElementById('f_mensalidade')?.value.trim() || '',
-    vencimento: document.getElementById('f_vencimento')?.value || '',
+    mensalidade: document.getElementById('f_mensalidade').value.trim(),
+    vencimento: document.getElementById('f_vencimento').value,
     forma: valoresCheckboxes('f_forma'),
     aut1: document.getElementById('f_aut1').value.trim(),
     aut1_parentesco: document.getElementById('f_aut1_parentesco').value.trim(),
@@ -1085,7 +1097,6 @@ function salvarFicha(e) {
     aut2_parentesco: document.getElementById('f_aut2_parentesco').value.trim(),
     imagem: document.querySelector('input[name="f_imagem"]:checked')?.value || '',
     observacoes: document.getElementById('f_observacoes').value.trim(),
-    dataInscricao: new Date().toISOString().slice(0, 10),
     status: 'Pendente'
   };
 
@@ -1115,7 +1126,6 @@ function converterEmAluno(id) {
   if (!i) return;
   if (!confirm(`Converter ${i.nome} em aluno matriculado?`)) return;
 
-  // Verifica se já existe
   const jaExiste = DB.list('alunos').some(a => a.nome.toLowerCase() === i.nome.toLowerCase());
   if (jaExiste) { alert('Já existe um aluno com este nome.'); return; }
 
@@ -1181,6 +1191,7 @@ function imprimirFichaPorId(id) {
 function coletarFichaAtual() {
   return {
     numero: document.getElementById('f_numero').value.trim(),
+    dataInscricao: document.getElementById('f_data').value,
     nome: document.getElementById('f_nome').value.trim(),
     nascimento: document.getElementById('f_nascimento').value,
     idade: document.getElementById('f_idade').value,
@@ -1198,16 +1209,15 @@ function coletarFichaAtual() {
     turnoReforco: valoresCheckboxes('f_turno_reforco'),
     dias: valoresCheckboxes('f_dias'),
     servicos: valoresCheckboxes('f_servicos'),
-    mensalidade: document.getElementById('f_mensalidade')?.value.trim() || '',
-    vencimento: document.getElementById('f_vencimento')?.value || '',
+    mensalidade: document.getElementById('f_mensalidade').value.trim(),
+    vencimento: document.getElementById('f_vencimento').value,
     forma: valoresCheckboxes('f_forma'),
     aut1: document.getElementById('f_aut1').value.trim(),
     aut1_parentesco: document.getElementById('f_aut1_parentesco').value.trim(),
     aut2: document.getElementById('f_aut2').value.trim(),
     aut2_parentesco: document.getElementById('f_aut2_parentesco').value.trim(),
     imagem: document.querySelector('input[name="f_imagem"]:checked')?.value || '',
-    observacoes: document.getElementById('f_observacoes').value.trim(),
-    dataInscricao: new Date().toISOString().slice(0, 10)
+    observacoes: document.getElementById('f_observacoes').value.trim()
   };
 }
 
@@ -1231,59 +1241,19 @@ function imprimirFichaComDados(d) {
   <style>
     @page { size: A4; margin: 8mm; }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: 'Inter','Segoe UI',system-ui,sans-serif;
-      color: #0f172a;
-      font-size: 8pt;
-      padding: 4mm;
-    }
-    .cabecalho {
-      position: relative;
-      padding: 3mm 4mm;
-      border: 2px solid #2563eb;
-      border-radius: 8px;
-      background: linear-gradient(135deg,#fff,#eff6ff);
-      text-align: center;
-      margin-bottom: 2mm;
-    }
-    .cabecalho::before,.cabecalho::after {
-      content:""; position:absolute; left:0; right:0; height:3px;
-    }
+    body { font-family: 'Inter','Segoe UI',system-ui,sans-serif; color: #0f172a; font-size: 8pt; padding: 2mm; }
+    .cabecalho { position: relative; padding: 3mm 4mm; border: 2px solid #2563eb; border-radius: 8px; background: linear-gradient(135deg,#fff,#eff6ff); text-align: center; margin-bottom: 2mm; }
+    .cabecalho::before,.cabecalho::after { content:""; position:absolute; left:0; right:0; height:3px; }
     .cabecalho::before { top:0; background: linear-gradient(90deg,#6d28d9,#3b82f6,#10b981); }
     .cabecalho::after  { bottom:0; background: linear-gradient(90deg,#f43f5e,#f97316,#facc15); }
     .cabecalho__marca { display:flex; align-items:center; justify-content:center; gap:8px; }
-    .cabecalho__titulo {
-      font-size: 13pt; font-weight: 900; letter-spacing:.02em;
-      text-transform: uppercase; color:#1e3a8a;
-    }
-    .cabecalho__subtitulo {
-      font-size: 9pt; font-weight: 800; letter-spacing:.12em;
-      text-transform: uppercase; color:#f97316; margin-top:1mm;
-    }
-    .titulo-ficha {
-      display:inline-block; margin-top:1.5mm; padding:1.2mm 8mm;
-      border-radius:999px;
-      background: linear-gradient(135deg,#1d4ed8,#1e3a8a);
-      color:#fff; font-size:10pt; font-weight:900;
-      letter-spacing:.14em; text-transform:uppercase;
-    }
-    .barra {
-      display:flex; justify-content:space-between; align-items:center;
-      padding: 1.5mm 3mm; margin-bottom: 2mm;
-      background:#eff6ff; border:1px solid #dbeafe; border-radius:6px;
-      font-size:8pt; font-weight:700; color:#1e3a8a;
-    }
+    .cabecalho__titulo { font-size: 13pt; font-weight: 900; letter-spacing:.02em; text-transform: uppercase; color:#1e3a8a; }
+    .cabecalho__subtitulo { font-size: 9pt; font-weight: 800; letter-spacing:.12em; text-transform: uppercase; color:#f97316; margin-top:1mm; }
+    .titulo-ficha { display:inline-block; margin-top:1.5mm; padding:1.2mm 8mm; border-radius:999px; background: linear-gradient(135deg,#1d4ed8,#1e3a8a); color:#fff; font-size:10pt; font-weight:900; letter-spacing:.14em; text-transform:uppercase; }
+    .barra { display:flex; justify-content:space-between; align-items:center; padding: 1.5mm 3mm; margin-bottom: 2mm; background:#eff6ff; border:1px solid #dbeafe; border-radius:6px; font-size:8pt; font-weight:700; color:#1e3a8a; }
     .barra .valor { border-bottom:1px dotted #64748b; padding:0 4px; min-width:30mm; display:inline-block; }
-    .secao {
-      border:1px solid #e2e8f0; border-radius:6px; overflow:hidden;
-      margin-bottom: 1.6mm;
-    }
-    .secao__titulo {
-      background: linear-gradient(135deg,#1d4ed8,#1e3a8a);
-      color:#fff; padding: 1.2mm 3mm;
-      font-size:8.5pt; font-weight:800; letter-spacing:.04em;
-      text-transform: uppercase;
-    }
+    .secao { border:1px solid #e2e8f0; border-radius:6px; overflow:hidden; margin-bottom: 1.6mm; }
+    .secao__titulo { background: linear-gradient(135deg,#1d4ed8,#1e3a8a); color:#fff; padding: 1.2mm 3mm; font-size:8.5pt; font-weight:800; letter-spacing:.04em; text-transform: uppercase; }
     .secao__corpo { padding: 1.8mm 3mm; }
     .linha { display:flex; gap:3mm; flex-wrap:wrap; align-items:flex-end; margin-bottom:1mm; }
     .campo { display:flex; align-items:flex-end; gap:3px; flex:1; min-width:0; }
@@ -1295,14 +1265,8 @@ function imprimirFichaComDados(d) {
     .checks { display:flex; flex-wrap:wrap; gap:2mm 5mm; }
     .check { font-size:7.5pt; font-weight:600; }
     table.tabela { width:100%; border-collapse:collapse; font-size:7.5pt; }
-    table.tabela thead th {
-      background: linear-gradient(135deg,#1d4ed8,#1e3a8a);
-      color:#fff; text-align:left; padding:1.2mm 2mm;
-      font-size:7.5pt; font-weight:800; text-transform:uppercase;
-    }
-    table.tabela tbody td {
-      padding:1.5mm 2mm; border-bottom:1px solid #e2e8f0; height:6mm;
-    }
+    table.tabela thead th { background: linear-gradient(135deg,#1d4ed8,#1e3a8a); color:#fff; text-align:left; padding:1.2mm 2mm; font-size:7.5pt; font-weight:800; text-transform:uppercase; }
+    table.tabela tbody td { padding:1.5mm 2mm; border-bottom:1px solid #e2e8f0; height:6mm; }
     .aviso { padding:1.2mm 2mm; background:#fef9c3; border-left:3px solid #ca8a04; border-radius:3px; font-size:7.5pt; font-weight:600; color:#78350f; margin:1.5mm 0; }
     .termo { padding:1.8mm 3mm; border:1px solid #e2e8f0; border-left:3px solid #2563eb; border-radius:4px; background:#eff6ff; font-size:7.5pt; line-height:1.4; margin-bottom:1.6mm; }
     .assinatura { margin-top:3mm; text-align:center; }
