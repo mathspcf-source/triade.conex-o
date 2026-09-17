@@ -44,6 +44,7 @@
 
     <main class="content">
 
+      <!-- ============ VISÃO GERAL ============ -->
       <section class="tab active" id="tab-visao">
         <div class="grid grid-4" style="margin-bottom:16px;">
           <div class="card floating stat"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div><div><div class="val" id="kpiTurmas">0</div><div class="lbl">Minhas turmas</div></div></div>
@@ -66,12 +67,13 @@
         </div>
       </section>
 
+      <!-- ============ MINHAS TURMAS ============ -->
       <section class="tab" id="tab-turmas">
         <div class="sec-header"><div><h2>Minhas Turmas</h2><p>Turmas sob sua responsabilidade</p></div></div>
         <div class="grid grid-3" id="listaTurmas"></div>
       </section>
 
-      <!-- ============ ATIVIDADES (com questões) ============ -->
+      <!-- ============ ATIVIDADES ============ -->
       <section class="tab" id="tab-atividades">
         <div class="sec-header">
           <div><h2>Atividades</h2><p>Cadastre atividades e crie questões para os alunos responderem</p></div>
@@ -113,6 +115,7 @@
         </table></div>
       </section>
 
+      <!-- ============ NOTAS ============ -->
       <section class="tab" id="tab-notas">
         <div class="sec-header">
           <div><h2>Notas</h2><p>Lance notas das suas turmas</p></div>
@@ -128,6 +131,7 @@
         </div>
       </section>
 
+      <!-- ============ FALTAS ============ -->
       <section class="tab" id="tab-faltas">
         <div class="sec-header">
           <div><h2>Faltas</h2><p>Registro de presença</p></div>
@@ -147,6 +151,7 @@
         </div>
       </section>
 
+      <!-- ============ DESEMPENHO ============ -->
       <section class="tab" id="tab-desempenho">
         <div class="sec-header"><div><h2>Desempenho</h2><p>Análise das suas turmas</p></div></div>
         <div class="grid grid-2">
@@ -155,6 +160,7 @@
         </div>
       </section>
 
+      <!-- ============ RELATÓRIOS ============ -->
       <section class="tab" id="tab-relatorios">
         <div class="sec-header">
           <div><h2>Relatórios do aluno</h2><p>Crie relatórios individuais</p></div>
@@ -175,11 +181,13 @@
         <div class="grid grid-2" id="listaRelatorios"></div>
       </section>
 
+      <!-- ============ MURAL ============ -->
       <section class="tab" id="tab-mural">
         <div class="sec-header"><div><h2>Mural de Avisos</h2><p>Avisos do administrador e da coordenação</p></div></div>
         <div id="listaMuralProf"></div>
       </section>
 
+      <!-- ============ PERFIL ============ -->
       <section class="tab" id="tab-perfil">
         <div class="perfil-header">
           <div class="perfil-photo">
@@ -209,7 +217,7 @@
   </div>
 </div>
 
-<!-- MODAL: respostas do aluno -->
+<!-- ============ MODAL: RESPOSTAS ============ -->
 <div class="modal-backdrop" id="modalRespostas" onclick="if(event.target===this) fecharModalRespostas()">
   <div class="modal" style="max-width:720px;">
     <div class="modal-header">
@@ -217,7 +225,7 @@
         <h3 id="respTitulo">Respostas</h3>
         <p id="respSub"></p>
       </div>
-      <button class="modal-close" onclick="fecharModalRespostas()">
+      <button class="modal-close" onclick="fecharModalRespostas()" aria-label="Fechar">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
@@ -345,8 +353,7 @@ function popularSelectTurmasProf() {
   sel.innerHTML = turmas.map(t => `<option>${t.nome}</option>`).join('') || '<option value="">Sem turmas</option>';
 }
 
-/* ----- Editor de questões ----- */
-let questoesTemp = []; // estado local do formulário
+let questoesTemp = [];
 
 function adicionarQuestao() {
   questoesTemp.push({
@@ -450,7 +457,6 @@ function renderQuestoesEditor() {
   }).join('');
 }
 
-/* ----- Abrir/criar atividade ----- */
 function novaAtividade() {
   document.getElementById('ativId').value = '';
   document.getElementById('tituloFormAtiv').textContent = 'Cadastrar atividade';
@@ -481,7 +487,6 @@ function editarAtividade(id) {
 function salvarAtividade(e) {
   e.preventDefault();
 
-  // Validação: enunciados não podem estar vazios
   for (let i = 0; i < questoesTemp.length; i++) {
     const q = questoesTemp[i];
     if (!q.enunciado || !q.enunciado.trim()) {
@@ -559,12 +564,9 @@ function renderAtividades() {
 /* ============================================================
    MODAL DE RESPOSTAS
    ============================================================ */
-let respostasAtividade = null;
-
 function verRespostas(id) {
   const a = DB.get('atividades', id);
   if (!a) return;
-  respostasAtividade = a;
 
   document.getElementById('respTitulo').textContent = 'Respostas — ' + a.titulo;
   document.getElementById('respSub').textContent = `${a.turma} · ${a.disciplina} · Prazo ${fmtData(a.prazo)}`;
@@ -572,7 +574,6 @@ function verRespostas(id) {
   const questoes = a.questoes || [];
   const respostas = a.respostas || {};
   const alunos = Object.keys(respostas);
-
   const body = document.getElementById('respBody');
 
   if (!questoes.length) {
@@ -598,7 +599,6 @@ function verRespostas(id) {
     return;
   }
 
-  // Mostra cada aluno com as respostas
   body.innerHTML = alunos.map(nomeAluno => {
     const r = respostas[nomeAluno];
     const acertos = contarAcertos(questoes, r);
@@ -610,7 +610,7 @@ function verRespostas(id) {
             <div class="card-title" style="margin:0;">${nomeAluno}</div>
             <div class="card-sub" style="margin:0;">Enviado em ${fmtData(r.data)}</div>
           </div>
-          ${totalMulti ? `<span class="badge ${acertos.total === totalMulti ? 'badge-ok' : 'badge-info'}">${acertos.total}/${totalMulti} acertos</span>` : ''}
+          ${totalMulti ? `<span class="badge ${acertos === totalMulti ? 'badge-ok' : 'badge-info'}">${acertos}/${totalMulti} acertos</span>` : ''}
         </div>
         ${questoes.map((q, i) => {
           const resposta = r.respostas[q.id];
@@ -673,13 +673,12 @@ function contarAcertos(questoes, resposta) {
       if (resposta.respostas[q.id] === q.gabarito) total++;
     }
   });
-  return { total };
+  return total;
 }
 
 function fecharModalRespostas() {
   document.getElementById('modalRespostas').classList.remove('open');
   document.body.style.overflow = '';
-  respostasAtividade = null;
 }
 
 /* ============================================================
@@ -687,6 +686,7 @@ function fecharModalRespostas() {
    ============================================================ */
 function popularSelectTurmaNotas() {
   const sel = document.getElementById('selTurmaProf');
+  if (!sel) return;
   const turmas = minhasTurmas();
   sel.innerHTML = turmas.map(t => `<option>${t.nome}</option>`).join('');
 }
@@ -754,6 +754,7 @@ function lancarNotaProf(aluno, turma, disciplina, bimestre) {
    ============================================================ */
 function popularSelectTurmaFalta() {
   const sel = document.getElementById('selTurmaFalta');
+  if (!sel) return;
   const turmas = minhasTurmas();
   sel.innerHTML = turmas.map(t => `<option>${t.nome}</option>`).join('');
   if (!document.getElementById('dataFalta').value) document.getElementById('dataFalta').value = hojeISO();
@@ -806,6 +807,7 @@ function renderDesempenho() {
   const turmas = minhasTurmas();
 
   const contMedia = document.getElementById('desempenhoMinhasTurmas');
+  contMedia.className = 'donut-list';
   contMedia.innerHTML = turmas.length
     ? turmas.map(t => {
         const m = calcularMediaTurma(t.nome, 1);
@@ -820,6 +822,7 @@ function renderDesempenho() {
     : '<p style="font-size:13px;color:var(--cinza-500);">Sem turmas.</p>';
 
   const contFreq = document.getElementById('desempenhoMinhasFreq');
+  contFreq.className = 'donut-list';
   contFreq.innerHTML = turmas.length
     ? turmas.map(t => {
         const faltas = DB.list('faltas').filter(f => f.turma === t.nome);
