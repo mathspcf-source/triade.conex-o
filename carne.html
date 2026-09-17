@@ -2,14 +2,14 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Carnê Tríade Conexão</title>
+<title>Carnê Tríade Conexão - Reforço Escolar</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   :root {
     --azul: #1e3a8a;
-    --azul-medio: #3b82f6;
     --azul-claro: #dbeafe;
+    --azul-medio: #3b82f6;
     --verde: #10b981;
     --amarelo: #fbbf24;
     --vermelho: #ef4444;
@@ -24,7 +24,8 @@
     min-height: 100vh;
   }
 
-  .aviso-topo {
+  /* Barra de ações (não aparece na impressão) */
+  .barra-acoes {
     max-width: 210mm;
     margin: 0 auto 16px;
     padding: 12px 18px;
@@ -38,14 +39,9 @@
     font-size: 13.5px;
     color: #1e293b;
   }
-  .aviso-topo svg { flex-shrink: 0; color: var(--azul); }
-  .aviso-topo strong { color: var(--azul); }
-  .aviso-topo .acoes {
-    margin-left: auto;
-    display: flex;
-    gap: 8px;
-  }
-  .aviso-topo button {
+  .barra-acoes .icone { flex-shrink: 0; color: var(--azul); }
+  .barra-acoes strong { color: var(--azul); }
+  .barra-acoes .btn {
     padding: 8px 14px;
     border: none;
     border-radius: 8px;
@@ -57,17 +53,13 @@
     gap: 6px;
     transition: background .18s;
   }
-  .btn-imprimir {
-    background: var(--azul);
-    color: #fff;
-  }
-  .btn-imprimir:hover { background: #172554; }
-  .btn-voltar {
-    background: #e2e8f0;
-    color: #1e293b;
-  }
-  .btn-voltar:hover { background: #cbd5e1; }
+  .barra-acoes .btn-imprimir { background: var(--azul); color: #fff; }
+  .barra-acoes .btn-imprimir:hover { background: #172554; }
+  .barra-acoes .btn-voltar { background: #e2e8f0; color: #1e293b; }
+  .barra-acoes .btn-voltar:hover { background: #cbd5e1; }
+  .barra-acoes .grupo { margin-left: auto; display: flex; gap: 8px; }
 
+  /* ===== FOLHA A4 ===== */
   .folha {
     width: 210mm;
     min-height: 297mm;
@@ -164,15 +156,6 @@
     text-transform: uppercase;
   }
 
-  .canhoto .campo .valor-fixo {
-    font-size: 9.5px;
-    font-weight: 700;
-    color: var(--azul);
-    padding: 1px 0;
-    border-bottom: 1px dotted #94a3b8;
-    min-height: 12px;
-  }
-
   .canhoto .campo .linha {
     border-bottom: 1px dotted #94a3b8;
     height: 11px;
@@ -183,7 +166,12 @@
     gap: 3px;
     align-items: flex-end;
   }
-  .canhoto .data-linha .linha { flex: 1; border-bottom: 1px dotted #94a3b8; height: 11px; }
+
+  .canhoto .data-linha .linha {
+    flex: 1;
+    border-bottom: 1px dotted #94a3b8;
+    height: 11px;
+  }
 
   /* ===== VIA PRINCIPAL ===== */
   .via {
@@ -213,7 +201,7 @@
     gap: 5px;
   }
 
-  .via .titulo svg { color: var(--azul-medio); }
+  .via .titulo svg { color: var(--azul-medio); flex-shrink: 0; }
 
   .via .parcela-tag {
     font-weight: 700;
@@ -232,10 +220,25 @@
     flex: 1;
   }
 
-  .via .col-esq { flex: 1; display: flex; flex-direction: column; gap: 5px; }
-  .via .col-dir { width: 38%; display: flex; flex-direction: column; gap: 5px; }
+  .via .col-esq {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
 
-  .via .campo { display: flex; flex-direction: column; gap: 1px; }
+  .via .col-dir {
+    width: 38%;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .via .campo {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
 
   .via .campo label {
     font-size: 7.5px;
@@ -245,23 +248,24 @@
     text-transform: uppercase;
   }
 
-  .via .campo .valor-fixo {
-    font-size: 10px;
-    font-weight: 700;
-    color: #1e293b;
-    padding: 1px 0;
-    border-bottom: 1px dotted #94a3b8;
-    min-height: 13px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
   .via .campo .linha {
     border-bottom: 1px dotted #94a3b8;
     height: 12px;
   }
 
+  .via .campo .valor-preenchido {
+    font-size: 9.5px;
+    font-weight: 700;
+    color: #1e293b;
+    padding: 1px 0 2px;
+    border-bottom: 1px dotted #94a3b8;
+    min-height: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Caixas destacadas */
   .via .caixa {
     border: 1.5px solid var(--azul-claro);
     border-radius: 6px;
@@ -283,19 +287,54 @@
     text-transform: uppercase;
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 3px;
   }
-  .via .caixa.destaque label { color: #047857; }
+
+  .via .caixa.destaque label {
+    color: #047857;
+  }
+
   .via .caixa label svg { flex-shrink: 0; }
 
-  .via .caixa .valor-fixo {
-    font-size: 11px;
+  .via .caixa .valor-preenchido {
+    font-size: 10px;
     font-weight: 800;
-    color: #0f172a;
+    color: #1e293b;
+    border-bottom: 1px dotted #64748b;
+    padding: 1px 0;
+    margin-top: 2px;
+    min-height: 13px;
+  }
+
+  .via .caixa.destaque .valor-preenchido {
+    color: #047857;
+    font-size: 11px;
+  }
+
+  .via .caixa .linha {
+    border-bottom: 1px dotted #64748b;
+    height: 11px;
     margin-top: 2px;
   }
-  .via .caixa.destaque .valor-fixo { color: #047857; font-size: 12px; }
 
+  .via .caixa .data {
+    display: flex;
+    gap: 3px;
+    margin-top: 2px;
+    align-items: center;
+  }
+
+  .via .caixa .data .linha {
+    flex: 1;
+    margin-top: 0;
+  }
+
+  .via .caixa .data span {
+    color: var(--cinza);
+    font-weight: 700;
+  }
+
+  /* Linha recebido */
   .via .recebido {
     display: flex;
     align-items: flex-end;
@@ -304,16 +343,19 @@
     margin-top: auto;
     padding-top: 3px;
   }
+
   .via .recebido .label {
     font-weight: 700;
     color: var(--cinza);
     white-space: nowrap;
   }
+
   .via .recebido .linha {
     flex: 1;
     border-bottom: 1px dotted #94a3b8;
     height: 11px;
   }
+
   .via .recebido .check {
     background: var(--verde);
     color: #fff;
@@ -327,6 +369,9 @@
     gap: 3px;
   }
 
+  .via .recebido .check svg { flex-shrink: 0; }
+
+  /* Aviso */
   .via .aviso {
     font-size: 7.5px;
     color: #92400e;
@@ -339,12 +384,16 @@
     gap: 4px;
     margin-top: 2px;
   }
+
   .via .aviso svg { flex-shrink: 0; color: #b45309; }
 
   /* ===== IMPRESSÃO ===== */
   @media print {
-    body { background: #fff; padding: 0; }
-    .aviso-topo { display: none !important; }
+    body {
+      background: #fff;
+      padding: 0;
+    }
+    .barra-acoes { display: none !important; }
     .folha {
       margin: 0;
       box-shadow: none;
@@ -362,26 +411,26 @@
 <body>
 
 <!-- Barra de ações (não imprime) -->
-<div class="aviso-topo">
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<div class="barra-acoes" id="barraAcoes">
+  <svg class="icone" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
     <line x1="16" y1="2" x2="16" y2="6"/>
     <line x1="8" y1="2" x2="8" y2="6"/>
     <line x1="3" y1="10" x2="21" y2="10"/>
   </svg>
   <div>
-    <strong id="tituloAluno">Carregando…</strong>
-    <div id="subtituloCarne" style="font-size:12px;color:#64748b;margin-top:2px;"></div>
+    <strong id="infoAluno">Carregando…</strong>
+    <div id="infoSub" style="font-size:12px;color:#64748b;margin-top:2px;"></div>
   </div>
-  <div class="acoes">
-    <button class="btn-voltar" onclick="window.close()">
+  <div class="grupo">
+    <button class="btn btn-voltar" onclick="window.close()">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <line x1="19" y1="12" x2="5" y2="12"/>
         <polyline points="12 19 5 12 12 5"/>
       </svg>
       Fechar
     </button>
-    <button class="btn-imprimir" onclick="window.print()">
+    <button class="btn btn-imprimir" onclick="window.print()">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <polyline points="6 9 6 2 18 2 18 9"/>
         <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
@@ -392,78 +441,121 @@
   </div>
 </div>
 
-<!-- Container onde as folhas serão montadas -->
+<!-- Container das folhas -->
 <div id="paginas"></div>
 
-<script src="db.js"></script>
+<!-- Fallback: se o JS falhar, mostra mensagem -->
+<noscript>
+  <div style="max-width:210mm;margin:20px auto;padding:20px;background:#fee2e2;color:#991b1b;border-radius:8px;">
+    JavaScript está desativado. Ative para gerar o carnê.
+  </div>
+</noscript>
+
 <script>
 /* ============================================================
-   CARNÊ — geração dinâmica a partir dos dados do aluno
+   CARNÊ — geração dinâmica a partir do localStorage
    ============================================================ */
 
+// ---------- Compatibilidade com o DB do admin ----------
+// Se estiver rodando sozinho (sem db.js), criamos um stub que lê direto do localStorage
+function lerDB(entidade) {
+  try {
+    const raw = localStorage.getItem('triade_' + entidade);
+    return raw ? JSON.parse(raw) : [];
+  } catch (e) {
+    console.error('Erro ao ler', entidade, e);
+    return [];
+  }
+}
+
+function fmtMoeda(v) {
+  return 'R$ ' + Number(v || 0).toFixed(2).replace('.', ',');
+}
+
+// ---------- Ícones SVG ----------
+const ICONE_ESCOLA = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg>`;
+const ICONE_CALENDARIO = `<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`;
+const ICONE_DINHEIRO = `<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>`;
+const ICONE_CHECK = `<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+const ICONE_INFO = `<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>`;
+
+// ---------- Inicialização ----------
 (function gerarCarne() {
   const params = new URLSearchParams(location.search);
   const nomeAluno = params.get('aluno');
   const anoParam = +(params.get('ano') || new Date().getFullYear());
 
+  const infoAluno = document.getElementById('infoAluno');
+  const infoSub = document.getElementById('infoSub');
+  const container = document.getElementById('paginas');
+
+  // Sem parâmetro: erro amigável
   if (!nomeAluno) {
-    document.getElementById('tituloAluno').textContent = 'Aluno não informado';
-    document.getElementById('subtituloCarne').textContent = 'Abra o carnê pela aba Financeiro do painel admin.';
+    infoAluno.textContent = 'Aluno não informado';
+    infoSub.textContent = 'Abra o carnê pela aba Financeiro do painel admin.';
+    container.innerHTML = `<div style="max-width:210mm;margin:20px auto;padding:24px;background:#fef3c7;border-left:4px solid #f59e0b;border-radius:8px;color:#92400e;">
+      <strong style="display:block;font-size:15px;margin-bottom:6px;">Nenhum aluno especificado</strong>
+      Use o botão <strong>Imprimir carnê</strong> na aba Financeiro do painel admin para abrir esta página com os dados corretos.
+    </div>`;
     return;
   }
 
-  const aluno = DB.list('alunos').find(a => a.nome === nomeAluno);
+  const alunos = lerDB('alunos');
+  const aluno = alunos.find(a => a.nome === nomeAluno);
+
   if (!aluno) {
-    document.getElementById('tituloAluno').textContent = 'Aluno não encontrado';
-    document.getElementById('subtituloCarne').textContent = nomeAluno;
+    infoAluno.textContent = 'Aluno não encontrado';
+    infoSub.textContent = nomeAluno;
+    container.innerHTML = `<div style="max-width:210mm;margin:20px auto;padding:24px;background:#fee2e2;border-left:4px solid #ef4444;border-radius:8px;color:#991b1b;">
+      <strong style="display:block;font-size:15px;margin-bottom:6px;">Aluno não encontrado no banco local</strong>
+      O aluno <strong>${nomeAluno}</strong> não existe no <code>localStorage</code> deste navegador.
+      Cadastre-o no painel admin primeiro.
+    </div>`;
     return;
   }
 
-  // Busca todos os pagamentos do aluno no ano
-  const pagamentos = DB.list('pagamentos')
+  // Pagamentos do aluno no ano
+  const pagamentos = lerDB('pagamentos')
     .filter(p => p.aluno === aluno.nome && p.ano === anoParam)
     .sort((a, b) => a.mes - b.mes);
 
-  // Se não tiver nenhum lançamento, gera 12 vazios na memória (só visual)
-  const parcelas = [];
+  // Plano
+  const plano = lerDB('planos').find(p => p.nome === aluno.plano);
+  const valorPadrao = plano ? plano.valor : 0;
+
+  // Se não há pagamentos, gera 12 parcelas virtuais
+  let parcelas;
   if (pagamentos.length) {
-    pagamentos.forEach(p => parcelas.push(p));
+    parcelas = pagamentos;
   } else {
+    parcelas = [];
     for (let m = 1; m <= 12; m++) {
       parcelas.push({
         mes: m,
-        valor: 0,
+        valor: valorPadrao,
         vencimento: `${String(aluno.vencimento).padStart(2,'0')}/${String(m).padStart(2,'0')}/${anoParam}`,
         status: 'Pendente'
       });
     }
   }
 
-  const plano = DB.list('planos').find(p => p.nome === aluno.plano);
-  const valorPadrao = plano ? plano.valor : 0;
+  // Cabeçalho
+  infoAluno.textContent = 'Carnê — ' + aluno.nome;
+  infoSub.textContent = `${aluno.turma} · ${aluno.plano} · Ano ${anoParam} · ${parcelas.length} parcela(s)`;
 
-  // Cabeçalho da página
-  document.getElementById('tituloAluno').textContent = 'Carnê — ' + aluno.nome;
-  document.getElementById('subtituloCarne').textContent =
-    `${aluno.turma} · ${aluno.plano} · Ano ${anoParam} · ${parcelas.length} parcela(s)`;
-
-  // Renderiza em folhas de 6
-  const container = document.getElementById('paginas');
+  // Renderização em folhas de 6
   const meses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-
-  const ICONE_ESCOLA = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg>`;
-  const ICONE_CALENDARIO = `<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`;
-  const ICONE_DINHEIRO = `<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>`;
-  const ICONE_CHECK = `<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
-  const ICONE_INFO = `<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>`;
+  const total = parcelas.length;
 
   for (let i = 0; i < parcelas.length; i += 6) {
     const bloco = parcelas.slice(i, i + 6);
     const folha = document.createElement('div');
     folha.className = 'folha';
+
     folha.innerHTML = bloco.map((p, idx) => {
       const numero = i + idx + 1;
-      const total = parcelas.length;
+      const numeroFmt = String(numero).padStart(2, '0');
+      const totalFmt = String(total).padStart(2, '0');
       const valor = p.valor || valorPadrao;
       const venc = p.vencimento || `${String(aluno.vencimento).padStart(2,'0')}/${String(p.mes).padStart(2,'0')}/${anoParam}`;
       const mesNome = meses[(p.mes || 1) - 1] || '';
@@ -471,10 +563,12 @@
       return `
       <div class="carne">
         <div class="canhoto">
-          <div class="topo"><span>CANHOTO</span><span class="badge">${String(numero).padStart(2,'0')}/${String(total).padStart(2,'0')}</span></div>
-          <div class="campo"><label>Aluno(a):</label><div class="valor-fixo">${aluno.nome}</div></div>
-          <div class="campo"><label>Vencimento:</label><div class="valor-fixo">${venc}</div></div>
-          <div class="campo"><label>Valor (R$):</label><div class="valor-fixo">${fmtMoeda(valor)}</div></div>
+          <div class="topo"><span>CANHOTO</span><span class="badge">${numeroFmt}/${totalFmt}</span></div>
+          <div class="campo"><label>Aluno(a):</label><div class="linha"></div></div>
+          <div class="campo"><label>Vencimento:</label>
+            <div class="data-linha"><div class="linha"></div><span>/</span><div class="linha"></div><span>/</span><div class="linha"></div></div>
+          </div>
+          <div class="campo"><label>Valor (R$):</label><div class="linha"></div></div>
           <div class="campo"><label>Data pagamento:</label>
             <div class="data-linha"><div class="linha"></div><span>/</span><div class="linha"></div><span>/</span><div class="linha"></div></div>
           </div>
@@ -484,24 +578,29 @@
         <div class="via">
           <div class="cabecalho">
             <span class="titulo">${ICONE_ESCOLA} TRÍADE CONEXÃO | Reforço Escolar</span>
-            <span class="parcela-tag">PARCELA ${String(numero).padStart(2,'0')}/${String(total).padStart(2,'0')}</span>
+            <span class="parcela-tag">PARCELA ${numeroFmt}/${totalFmt}</span>
           </div>
 
           <div class="corpo">
             <div class="col-esq">
-              <div class="campo"><label>Nome do aluno(a):</label><div class="valor-fixo">${aluno.nome}</div></div>
-              <div class="campo"><label>Responsável:</label><div class="valor-fixo">${aluno.responsavel || '—'}</div></div>
-              <div class="campo"><label>Turma / Plano:</label><div class="valor-fixo">${aluno.turma} · ${aluno.plano}</div></div>
+              <div class="campo">
+                <label>Nome do aluno(a):</label>
+                <div class="valor-preenchido">${aluno.nome}</div>
+              </div>
+              <div class="campo">
+                <label>Responsável:</label>
+                <div class="valor-preenchido">${aluno.responsavel || '—'}</div>
+              </div>
             </div>
 
             <div class="col-dir">
               <div class="caixa">
                 <label>${ICONE_CALENDARIO} Vencimento — ${mesNome}</label>
-                <div class="valor-fixo">${venc}</div>
+                <div class="valor-preenchido">${venc}</div>
               </div>
               <div class="caixa destaque">
                 <label>${ICONE_DINHEIRO} Valor da mensalidade</label>
-                <div class="valor-fixo">${fmtMoeda(valor)}</div>
+                <div class="valor-preenchido">${fmtMoeda(valor)}</div>
               </div>
             </div>
           </div>
@@ -516,6 +615,7 @@
         </div>
       </div>`;
     }).join('');
+
     container.appendChild(folha);
   }
 })();
