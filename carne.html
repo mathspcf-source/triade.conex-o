@@ -85,7 +85,7 @@
   }
   .dica strong { color: var(--vermelho-600); }
 
-  /* ===== Avisos de sistema ===== */
+  /* ===== Avisos ===== */
   .aviso-sistema {
     max-width: 210mm;
     margin: 0 auto 16px;
@@ -117,9 +117,7 @@
     font-size: 12.5px;
   }
 
-  /* ============================================================
-     FOLHA A4
-     ============================================================ */
+  /* ===== Folha A4 ===== */
   .folha {
     width: 210mm;
     height: 297mm;
@@ -133,9 +131,7 @@
     gap: var(--gap-folha);
   }
 
-  /* ============================================================
-     CAPA (mesmo tamanho do carnê)
-     ============================================================ */
+  /* ===== Capa (mesmo tamanho dos recibos) ===== */
   .capa {
     position: relative;
     height: var(--altura-carne);
@@ -160,10 +156,7 @@
     justify-content: center;
     margin-bottom: 2px;
   }
-  .capa-logo svg {
-    width: 28px;
-    height: 28px;
-  }
+  .capa-logo svg { width: 26px; height: 26px; }
 
   .capa-subtitulo {
     font-size: 7.5px;
@@ -219,9 +212,24 @@
     box-shadow: 0 2px 6px rgba(124, 58, 237, 0.3);
   }
 
-  /* ============================================================
-     CARNÊ
-     ============================================================ */
+  .capa-aluno {
+    margin-top: 5px;
+    font-size: 9px;
+    line-height: 1.35;
+    color: var(--azul-700);
+  }
+  .capa-aluno strong {
+    display: block;
+    font-size: 10px;
+    font-weight: 800;
+  }
+  .capa-aluno span {
+    color: var(--cinza-500);
+    font-weight: 500;
+    font-size: 8.5px;
+  }
+
+  /* ===== Carnê ===== */
   .carne {
     position: relative;
     height: var(--altura-carne);
@@ -233,7 +241,6 @@
     break-inside: avoid;
     page-break-inside: avoid;
   }
-
   .carne::before {
     content: "";
     position: absolute;
@@ -243,7 +250,6 @@
     border-radius: 7px 7px 0 0;
     z-index: 2;
   }
-
   .carne::after {
     content: "";
     position: absolute;
@@ -254,7 +260,7 @@
     z-index: 2;
   }
 
-  /* ---------- CANHOTO ---------- */
+  /* ----- Canhoto ----- */
   .canhoto {
     position: relative;
     width: 31%;
@@ -266,7 +272,6 @@
     border-right: 2px dashed #818cf8;
     border-radius: 7px 0 0 7px;
   }
-
   .canhoto::after {
     content: "";
     position: absolute;
@@ -283,9 +288,6 @@
     border-radius: 50%;
     z-index: 3;
   }
-
-  .canhoto::after svg { width: 9px; height: 9px; }
-
   .canhoto__topo {
     display: flex;
     justify-content: space-between;
@@ -295,7 +297,6 @@
     border-bottom: 1.5px solid #c7d2fe;
     flex: none;
   }
-
   .canhoto__rotulo {
     font-size: 8px;
     font-weight: 800;
@@ -303,7 +304,6 @@
     text-transform: uppercase;
     color: var(--roxo-700);
   }
-
   .canhoto .campo {
     display: flex;
     flex-direction: column;
@@ -311,16 +311,11 @@
     min-width: 0;
     flex: none;
   }
-
-  .canhoto .linha-dupla {
-    display: flex;
-    gap: 8px;
-  }
+  .canhoto .linha-dupla { display: flex; gap: 8px; }
   .canhoto .linha-dupla > .campo { flex: 1; min-width: 0; }
-
   .campo--assinatura { margin-top: auto; }
 
-  /* ---------- VIA PRINCIPAL ---------- */
+  /* ----- Via ----- */
   .via {
     flex: 1;
     min-width: 0;
@@ -331,7 +326,6 @@
     border-radius: 0 7px 7px 0;
     background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
   }
-
   .via__topo {
     display: flex;
     justify-content: space-between;
@@ -340,7 +334,6 @@
     padding-bottom: 5px;
     border-bottom: 1.5px solid #bfdbfe;
   }
-
   .marca {
     display: flex;
     flex-direction: column;
@@ -351,7 +344,6 @@
     flex: 1;
     text-align: center;
   }
-
   .marca__titulo {
     font-size: 12px;
     font-weight: 900;
@@ -361,7 +353,6 @@
     line-height: 1.1;
     white-space: nowrap;
   }
-
   .marca__subtitulo {
     font-size: 8.5px;
     font-weight: 800;
@@ -371,7 +362,6 @@
     line-height: 1.1;
     white-space: nowrap;
   }
-
   .marca__linha {
     width: 40px;
     height: 3px;
@@ -380,7 +370,7 @@
     background: linear-gradient(90deg, var(--vermelho-500), var(--amarelo-400), var(--verde-500), var(--azul-500));
   }
 
-  /* ---------- BADGES ---------- */
+  /* ----- Badges ----- */
   .badge {
     font-weight: 800;
     letter-spacing: .04em;
@@ -403,7 +393,7 @@
     flex: none;
   }
 
-  /* ---------- CAMPOS GENÉRICOS ---------- */
+  /* ----- Campos ----- */
   .campo {
     display: flex;
     flex-direction: column;
@@ -418,10 +408,20 @@
     color: var(--azul-700);
     line-height: 1.2;
   }
-
   .linha {
     height: 13px;
     border-bottom: 1.5px dotted #818cf8;
+  }
+  .valor-preenchido {
+    font-size: 9.5px;
+    font-weight: 700;
+    color: #1e293b;
+    padding: 1px 0 2px;
+    border-bottom: 1.5px dotted #818cf8;
+    min-height: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .data {
@@ -457,7 +457,6 @@
     display: flex;
     gap: 10px;
   }
-
   .via__esq {
     flex: 1;
     min-width: 0;
@@ -465,11 +464,7 @@
     flex-direction: column;
     gap: 7px;
   }
-  .via__esq .campo {
-    flex: 1;
-    justify-content: space-between;
-  }
-
+  .via__esq .campo { flex: 1; justify-content: space-between; }
   .via__dir {
     width: 38%;
     min-width: 0;
@@ -488,7 +483,6 @@
     background: linear-gradient(135deg, #dbeafe, #bfdbfe);
   }
   .caixa > .rotulo { color: var(--azul-700); }
-
   .caixa--verde {
     border-color: #6ee7b7;
     background: linear-gradient(135deg, #d1fae5, #a7f3d0);
@@ -532,7 +526,6 @@
     flex-direction: column;
     gap: 3px;
   }
-
   .recebido {
     display: flex;
     align-items: flex-end;
@@ -555,7 +548,6 @@
     height: 12px;
     border-bottom: 1.5px dotted #a78bfa;
   }
-
   .ok {
     flex: none;
     width: 18px;
@@ -569,9 +561,7 @@
   }
   .ok svg { width: 9px; height: 9px; }
 
-  /* ============================================================
-     IMPRESSÃO
-     ============================================================ */
+  /* ===== Impressão ===== */
   @media print {
     @page { size: A4; margin: 0; }
     html, body { background: #fff; padding: 0; margin: 0; }
@@ -597,7 +587,7 @@
 </head>
 <body>
 
-<!-- ================= BARRA DE AÇÕES ================= -->
+<!-- Barra de ações -->
 <div class="toolbar no-print">
   <button class="btn" type="button" onclick="window.print()">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -617,17 +607,17 @@
   <p class="dica" id="resumo"></p>
 </div>
 
-<!-- ================= AVISO DO SISTEMA ================= -->
+<!-- Avisos -->
 <div id="avisoSistema"></div>
 
-<!-- ================= PÁGINAS ================= -->
+<!-- Páginas -->
 <main id="paginas"></main>
 
 <script>
 /* ============================================================
    CARNÊ — Tríade Conexão
-   Layout: capa + 6 blocos por folha A4
-   Capa tem a MESMA altura dos recibos
+   Capa + recibos do mesmo tamanho.
+   Preenchimento automático: aluno, responsável e data de pagamento.
    ============================================================ */
 
 const CONFIG = {
@@ -638,13 +628,13 @@ const CONFIG = {
   contato: ""
 };
 
-const SVG_TESOURA = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/></svg>`;
+/* ---------- Ícones ---------- */
 const SVG_CHECK = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
 const SVG_CALENDARIO = `<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`;
 const SVG_DINHEIRO = `<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>`;
 const SVG_ALERTA = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`;
 
-function logoSVG(tamanho = 28) {
+function logoSVG(tamanho = 26) {
   return `
   <svg viewBox="0 0 100 90" width="${tamanho}" height="${tamanho}" fill="none" xmlns="http://www.w3.org/2000/svg">
     <defs>
@@ -661,6 +651,7 @@ function logoSVG(tamanho = 28) {
   </svg>`;
 }
 
+/* ---------- Utilitários ---------- */
 const pad2 = n => String(n).padStart(2, '0');
 
 function fmtMoeda(v) {
@@ -683,7 +674,7 @@ function mostrarAviso(tipo, html) {
 }
 
 /* ============================================================
-   VENCIMENTOS
+   Vencimentos
    ============================================================ */
 function listaVencimentos(anoBase, diaBase, totalParcelas) {
   const n = totalParcelas;
@@ -700,12 +691,19 @@ function listaVencimentos(anoBase, diaBase, totalParcelas) {
 }
 
 /* ============================================================
-   HTML — CAPA (mesmo tamanho dos recibos)
+   Capa — com nome do aluno e responsável
    ============================================================ */
-function capaHTML() {
+function capaHTML(aluno) {
+  const info = aluno && aluno.nome
+    ? `<div class="capa-aluno">
+        <strong>${aluno.nome}</strong>
+        ${aluno.responsavel ? `<span>Responsável: ${aluno.responsavel}</span>` : ''}
+      </div>`
+    : '';
+
   return `
   <article class="capa">
-    <div class="capa-logo">${logoSVG(28)}</div>
+    <div class="capa-logo">${logoSVG(26)}</div>
     <span class="capa-subtitulo">${CONFIG.titulo}</span>
     <h1 class="capa-titulo">${CONFIG.subtitulo}</h1>
     <div class="divisoria">
@@ -714,18 +712,26 @@ function capaHTML() {
       <span class="divisoria__linha"></span>
     </div>
     <span class="capa-badge">Carnê de Pagamento</span>
+    ${info}
   </article>`;
 }
 
 /* ============================================================
-   HTML — CARNÊ (uma parcela)
+   Carnê — com preenchimento de aluno, responsável e data de pagamento
    ============================================================ */
-function carneHTML(i, vencimentos, valorPadrao) {
-  const num   = pad2(i + 1);
-  const total = pad2(CONFIG.totalParcelas);
-  const venc  = vencimentos[i] || '';
+function carneHTML(i, parcelas, valorPadrao, aluno) {
+  const p      = parcelas[i] || {};
+  const num    = pad2(i + 1);
+  const total  = pad2(CONFIG.totalParcelas);
+  const venc   = p.vencimento || '';
   const partes = venc.split('/');
-  const valor = valorPadrao || '';
+  const valor  = valorPadrao || '';
+
+  const dataPag = p.dataPagamento || '';
+  const dp      = dataPag.split('/');
+
+  const nomeAluno = (aluno && aluno.nome) || '';
+  const nomeResp  = (aluno && aluno.responsavel) || '';
 
   return `
   <article class="carne">
@@ -737,7 +743,9 @@ function carneHTML(i, vencimentos, valorPadrao) {
 
       <div class="campo">
         <span class="rotulo">Aluno(a)</span>
-        <div class="linha"></div>
+        ${nomeAluno
+          ? `<div class="valor-preenchido">${nomeAluno}</div>`
+          : `<div class="linha"></div>`}
       </div>
 
       <div class="linha-dupla">
@@ -751,17 +759,21 @@ function carneHTML(i, vencimentos, valorPadrao) {
         </div>
         <div class="campo">
           <span class="rotulo">Valor (R$)</span>
-          <div class="linha"></div>
+          ${valor
+            ? `<div class="valor-preenchido">${valor}</div>`
+            : `<div class="linha"></div>`}
         </div>
       </div>
 
       <div class="campo">
         <span class="rotulo">Data do pagamento</span>
-        <div class="data">
-          <span class="cx"></span><i>/</i>
-          <span class="cx"></span><i>/</i>
-          <span class="cx cx--ano"></span>
-        </div>
+        ${dataPag
+          ? `<div class="valor-preenchido">${dataPag}</div>`
+          : `<div class="data">
+              <span class="cx"></span><i>/</i>
+              <span class="cx"></span><i>/</i>
+              <span class="cx cx--ano"></span>
+            </div>`}
       </div>
 
       <div class="campo campo--assinatura">
@@ -784,11 +796,15 @@ function carneHTML(i, vencimentos, valorPadrao) {
         <div class="via__esq">
           <div class="campo">
             <span class="rotulo">Nome do aluno(a)</span>
-            <div class="linha"></div>
+            ${nomeAluno
+              ? `<div class="valor-preenchido">${nomeAluno}</div>`
+              : `<div class="linha"></div>`}
           </div>
           <div class="campo">
             <span class="rotulo">Responsável</span>
-            <div class="linha"></div>
+            ${nomeResp
+              ? `<div class="valor-preenchido">${nomeResp}</div>`
+              : `<div class="linha"></div>`}
           </div>
         </div>
 
@@ -816,7 +832,9 @@ function carneHTML(i, vencimentos, valorPadrao) {
           <span class="recebido__label">Recebido por</span>
           <div class="linha"></div>
           <span class="recebido__label">Data</span>
-          <div class="linha linha--data"></div>
+          ${dataPag
+            ? `<div class="valor-preenchido" style="flex:0 0 92px;padding:0 0 1px;text-align:center;">${dataPag}</div>`
+            : `<div class="linha linha--data"></div>`}
           <span class="ok" aria-hidden="true">${SVG_CHECK}</span>
         </div>
       </div>
@@ -825,33 +843,30 @@ function carneHTML(i, vencimentos, valorPadrao) {
 }
 
 /* ============================================================
-   RENDER
+   Render
    ============================================================ */
 function renderCarne({ aluno, parcelas, anoParam, valorPadrao }) {
   const container = document.getElementById('paginas');
 
-  /* Monta lista: capa + parcelas */
+  /* Lista: capa + parcelas */
   const blocos = [{ tipo: 'capa' }];
   parcelas.forEach((p, i) => blocos.push({ tipo: 'parcela', index: i }));
 
-  /* Ajusta altura para caber 6 por folha */
+  /* Altura para caber porPagina blocos */
   const porPagina = Math.max(1, Math.min(CONFIG.porPagina, blocos.length));
-  const areaUtil = 297 - (2 * 7) - 2;
-  const altura = (areaUtil - (porPagina - 1) * 2.5) / porPagina;
+  const areaUtil  = 297 - (2 * 7) - 2;
+  const altura    = (areaUtil - (porPagina - 1) * 2.5) / porPagina;
   document.documentElement.style.setProperty('--altura-carne', altura.toFixed(2) + 'mm');
 
-  const vencimentos = parcelas.map(p => p.vencimento);
-
-  /* Distribui em folhas */
   for (let i = 0; i < blocos.length; i += porPagina) {
     const bloco = blocos.slice(i, i + porPagina);
     let conteudo = '';
 
     bloco.forEach(b => {
       if (b.tipo === 'capa') {
-        conteudo += capaHTML();
+        conteudo += capaHTML(aluno);
       } else {
-        conteudo += carneHTML(b.index, vencimentos, valorPadrao);
+        conteudo += carneHTML(b.index, parcelas, valorPadrao, aluno);
       }
     });
 
@@ -869,12 +884,12 @@ function renderCarne({ aluno, parcelas, anoParam, valorPadrao }) {
 }
 
 /* ============================================================
-   BOOT
+   Boot
    ============================================================ */
 (function iniciar() {
-  const params = new URLSearchParams(location.search);
+  const params    = new URLSearchParams(location.search);
   const nomeAluno = params.get('aluno');
-  const anoParam = +(params.get('ano') || new Date().getFullYear());
+  const anoParam  = +(params.get('ano') || new Date().getFullYear());
 
   const todosAlunos = lerLS('triade_alunos');
   const todosPags   = lerLS('triade_pagamentos');
@@ -896,7 +911,12 @@ function renderCarne({ aluno, parcelas, anoParam, valorPadrao }) {
       vencimento: 12
     };
     const vencimentos = listaVencimentos(anoParam, alunoDemo.vencimento, CONFIG.totalParcelas);
-    const parcelas = vencimentos.map((v, i) => ({ mes: i + 1, vencimento: v }));
+    const parcelas = vencimentos.map((v, i) => ({
+      mes: i + 1,
+      vencimento: v,
+      dataPagamento: '',
+      status: 'Pendente'
+    }));
     renderCarne({ aluno: alunoDemo, parcelas, anoParam, valorPadrao: '180,00' });
     return;
   }
@@ -908,9 +928,13 @@ function renderCarne({ aluno, parcelas, anoParam, valorPadrao }) {
       Cadastre o aluno no painel admin e abra o carnê pelo botão "Imprimir carnê".
     `);
     const vencimentos = listaVencimentos(anoParam, 10, CONFIG.totalParcelas);
-    const parcelas = vencimentos.map((v, i) => ({ mes: i + 1, vencimento: v }));
+    const parcelas = vencimentos.map((v, i) => ({
+      mes: i + 1,
+      vencimento: v,
+      dataPagamento: ''
+    }));
     renderCarne({
-      aluno: { nome: nomeAluno, turma: '—', plano: '—', vencimento: 10 },
+      aluno: { nome: nomeAluno, turma: '—', plano: '—', responsavel: '', vencimento: 10 },
       parcelas, anoParam, valorPadrao: ''
     });
     return;
@@ -924,9 +948,13 @@ function renderCarne({ aluno, parcelas, anoParam, valorPadrao }) {
       Disponíveis: <code>${todosAlunos.map(a => a.nome).join(', ')}</code>
     `);
     const vencimentos = listaVencimentos(anoParam, 10, CONFIG.totalParcelas);
-    const parcelas = vencimentos.map((v, i) => ({ mes: i + 1, vencimento: v }));
+    const parcelas = vencimentos.map((v, i) => ({
+      mes: i + 1,
+      vencimento: v,
+      dataPagamento: ''
+    }));
     renderCarne({
-      aluno: { nome: nomeAluno, turma: '—', plano: '—', vencimento: 10 },
+      aluno: { nome: nomeAluno, turma: '—', plano: '—', responsavel: '', vencimento: 10 },
       parcelas, anoParam, valorPadrao: ''
     });
     return;
@@ -944,11 +972,18 @@ function renderCarne({ aluno, parcelas, anoParam, valorPadrao }) {
   if (pagamentos.length) {
     parcelas = pagamentos.map(p => ({
       mes: p.mes,
-      vencimento: p.vencimento || ''
+      vencimento: p.vencimento || '',
+      dataPagamento: p.dataPagamento || '',
+      status: p.status
     }));
   } else {
     const vencimentos = listaVencimentos(anoParam, aluno.vencimento, CONFIG.totalParcelas);
-    parcelas = vencimentos.map((v, i) => ({ mes: i + 1, vencimento: v }));
+    parcelas = vencimentos.map((v, i) => ({
+      mes: i + 1,
+      vencimento: v,
+      dataPagamento: '',
+      status: 'Pendente'
+    }));
     mostrarAviso('amarelo', `
       <strong>Nenhum pagamento lançado para ${aluno.nome} em ${anoParam}</strong>
       O carnê abaixo foi gerado usando o valor do plano <code>${aluno.plano}</code>
